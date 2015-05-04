@@ -1,5 +1,9 @@
-# youtube-app
-App for search through youtube, play videos and send the videos to your yetu tv homescreen.
+# Youtube App
+This sole purpose of this application is to show how :
+
+* yetu oauth2 client can be implemented in a play framework. For this, also see [the library this project makes use of](https://github.com/yetu/yetu-play-authenticator)
+* how communication between different screens are accomplished (e.g. message from a pc to tv)
+* (what an app for current yetu homescreen across devices have to have)
 
 ## Warning:
 
@@ -100,3 +104,4 @@ Currently please contact dev-support@yetu.com to obtain OAuth2 credentials.
 For more information on how to develop yetu apps, please see [this page](https://github.com/yetu/app-development-workflow/wiki/How-to-develop-Apps-for-the-yetu-platform%3F)
 
 You also have to obtain a youtube developer token, please refer to the official youtube documentation for this.
+
