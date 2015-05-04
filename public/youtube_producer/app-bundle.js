@@ -1,0 +1,651 @@
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+require('./js/app');
+},{"./js/app":2}],2:[function(require,module,exports){
+var youtubeApp = angular.module('youtubeApp',
+	[
+		'ngRoute',
+		'ngResource',
+		'pascalprecht.translate',
+		'reactTo',
+		require('./yt_result').name,
+		require('./yt_search').name,
+		require('./yt_auth').name,
+		require('./yt_notification').name
+	]);
+
+youtubeApp.config(function ($routeProvider, $translateProvider, $httpProvider, $locationProvider, i18n) {
+	$httpProvider.defaults.useXDomain = true;
+	delete $httpProvider.defaults.headers.common['X-Requested-With'];
+
+	$locationProvider.html5Mode(true);
+
+	$routeProvider
+		.when('/', {
+			template: require('./mainTemplate.html')
+		})
+		.otherwise({
+			redirectTo: '/'
+		});
+
+	//initialize the $translateProvider with all languages including their strings that are in i18n config file
+    for(var i=0; i<i18n.languagesAvailable.length; i++){
+        var language = i18n.languagesAvailable[i];
+        $translateProvider.translations(language, i18n.languages[language]);
+    };
+    $translateProvider.preferredLanguage('en');
+});
+
+youtubeApp.run(function($location,$translate){
+    var params = $location.search();
+    if(params.lang){
+        $translate.use(params.lang);
+    }
+});
+
+youtubeApp.constant("SERVERPATHS", {
+    youtubeUrl: "/playlist",
+		notificationUrl: "/notification",
+		level2Url: "/level2tv",
+		imageUrl: "/assets/youtube_producer/img/"
+});
+
+youtubeApp.constant("SPECIALPURPOSE", {
+    notificationTriggers: ["yetu", "is", "awesome"],
+		successOnSentNotification: "A general notification was sent successfully!",
+		errorOnSentNotification: "There was an error sending the general notification",
+		displayTimeout: 2000
+});
+
+youtubeApp.constant("YOUTUBEREQUESTS", {
+    maxResults: 1,
+    playlistItems: {
+        url: 'https://www.googleapis.com/youtube/v3/playlistItems',
+        part: 'snippet'
+    },
+    video: {
+        url: 'https://www.googleapis.com/youtube/v3/videos',
+        part: 'snippet,contentDetails,statistics'
+    }
+});
+youtubeApp.constant('i18n', {
+    languagesAvailable: ['en', 'de'],
+    languages: {
+        en:{
+            COMMIT_BUTTON_LABEL: 'Play'
+        },
+        de:{
+            COMMIT_BUTTON_LABEL: 'Abspielen'
+        }
+    }
+});
+
+},{"./mainTemplate.html":3,"./yt_auth":4,"./yt_notification":6,"./yt_result":8,"./yt_search":14}],3:[function(require,module,exports){
+module.exports = "<div class=\"container\">\r\n  <yt-search class=\"yt-search\"></yt-search>\r\n  <yt-result class=\"yt-result\"></yt-result>\r\n\t<yt-auth class=\"ng-hide\"></yt-auth>\r\n</div>";
+
+},{}],4:[function(require,module,exports){
+module.exports = angular.module('yt_auth', ['ngResource'])
+	.directive('ytAuth', require('./yt_authDirective'));
+
+},{"./yt_authDirective":5}],5:[function(require,module,exports){
+module.exports = function ($window, $http, $interval, $log) {
+    'use strict';
+    return {
+        restrict: 'E',
+        link: function (scope, element, attr) {
+            //TODO: use more angular.js methods instead of mix of native and angular stuff
+
+            var openidIframe = document.createElement('iframe');
+
+            openidIframe.src = config.authServer + '/assets/login_status.html';
+            openidIframe.id = 'openid-provider';
+            openidIframe.style.visibility = 'hidden';
+            openidIframe.style.display = 'none';
+
+            document.body.appendChild(openidIframe);
+
+            openidIframe.onload = check_session;
+
+            var timerID = setInterval(check_session, config.sessionPollingInterval * 1000);
+
+            function check_session() {
+                var win = openidIframe.contentWindow;
+                win.postMessage('youtubeApp ' + config.userUUID, config.authServer);
+            }
+
+
+            function receiveMessageP(event) {
+                if (event.originalEvent) {
+                    event = event.originalEvent;
+                }
+                if (event.origin !== config.authServer) {
+                    $log.log('event.origin domain [' + event.origin + '] does not match the configured domain [' + config.authServer + ']');
+                    return;
+                }
+                var stat = event.data;
+                $log.log('poller | received message:' + stat);
+                if (stat == 'invalid') {
+                    $log.log('session=invalid! Logging out and redirecting');
+                    clearInterval(timerID);
+                    $window.location.href = '/signOut';
+                }
+            }
+
+            angular.element($window).on('message', receiveMessageP);
+        }
+    }
+};
+},{}],6:[function(require,module,exports){
+module.exports = angular.module('yt_notification', ['ngResource'])
+.service('ytNotification', require('./ytNotification'));
+},{"./ytNotification":7}],7:[function(require,module,exports){
+module.exports = function($http, SERVERPATHS, SPECIALPURPOSE) {
+	'use strict';
+	//array object with possible payloads
+	var payloads = [{
+        headline: 'CamBot',
+		notification: {
+			subTitle: 'motion detected outside back window',
+			image: 'http://i4.mirror.co.uk/incoming/article141978.ece/alternates/s2197/burglar-trying-to-pry-open-window-on-house-pic-getty-images-123608196.jpg'
+		}
+	}, {
+        headline: 'WaterBot',
+		notification: {
+			subTitle: 'basement water sensor activated',
+			image: 'http://www.smbywills.com/core/images/waterproofing/basement-flooding/flooded-basement-home-lg.jpg'
+		}
+	}, {
+        headline: 'DoorBot',
+		notification: {
+			subTitle: 'doorbell activated',
+			image: 'http://static.guim.co.uk/sys-images/Guardian/Pix/pictures/2011/9/4/1315149322196/Man-at-front-door-007.jpg'
+		}
+	}];
+	//checks if the special triggerphrase was entered
+	this.isSpecialTrigger = function(inputValue) {
+		var result = [];
+		angular.forEach(SPECIALPURPOSE.notificationTriggers, function(value, key) {
+			if (inputValue.toLowerCase().indexOf(value) === -1) {
+				result.push(0);
+			} else {
+				result.push(1);
+			}
+		});
+		if (result.indexOf(0) !== -1) {
+			return false;
+		} else {
+			return true;
+		}
+	};
+	//returns a random element of the payloads object
+	this.sendGeneralNotification = function() {
+		return $http.post(SERVERPATHS.notificationUrl, payloads[Math.floor((Math.random() * payloads.length))]);
+	};
+};
+
+},{}],8:[function(require,module,exports){
+module.exports = angular.module('yt_result', ['ngResource', 'pascalprecht.translate', 'reactTo'])
+	.directive('ytResult', require('./yt_resultDirective'))
+	.service('ytPlaylistService', require('./yt_playlistService'))
+	.directive('ytResultItem', require('./yt_resultItemDirective'));
+
+
+},{"./yt_playlistService":9,"./yt_resultDirective":10,"./yt_resultItemDirective":11}],9:[function(require,module,exports){
+module.exports = function ($http, $location, $translate, SERVERPATHS, YOUTUBEREQUESTS) {
+	'use strict';
+	this.playlistSendResult = null;
+	var that = this;
+	this.deletePlaylistSendResult = function(){
+		that.playlistSendResult = null;
+	};
+
+	var sendPlaylist = function(playlist){
+		var streamTitle = playlist.headline || '';
+		$http.post(SERVERPATHS.youtubeUrl,playlist).success(function(data){
+			that.playlistSendResult = {
+				name: decodeURI(streamTitle),
+				sended: "YES"
+			};
+		}).error(function(data, status){
+			if(status === 401){
+				that.playlistSendResult = {
+					name: decodeURI(streamTitle),
+					sended: 401
+				};
+			}else {
+				that.playlistSendResult = {
+					name: decodeURI(streamTitle),
+					sended: "ERROR"
+				};
+			}
+
+		});
+	};
+
+	// call youtube data api to get playlist item of specified playlist id
+	var getYtPlaylistItems = function(playlistId){
+		return $http.get(YOUTUBEREQUESTS.playlistItems.url, {
+			params: {
+				maxResults: YOUTUBEREQUESTS.maxResults,
+				part: YOUTUBEREQUESTS.playlistItems.part,
+				key: config.youtubeDeveloperToken,
+				playlistId: playlistId,
+
+			}
+		});
+	};
+
+	// call youtube data api to get video item of specified video id
+	var getYtVideo = function (videoId){
+		return $http.get(YOUTUBEREQUESTS.video.url, {
+			params: {
+				maxResults: YOUTUBEREQUESTS.maxResults,
+				part: YOUTUBEREQUESTS.video.part,
+				key: config.youtubeDeveloperToken,
+				id: videoId
+			}
+		});
+	};
+
+	var parseYtPlaylistItems = function (playlistItems) {
+		var parsedItem = {};
+		if (playlistItems.length > 0) {
+			var item = playlistItems[0];
+			if (item && item.snippet){
+				parsedItem.owner = item.snippet.channelTitle || ''; //playlist owner
+				parsedItem.title = item.snippet.title || ''; //video title
+				if(item.snippet.thumbnails && item.snippet.thumbnails.maxres && item.snippet.thumbnails.maxres.url){
+					parsedItem.image = item.snippet.thumbnails.maxres.url;
+				}else if(item.snippet.thumbnails && item.snippet.thumbnails.high && item.snippet.thumbnails.high.url) {
+					parsedItem.image = item.snippet.thumbnails.high.url;
+				}else if(item.snippet.thumbnails && item.snippet.thumbnails.medium && item.snippet.thumbnails.medium.url) {
+					parsedItem.image = item.snippet.thumbnails.medium.url;
+				}else if(item.snippet.thumbnails && item.snippet.thumbnails.standard && item.snippet.thumbnails.standard.url) {
+					parsedItem.image = item.snippet.thumbnails.standard.url;
+				}else if(item.snippet.thumbnails && item.snippet.thumbnails.default && item.snippet.thumbnails.default.url){
+					parsedItem.image = item.snippet.thumbnails.default.url;
+				}else {
+					parsedItem.image = '';
+				}
+				if (item.snippet.resourceId){
+					parsedItem.videoId = item.snippet.resourceId.videoId || '';
+				} else {
+					parsedItem.videoId = '';
+				}
+			}
+		}
+		return parsedItem;
+	};
+
+	var parseYtVideoData = function (data) {
+		var video = {};
+		if (data.items && data.items.length > 0 && data.items[0].contentDetails && data.items[0].snippet &&  data.items[0].statistics) {
+			video = {
+				duration: data.items[0].contentDetails.duration,
+				publishDate: data.items[0].snippet.publishedAt,
+				definition: data.items[0].contentDetails.definition,
+				viewCount: data.items[0].statistics.viewCount
+			};
+		}
+		return video;
+	};
+
+	this.sendPlaylistItem = function(playlistId, playlistTitle, urlToApp){
+		var playlistItem, videoItem;
+
+		getYtPlaylistItems(playlistId).success(function(ptData){
+			playlistItem = parseYtPlaylistItems(ptData.items);
+			getYtVideo(playlistItem.videoId).success(function(vData){
+				videoItem = parseYtVideoData(vData);
+
+				$translate(['COMMIT_BUTTON_LABEL']).then(function (translations) {
+					var url =  $location.protocol() + '://' + $location.host() + ":" + $location.port();
+					var playlist = {
+						action:{
+							url: url + SERVERPATHS.level2Url,
+							type: 'open',
+							parameter:{
+								playlistId: playlistId,
+								itemIndex: 0
+							},
+							button:{
+								icon: url + SERVERPATHS.imageUrl + "notification_play.svg",
+								label: translations.COMMIT_BUTTON_LABEL
+							}
+						},
+						headline: encodeURI(playlistTitle),
+						stream: {
+							owner:playlistItem.owner,
+							title: encodeURI(playlistItem.title),
+							image: playlistItem.image,
+							duration: videoItem.duration,
+							publishDate: videoItem.publishDate,
+							viewCount: videoItem.viewCount,
+							resolution: videoItem.resolution
+						}
+					};
+					sendPlaylist(playlist);
+				});
+
+			}).error(function(data){
+                console.error("error happening on getYtVideo: ", data);
+			});
+		}).error(function(data){
+            console.error("error happening on getYtPlaylistItems: ", data);
+		});
+	};
+};
+
+
+},{}],10:[function(require,module,exports){
+
+module.exports = function (reactTo, $rootScope, ytPlaylistService, $timeout) {
+	return {
+		restrict: 'E',
+		template: require('./yt_resultTemplate.html'),
+		controller: function($scope, ytSearchState){
+			$scope.resultLists = null;
+			$scope.resultListsState = 'initial';
+			var react = reactTo($scope, false, true);
+			react(ytSearchState,'resultLists', function(newV){
+				if(newV){
+					$scope.resultLists = newV;
+				}
+			});
+			react(ytSearchState,'resultListsState', function(newV){
+				if(newV){
+					$scope.resultListsState = newV;
+				}
+			});
+		},
+		link: function(scope,element){
+			var react = reactTo(scope, false, true);
+			scope.sendOverlay = false;
+			scope.playListName = '';
+			scope.playListSended = null;
+			var timeoutId;
+			react(ytPlaylistService, 'playlistSendResult', function(newV){
+				if(newV){
+					scope.playListName = newV.name;
+					scope.playListSended = newV.sended;
+					scope.sendOverlay = true;
+					timeoutId = $timeout(function(){
+						scope.sendOverlay = false;
+						ytPlaylistService.deletePlaylistSendResult()
+					},3000);
+				}
+			});
+			window.onresize=function(){
+				$rootScope.$broadcast('RESIZE');
+			};
+
+			document.body.onclick = function(){
+				if(timeoutId){
+					$timeout.cancel(timeoutId);
+					scope.sendOverlay = false;
+					scope.$apply();
+				}
+			};
+		}
+	}
+};
+},{"./yt_resultTemplate.html":13}],11:[function(require,module,exports){
+
+module.exports = function (ytPlaylistService, ytSearchState) {
+	var player = null, index = null;
+	// 2. This code loads the IFrame Player API code asynchronously.
+	var tag = document.createElement('script');
+
+	tag.src = "https://www.youtube.com/iframe_api";
+	var firstScriptTag = document.getElementsByTagName('script')[0];
+	firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+	return {
+		restrict: 'E',
+		template: require('./yt_resultItemTemplate.html'),
+		link: function(scope,element){
+			scope.playing = false;
+			scope.onPlay = function(e){
+				index = angular.element(e.target).attr('data-index');
+				var playlistId = angular.element(e.target).attr('data-id');
+				loadPlayerAndVideo(playlistId);
+			}
+			scope.onPlaylistSendButtonClick = function(e){
+				var title = angular.element(e.target).attr('data-title')
+				var playlistId = angular.element(e.target).attr('data-id');
+				ytPlaylistService.sendPlaylistItem(playlistId, title);
+			};
+			
+			scope.onClose = function(){
+				angular.element(element.find('iframe')[0]).remove();
+				angular.element(element.find('div')[3]).append('<div id="player'+index+'" class="yt-result-list-item--player">');
+				player = null;
+				scope.playing=false;
+
+			};
+
+			var loadPlayerAndVideo = function (id){
+				window.scrollTo(0,0);
+				if (player===null) {
+					player = new YT.Player('player'+index, {
+						height: '281',
+						width: '500',
+						playerVars:
+						{
+							listType:'playlist',
+							list: id,
+							autoplay: 1,
+							controls: 1,
+							showinfo: 0
+						}
+					});
+				}
+				if (player.loadPlaylist) {
+					player.loadPlaylist(id, "playlist", 0, 0, 'highres');
+					if (player.getVideoUrl && player.getPlaylist()[0]) {
+						player.loadVideoById(player.getPlaylist()[0], 0, 'highres');
+					} else if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
+						player.playVideo();
+					}
+				}
+				scope.playing=true;
+
+			};
+
+
+
+		}
+	}
+};
+
+},{"./yt_resultItemTemplate.html":12}],12:[function(require,module,exports){
+module.exports = "<li class=\"yt-result-list-item\">\r\n  <div class=\"yt-result-list-item--img\">\r\n    <img ng-if=\"resultList.img\" class=\"yt-result-list-item--img\" src=\"{{resultList.img}}\"/>\r\n    <img data-index=\"{{$index}}\" data-id=\"{{resultList.playlistId}}\" class=\"yt-result-list-item--playimg\" src=\"assets/youtube_producer/img/play-icon.svg\" ng-click=\"onPlay($event)\"/>\r\n  </div>\r\n  <div class=\"yt-result-list-item--rightContent\">\r\n    <h1 class=\"yt-result-list-item--title\">\r\n      <p class=\"yt-result-list-item--title-container\" data-type=\"title\" cw-reveal-label><span>{{resultList.title}}</span></p>\r\n    </h1>\r\n    <p class=\"yt-result-list-item--subtitle\">\r\n      <span>by {{resultList.channel}}</span>\r\n      <span class=\"point\">*</span>\r\n      <span>{{resultList.description.createDate}}</span>\r\n    </p>\r\n    <p class=\"yt-result-list-item--description\" data-type=\"description\" cw-reveal-label ng-if=\"resultList.description.text\">\r\n      <span>{{resultList.description.text}}</span>\r\n    </p>\r\n    <p class=\"yt-result-list-item--description\" ng-if=\"!resultList.description.text\">No description available.</p>\r\n  </div>\r\n  <div class=\"yt-result-list-item--buttons\">\r\n    <button class=\"yt-result-list-item--button\"\r\n            ng-click=\"onPlaylistSendButtonClick($event)\"\r\n            data-title=\"{{resultList.title}}\" data-id=\"{{resultList.playlistId}}\" data-channeltitle=\"{{resultList.channel}}\">\r\n      Play on TV\r\n      </button>\r\n  </div>\r\n  <div class=\"yt-result-list-item--video\"  ng-class=\"{'visible':playing}\" ng-click=\"onClose()\">\r\n    <div id=\"{{'player'+$index}}\" class=\"yt-result-list-item--player\">\r\n    </div>\r\n    <div ng-click=\"onClose()\" class=\"yt-result-list-item--close\">x</div>\r\n  </div>\r\n</li>";
+
+},{}],13:[function(require,module,exports){
+module.exports = "<div>\r\n<div class=\"yt-send-overlay\" ng-class=\"{visible: sendOverlay}\">\r\n  <p ng-if=\"playListSended==='YES'\">\r\n    YouTube Playlist \"{{playListName}}\" is now sent to your TV!\r\n  </p>\r\n  <p ng-if=\"playListSended==='ERROR'\">\r\n    YouTube Playlist \"{{playListName}}\" could not be sent to your TV!\r\n  </p>\r\n  <p ng-if=\"playListSended===401\">\r\n    You are not allowed to send the YouTube Playlist \"{{playListName}}\" to TV!\r\n  </p>\r\n</div>\r\n<ul class=\"yt-result-list\">\r\n  <yt-result-item ng-repeat=\"resultList in resultLists\">‚\r\n  </yt-result-item>\r\n  <div ng-if=\"resultListsState==='empty'\">\r\n    No results found.\r\n  </div>\r\n</ul>\r\n</div>";
+
+},{}],14:[function(require,module,exports){
+module.exports = angular.module('yt_search', ['ngResource','pascalprecht.translate'])
+	.service('ytSearchState', require('./yt_searchState'))
+	.directive('ytSearch', require('./yt_searchDirective'));
+
+},{"./yt_searchDirective":15,"./yt_searchState":16}],15:[function(require,module,exports){
+module.exports = function (ytSearchState, ytNotification, SPECIALPURPOSE, $timeout) {
+	return {
+		restrict: 'E',
+		template: require('./yt_searchTemplate.html'),
+		link: function(scope, element, attr){
+			scope.searchValue = ytSearchState.getSearchValue(true);
+			if(scope.searchValue){
+				ytSearchState.setSearchResult();
+			}
+			scope.searchButtonClick = function() {
+				scope.initSearch(element.find('input')[0].value);
+			};
+			scope.searchOnKeyUp = function (event) {
+				if (event.keyCode === 13 && event.target.value !== "") {
+					scope.initSearch(event.target.value);
+				}
+			};
+			scope.initSearch = function(value){
+				//if a special search query is entered we send a general notification
+				if(ytNotification.isSpecialTrigger(value)){
+					var result = ytNotification.sendGeneralNotification();
+					result.then(function() {
+						element.find('input')[0].value = SPECIALPURPOSE.successOnSentNotification;
+					}, function() {
+						element.find('input')[0].value = SPECIALPURPOSE.errorOnSentNotification;
+					});
+					$timeout(function(){
+						element.find('input')[0].value = '';
+					}, SPECIALPURPOSE.displayTimeout);
+					return;
+				//from here on it is normal search
+				} else {
+					ytSearchState.setSearchValue(value);
+					scope.searchValue = ytSearchState.getSearchValue(false);
+					ytSearchState.setSearchResult();
+				}
+			};
+		}
+	};
+};
+
+
+},{"./yt_searchTemplate.html":17}],16:[function(require,module,exports){
+module.exports = function ($location, $http) {
+	'use strict';
+	var searchValue;
+	this.resultLists = [];
+	this.resultListsState = 'initial'; //Enum initial/full/empty
+
+	var that = this;
+
+	this.getSearchValue = function (searchFromUrl) {
+		if(!searchValue||searchFromUrl){
+			searchValue = $location.search().search;
+			if(searchValue){
+				searchValue = decodeURI(searchValue);
+			}
+		}
+		return searchValue;
+	};
+
+	this.setSearchValue = function(value){
+		searchValue = value;
+	}
+
+
+	var getDate = function(timestamp){
+		var timespan;
+		var date = new Date();
+		var createDate = new Date(timestamp);
+		var hoursDivide = (1000*60*60);
+		var length = (date.getTime()/hoursDivide) - (createDate.getTime()/hoursDivide);
+		var hours;
+		var days;
+		var months;
+		var years;
+		if(length>24){
+			days = parseInt(length/24);
+			hours = parseInt(length - (days*24));
+			if(days >30){
+				months = parseInt(days/30);
+				days = days - (months*30);
+				if(months >12){
+					years = parseInt(months/12);
+					months = months - (years*12);
+				}
+				else{
+					years = 0;
+				}
+			}
+			else{
+				months = 0;
+				years = 0;
+			}
+		}
+		else{
+			hours = length;
+			days = 0;
+			months = 0;
+			years = 0;
+		}
+		var s = "s"
+		if(years>0){
+			if(years===1){
+				s="";
+			}
+			timespan = years+ ' year'+ s +' ago';
+		}
+		else if(years===0 && months>0){
+			if(months===1){
+				s="";
+			}
+			timespan = months+ ' month'+ s +' ago';
+		}
+		else if(years===0 && months===0 && days>0){
+			if(days===1){
+				s="";
+			}
+			timespan = days+ ' day'+ s +' ago';
+		}
+		else if(years===0 && months===0 && days===0 && hours>0){
+			if(hours===1){
+				s="";
+			}
+			timespan = hours+ ' hour'+ s +' ago';
+		}
+		return timespan;
+	};
+
+	var fillResultList = function(data){
+		that.resultLists = [];
+		data.items.forEach(function(item){
+			var newListItem = {
+				playlistId : item.id.playlistId,
+				title: item.snippet.title,
+				img: item.snippet.thumbnails.medium.url,
+				description: {
+					createDate: getDate(item.snippet.publishedAt),
+					text: item.snippet.description
+				}
+			};
+			$http.get('https://www.googleapis.com/youtube/v3/channels', {
+				params: {
+					id: item.snippet.channelId,
+					key: config.youtubeDeveloperToken,
+					part: 'snippet'
+				}
+			}).success(function(data){
+				newListItem.channel = data.items[0].snippet.title;
+			});
+			that.resultLists.push(newListItem)
+		});
+		if(that.resultLists.length>0){
+			that.resultListsState = 'full';
+		}
+		else{
+			that.resultListsState = 'empty';
+		}
+	};
+
+	this.setSearchResult = function() {
+		$http.get('https://www.googleapis.com/youtube/v3/search', {
+			params: {
+				maxResults: 10,
+				q: searchValue,
+				part: 'snippet',
+				key: config.youtubeDeveloperToken,
+				type: 'playlist'
+			}
+		}).success(function(data){
+			fillResultList(data);
+		}).error(function(data){
+			console.error("error happening on .setSearchResult:", data);
+		});
+
+	};
+};
+},{}],17:[function(require,module,exports){
+module.exports = "<div>\r\n  <input class=\"yt-search--input\" ng-keyup=\"searchOnKeyUp($event)\" type=\"text\" placeholder=\"Search YouTube Playlist\" value=\"{{searchValue}}\">\r\n  <button class=\"yt-search--button\" ng-click=\"searchButtonClick()\">\r\n    <svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\r\n\t    viewBox=\"0 0 21.7 21.7\" enable-background=\"new 0 0 21.7 21.7\" xml:space=\"preserve\">\r\n      <path fill=\"#333\" d=\"M21.7,20.3l-6-6c1.2-1.5,1.9-3.4,1.9-5.5c0-4.9-4-8.8-8.8-8.8C4,0,0,4,0,8.8c0,4.9,4,8.8,8.8,8.8\r\n        c2.1,0,4-0.7,5.5-1.9l6,6L21.7,20.3z M8.8,15.6C5.1,15.6,2,12.6,2,8.8C2,5.1,5.1,2,8.8,2c3.8,0,6.8,3.1,6.8,6.8\r\n        C15.6,12.6,12.6,15.6,8.8,15.6z\"/>\r\n    </svg>\r\n  </button>\r\n</div>";
+
+},{}]},{},[1]);
