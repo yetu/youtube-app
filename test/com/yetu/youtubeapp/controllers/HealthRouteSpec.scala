@@ -1,6 +1,6 @@
-package com.yetu.youtube.controllers
+package com.yetu.youtubeapp.controllers
 
-import com.yetu.youtube.utils.BaseSpec
+import com.yetu.youtubeapp.utils.BaseSpec
 import play.api.test.Helpers._
 
 

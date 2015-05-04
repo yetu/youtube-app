@@ -1,4 +1,4 @@
-package com.yetu.youtube.utils
+package com.yetu.youtubeapp.utils
 
 import com.typesafe.config.ConfigFactory
 
@@ -17,7 +17,7 @@ object ConfigLoader {
     val sessionPollingInterval = config.getInt("frontendConfig.sessionPollingInterval")
   }
 
-  val indexUrl = com.yetu.youtube.controllers.routes.YoutubeController.index
+  val indexUrl = com.yetu.youtubeapp.controllers.routes.YoutubeController.index
 
   object Inbox {
     val publishUrl = config.getString("inbox.publishUrl")

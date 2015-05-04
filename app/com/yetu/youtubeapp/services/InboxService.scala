@@ -1,8 +1,8 @@
-package com.yetu.youtube.services
+package com.yetu.youtubeapp.services
 
 import com.mohiva.play.silhouette.api.Logger
-import com.yetu.youtube.models.{InboxMessage, Payload}
-import com.yetu.youtube.utils.ConfigLoader.Inbox._
+import com.yetu.youtubeapp.models.{InboxMessage, Payload}
+import com.yetu.youtubeapp.utils.ConfigLoader.Inbox._
 import play.api.Play.current
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WS, WSResponse}

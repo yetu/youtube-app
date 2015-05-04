@@ -1,6 +1,6 @@
-package com.yetu.youtube.controllers
+package com.yetu.youtubeapp.controllers
 
-import com.yetu.youtube.utils.BaseSpec
+import com.yetu.youtubeapp.utils.BaseSpec
 import play.api.libs.json.Json
 import play.api.test.{FakeHeaders, FakeRequest}
 import play.api.test.Helpers._
@@ -9,7 +9,7 @@ import play.api.test.Helpers._
 class YoutubeRouteSpec extends BaseSpec {
 
   val indexUrl = "/"
-  val publishUrl = com.yetu.youtube.controllers.routes.YoutubeController.playlist.url
+  val publishUrl = com.yetu.youtubeapp.controllers.routes.YoutubeController.playlist.url
 
 
 

@@ -1,4 +1,4 @@
-package com.yetu.youtube.controllers
+package com.yetu.youtubeapp.controllers
 
 import play.api.mvc.{Controller, Action}
 

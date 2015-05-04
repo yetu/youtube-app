@@ -1,4 +1,4 @@
-package com.yetu.youtube.controllers
+package com.yetu.youtubeapp.controllers
 
 
 import javax.inject.Inject
@@ -8,12 +8,12 @@ import com.mohiva.play.silhouette.impl.authenticators.SessionAuthenticator
 import com.mohiva.play.silhouette.impl.providers.OAuth2Info
 import com.yetu.play.authenticator.models.User
 import com.yetu.play.authenticator.models.daos.OAuth2InfoDAO
-import com.yetu.youtube.models.{SimpleFrontendConfig, FrontendConfig}
-import com.yetu.youtube.services.InboxService
-import com.yetu.youtube.utils.ConfigLoader
-import com.yetu.youtube.utils.ConfigLoader.FrontendConfiguration
-import com.yetu.youtube.utils.ConfigLoader.Inbox._
-import com.yetu.youtube.views
+import com.yetu.youtubeapp.models.{SimpleFrontendConfig, FrontendConfig}
+import com.yetu.youtubeapp.services.InboxService
+import com.yetu.youtubeapp.utils.ConfigLoader
+import com.yetu.youtubeapp.utils.ConfigLoader.FrontendConfiguration
+import com.yetu.youtubeapp.utils.ConfigLoader.Inbox._
+import com.yetu.youtubeapp.views
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSResponse
 import play.api.mvc.{Action, Result}
