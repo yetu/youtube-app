@@ -1,4 +1,4 @@
-package com.yetu.youtube.utils
+package com.yetu.youtubeapp.utils
 
 import com.mohiva.play.silhouette.impl.authenticators.SessionAuthenticator
 import org.scalatest.concurrent.{AsyncAssertions, ScalaFutures}

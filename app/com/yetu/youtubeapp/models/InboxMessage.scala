@@ -1,4 +1,4 @@
-package com.yetu.youtube.models
+package com.yetu.youtubeapp.models
 
 import play.api.libs.json.Json
 

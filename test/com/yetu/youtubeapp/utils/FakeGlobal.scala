@@ -1,4 +1,4 @@
-package com.yetu.youtube.utils
+package com.yetu.youtubeapp.utils
 
 import java.util.UUID
 

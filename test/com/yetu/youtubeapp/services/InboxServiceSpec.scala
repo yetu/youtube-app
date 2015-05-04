@@ -1,6 +1,6 @@
-package com.yetu.youtube.services
+package com.yetu.youtubeapp.services
 
-import com.yetu.youtube.utils.{FakeGlobal, BaseSpec}
+import com.yetu.youtubeapp.utils.{FakeGlobal, BaseSpec}
 import org.scalatest.time._
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
