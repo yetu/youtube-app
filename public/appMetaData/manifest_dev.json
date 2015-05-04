@@ -1,14 +1,14 @@
 {
   "label": "YouTube",
-  "description": "YouTube on yetu TV: allowing you to watch your favorite videos on the best screen in your house.",
+  "description": "yetu | youtube app: allowing you to search and watch your favorite videos on the best screen in your house.",
   "backgroundColor": "#C4110B",
   "controlsType": "form",
   "tileType": "app",
   "category": [
     "Web TV"
   ],
-  "url": "http://apps.yetudev.com:7575",
-  "logo": "http://apps.yetudev.com:7575/assets/appMetaData/assets/logo.svg",
+  "url": "http://apps.yetudev.com:7676",
+  "logo": "http://apps.yetudev.com:7676/assets/appMetaData/assets/logo.svg",
   "controls": {
     "form": {
       "action": "open_app_view",
