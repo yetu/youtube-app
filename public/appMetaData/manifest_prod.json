@@ -7,8 +7,8 @@
   "category": [
     "Web TV"
   ],
-  "url": "http://apps.yetu.me:7676",
-  "logo": "http://apps.yetu.me:7676/assets/appMetaData/assets/logo.svg",
+  "url": "https://youtubeapp.yetu.me",
+  "logo": "https://youtubeapp.yetu.me/assets/appMetaData/assets/logo.svg",
   "controls": {
     "form": {
       "action": "open_app_view",
