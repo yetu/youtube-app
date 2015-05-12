@@ -2,7 +2,7 @@ import play.PlayScala
 
 scalaVersion := "2.11.4"
 
-name := """youtube"""
+name := """youtubeapp"""
 
 organization := """com.yetu"""
 
