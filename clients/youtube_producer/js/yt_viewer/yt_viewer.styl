@@ -1,0 +1,57 @@
+.yt-viewer {
+  width: 800px;
+
+  .video {
+    float: left;
+  }
+}
+
+.yt-player {
+  width: 800px;
+  height: 600px;
+  border: solid red 2px;
+}
+
+.yt-video-description {
+  width: 800px;
+  height: 300px;
+  border: solid orange 2px;
+}
+
+.yt-playlist {
+  width: 300px;
+  height: 900px;
+  border: solid black 2px;
+  margin-left: 800px;
+}
+
+.yt-controls {
+  display: none;
+}
+
+.tvmode {
+
+  .yt-viewer, .video, .yt-player {
+    height: 100%;
+    width: 100%;
+    position: relative;
+  }
+
+  .yt-player {
+    position: absolute;
+  }
+
+  .yt-controls {
+    position: absolute;
+    bottom: 10px;
+    height: 200px;
+    width: 100%;
+    border: solid pink 2px;
+    display: block;
+  }
+
+  .yt-video-description,
+  .yt-playlist {
+     display: none;
+  }
+}
