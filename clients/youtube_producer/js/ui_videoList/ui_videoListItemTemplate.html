@@ -1,0 +1,23 @@
+<li class="ui-video-list-item">
+  <div class="img">
+    <img ng-if="item.img" class="ui-video-list-item--img" src="{{item.img}}"/>
+    <a class="playimg" ng-href="#/view/expand/{{item.type}}/{{item.id}}"> <!-- TODO: replace href with {{ link | replaceParams }} -->
+      <img data-index="{{$index}}" data-id="{{item.playlistId}}" src="assets/youtube_producer/img/play-icon.svg" />
+    </a>
+  </div>
+  <div class="metadata">
+    <p class="title">{{item.title}}</p>
+    <p class="subtitle" ng-if="item.channel">
+      <span>by {{item.channel}}</span><br />
+      <span>{{ item.description.createDate | timeAgo }}</span>
+    </p>
+    <p class="description" data-type="description" cw-reveal-label ng-if="item.description.text">
+      {{item.description.text}}
+    </p>
+    <p class="description" ng-if="!item.description.text">No description available.</p>
+  </div>
+  <div class="buttons">
+      <app-send-to-tv id="{{ item.id }}" data-type="{{ item.type }}" data-title="{{ item.title }}"></app-send-to-tv>
+  </div>
+  <!-- TODO: <ng-transclude></ng-transclude> for send2tv component? -->
+</li>

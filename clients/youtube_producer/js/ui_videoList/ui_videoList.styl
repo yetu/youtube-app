@@ -1,0 +1,91 @@
+.ui-video-list {
+  list-style: none;
+  list-style-position: outside;
+  padding: 0;
+}
+
+.ui-video-list-item {
+  position: relative;
+  padding: 0;
+  background-color: #f4f4f4;
+  width: 23%;
+  float: left;
+  margin: 0 0 1% 1%;
+
+  .img {
+    position: relative;
+    width: 90%;
+    margin: 5px auto 5px auto;
+    display: block;
+    min-height: 150px;
+
+    img {
+      width: 100%;
+      min-height: 150px;
+    }
+  }
+
+  .playimg {
+    position: absolute;
+    top: 10px;
+    height: 50px;
+    opacity: 0.8;
+    -moz-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    filter: FlipH;
+    -ms-filter: "FlipH";
+    &:hover{
+      cursor: pointer;
+      opacity: 1.0;
+    }
+  }
+
+  .metadata {
+    height: 150px;
+    padding: 5px 10px;
+
+    .title{
+      color: #C4110B;
+      padding: 0;
+      margin: 0;
+      font-size: 24px;
+      font-weight: lighter;
+      font-family: source_sans_prolight;
+    }
+
+    .subtitle {
+      padding: 0;
+      margin: 5px 0;
+    }
+
+    .description{
+      padding: 0;
+      margin: 5px 0;
+    }
+  }
+
+  .buttons {
+    position: absolute;
+    right: 10px;
+    top: 5px; 
+    width: 50px;
+    .button {
+      font-family: source_sans_prolight;
+      font-size: 20px;
+      display: block;
+      width: 50px;
+      padding: 5px;
+      background: #C4110B;
+      border: 0;
+      outline: 0;
+      color: #fff;
+
+      &:hover {
+        cursor: pointer;
+        background: #333;
+      }
+    }
+  }
+}
