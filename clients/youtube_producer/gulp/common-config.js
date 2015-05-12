@@ -24,7 +24,7 @@ var scripts = {
 		src: 'app-bundle.js',
 		dest: 'bundle-js'
 	},
-    watch: 'js/**'
+    watch: ['js/**/*.js', 'js/**/*.html']
 };
 
 // paths for styles tasks
@@ -33,7 +33,7 @@ var styles = {
 		src: 'styles/app.styl',
 		dest: distAssets('/')+'/styles'
 	},
-	watch: 'styles/**'
+	watch: ['styles/**', 'js/**/*.styl']
 };
 
 var fonts = {
