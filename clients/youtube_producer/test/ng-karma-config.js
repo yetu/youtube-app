@@ -9,7 +9,8 @@ module.exports = function (config) {
         // ng template bundler
         preprocessors: {
             '**/*.html': ['ng-html2js'],
-            '/**/*.browserify': ['browserify']
+            '/**/*.browserify': ['browserify'],
+            'js/**/*.js': ['coverage']
         },
 
         files: [
@@ -17,14 +18,21 @@ module.exports = function (config) {
             '../../public/bower_components/angular-resource/angular-resource.js',
             '../../public/bower_components/angular-route/angular-route.js',
             '../../public/bower_components/angular-translate/angular-translate.min.js',
+            '../../public/bower_components/angular-mocks/angular-mocks.js',
             '../../public/bower_components/reactTo/reactTo.js',
+            '../../public/bower_components/angular-timeago/dist/angular-timeago.min.js',
             //include all test helpers from /test folder
             {pattern: 'test/**/!(spec.js)+(.js)'},
             // include templates fo ng-html2js
-            {pattern: 'js/**/*.html'}
+            {pattern: 'js/**/*.html'},
+            // app?
+            //{pattern: 'js/**/*.js'}
+            '../../public/youtube_producer/app-bundle.js'
         ],
         exclude: [
-            'bower_components/**/test/*.js'
+            'bower_components/**/test/*.js',
+            'test/jasmine.coverage/**/*',
+            'test/ng-karma-config.js'
         ],
 
         // Files to browserify
@@ -38,6 +46,18 @@ module.exports = function (config) {
             ]
         },
 
+        coverageReporter: {
+            type : 'html',
+            dir : 'test/jasmine.coverage/',
+            subdir: function(browser) {
+                return browser.toLowerCase().split(/[ /-]/)[0];
+            },
+            reporters:[
+                {type: 'cobertura' },
+                {type: 'html' },
+                {type: 'text-summary'}
+            ]
+        },
 
         ngHtml2JsPreprocessor: {
             // setting this option will create only a single module that contains templates
