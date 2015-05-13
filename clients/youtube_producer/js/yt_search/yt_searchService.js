@@ -1,16 +1,21 @@
 module.exports = (function ($http, $q) {
 	'use strict';
     var searchUrl = 'https://www.googleapis.com/youtube/v3/search',
-        channelsUrl = 'https://www.googleapis.com/youtube/v3/channels',
+        playlistsUrl = 'https://www.googleapis.com/youtube/v3/playlists',
+        videosUrl = 'https://www.googleapis.com/youtube/v3/videos',
         searchType = 'playlist,video',
         maxResults = 8,
+        regionCode = 'GB',
+        relevanceLanguage = 'en',
         developerToken = config.youtubeDeveloperToken,
         searchValue;
 
 	var processResultList = function(type, data){
         var list = [],
-            channels = [],
-            channels_map = [];
+            playlists = [],
+            playlists_map = [],
+            durations = [],
+            durations_map = [];
 
 		data.items.forEach(function(item){
             var kind = item.id.kind.replace('youtube#', ''),
@@ -29,26 +34,48 @@ module.exports = (function ($http, $q) {
 			};
 
             if(kind === 'playlist') {
-                channels.push(item.snippet.channelId);
-                channels_map[item.snippet.channelId] = list.length;
-            }
+                playlists.push(id);
+                playlists_map[id] = list.length;
+                // gets video id from image in case of video duration need
+                // id = item.snippet.thumbnails.medium.url.match(/vi\/(.+?)\//)[1];
+            } else {
+                durations.push(id);
+                durations_map[id] = list.length;
+            }            
 
 			list.push(newListItem);
 		});
 
-        if(channels.length) {
-            $http.get(channelsUrl, {
+        if(playlists.length) {
+            $http.get(playlistsUrl, {
                 params: {
-                    id: channels.join(','),
+                    id: playlists.join(','),
                     key: developerToken,
-                    part: 'snippet'
+                    part: 'snippet,contentDetails'
                 }
             }).success(function(data){
                 data.items.forEach(function(item) {
-                    list[channels_map[item.id]].channel = item.snippet.title;
+                    list[playlists_map[item.id]].channel = item.snippet.channelTitle;
+                    list[playlists_map[item.id]].totalItems = item.contentDetails.itemCount;
                 });
             });
         }
+
+        if(durations.length) {
+            $http.get(videosUrl, {
+                params: {
+                    id: durations.join(','),
+                    key: developerToken,
+                    part: 'contentDetails'
+                }
+            }).success(function(data){
+                data.items.forEach(function(item) {
+                    list[durations_map[item.id]].duration = item.contentDetails.duration;
+                });
+            });
+        }
+
+        console.debug(list);
 
         // TODO: distinguish result set depending on type
         return [
@@ -69,6 +96,8 @@ module.exports = (function ($http, $q) {
 		$http.get(searchUrl, {
 			params: {
 				maxResults: maxResults,
+                relevanceLanguage: relevanceLanguage,
+                regionCode: regionCode,
 				q: query,
 				part: 'snippet',
 				key: developerToken,
@@ -90,7 +119,8 @@ module.exports = (function ($http, $q) {
         // getNext: getNext,
         // getPrev: getPrev
         // setMaxResults
-        // setRegion
+        // setRegionCode
+        // setRelevanceLanguage
         // getDetails
     };
 });
