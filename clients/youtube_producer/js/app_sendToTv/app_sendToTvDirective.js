@@ -5,9 +5,9 @@ module.exports = function () {
 		template: require('./app_sendToTvTemplate.html'),
         scope: {
             class: '@class',
-            type: '@data-type',
+            type: '@dataType',
             id: '@id',
-            title: '@data-title'
+            title: '@dataTitle'
         },
 		link: function(scope, element){
             scope.onSendButtonClick = function(e){
