@@ -1,9 +1,11 @@
 <li class="ui-video-list-item">
   <div class="img">
-    <img ng-if="item.img" class="ui-video-list-item--img" src="{{item.img}}"/>
+    <img ng-if="item.img" src="{{item.img}}"/>
     <a class="playimg" ng-href="#/view/expand/{{item.type}}/{{item.id}}"> <!-- TODO: replace href with {{ link | replaceParams }} -->
       <img data-index="{{$index}}" data-id="{{item.playlistId}}" src="assets/youtube_producer/img/play-icon.svg" />
     </a>
+    <div ng-if="item.type == 'video'" class="duration"><span>{{ item.duration | duration }}</span></div>
+    <div ng-if="item.type == 'playlist'" class="items"><span>{{ item.totalItems }}</span></div>
   </div>
   <div class="metadata">
     <p class="title">{{item.title}}</p>

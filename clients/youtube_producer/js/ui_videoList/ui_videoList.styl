@@ -23,6 +23,23 @@
       width: 100%;
       min-height: 150px;
     }
+
+    .duration,
+    .items {
+        position: absolute;
+        bottom: 5px;
+        right: 0px;
+        width: 60px;
+        height: 30px;
+        background-color: #000;
+        color: #fff;
+        font-size: 18px;
+        padding: 2px;
+    }
+
+    .items span::before {
+        content: "PL: "
+    }
   }
 
   .playimg {
