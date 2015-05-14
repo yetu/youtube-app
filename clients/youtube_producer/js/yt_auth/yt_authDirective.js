@@ -1,3 +1,4 @@
+/* global angular, module, config */
 module.exports = function ($window, $http, $interval, $log) {
     'use strict';
     return {
@@ -34,7 +35,7 @@ module.exports = function ($window, $http, $interval, $log) {
                 }
                 var stat = event.data;
                 $log.log('poller | received message:' + stat);
-                if (stat == 'invalid') {
+                if (stat === 'invalid') {
                     $log.log('session=invalid! Logging out and redirecting');
                     clearInterval(timerID);
                     $window.location.href = '/signOut';
@@ -43,5 +44,5 @@ module.exports = function ($window, $http, $interval, $log) {
 
             angular.element($window).on('message', receiveMessageP);
         }
-    }
+    };
 };

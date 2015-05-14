@@ -1,3 +1,4 @@
+/* global module */
 /*
  * <app-search placeholder="" value="" trigger-search="enter,button,auto" auto-delay="" allow-repeat="" on-search="" on-reset=""></app-search>
  *
@@ -51,7 +52,7 @@ module.exports = function () {
                         scope.initSearch(value);
                     }
                 }));
-            };
+            }
 
             scope.$on('$destroy', function() {
                 _unbinder.forEach(function(unbind) {
