@@ -22,7 +22,7 @@ module.exports = function () {
 		controller: function($scope) {
 		},
 		link: function(scope, element){
-            // TODO: handling next/prev links using ytSearchService
+            // TODO: handling next/prev links using ytYoutubeService
 		}
 	};
 };
