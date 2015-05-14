@@ -1,0 +1,22 @@
+{
+ "kind": "youtube#videoListResponse",
+ "etag": "some-etag-video-list",
+ "pageInfo": {
+  "totalResults": 1,
+  "resultsPerPage": 1
+ },
+ "items": [
+  {
+   "kind": "youtube#video",
+   "etag": "some-etag-video-list",
+   "id": "first-video-id",
+   "contentDetails": {
+    "duration": "PT4H44S",
+    "dimension": "2d",
+    "definition": "hd",
+    "caption": "false",
+    "licensedContent": false
+   }
+  }
+ ]
+}

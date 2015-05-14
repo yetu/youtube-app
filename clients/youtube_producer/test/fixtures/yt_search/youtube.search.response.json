@@ -1,0 +1,92 @@
+{
+ "kind": "youtube#searchListResponse",
+ "etag": "some-etag-search",
+ "nextPageToken": "CAgQAA",
+ "pageInfo": {
+  "totalResults": 3,
+  "resultsPerPage": 3
+ },
+ "items": [
+  {
+   "kind": "youtube#searchResult",
+   "etag": "some-etag-search",
+   "id": {
+    "kind": "youtube#playlist",
+    "playlistId": "playlist-1"
+   },
+   "snippet": {
+    "publishedAt": "2011-02-25T17:10:00.000Z",
+    "channelId": "UCwtKO1Vwz-7g0nBxBQcU4bg",
+    "title": "Billboard Top Songs 2015",
+    "description": "Billboard Top Songs 2015.",
+    "thumbnails": {
+     "default": {
+      "url": "https://i.ytimg.com/vi/RgKAFK5djSk/default.jpg"
+     },
+     "medium": {
+      "url": "https://i.ytimg.com/vi/RgKAFK5djSk/mqdefault.jpg"
+     },
+     "high": {
+      "url": "https://i.ytimg.com/vi/RgKAFK5djSk/hqdefault.jpg"
+     }
+    },
+    "channelTitle": "chasemediawindsor",
+    "liveBroadcastContent": "none"
+   }
+  },
+  {
+   "kind": "youtube#searchResult",
+   "etag": "tbWC5XrSXxe1WOAx6MK9z4hHSU8/yguLixe5MMvL-C9Zr9RKFG_uoPY",
+   "id": {
+    "kind": "youtube#playlist",
+    "playlistId": "playlist-2"
+   },
+   "snippet": {
+    "publishedAt": "2014-05-09T13:46:39.000Z",
+    "channelId": "UCE80FOXpJydkkMo-BYoJdEg",
+    "title": "Top Pop Music Tracks",
+    "description": "",
+    "thumbnails": {
+     "default": {
+      "url": "https://i.ytimg.com/vi/AJtDXIazrMo/default.jpg"
+     },
+     "medium": {
+      "url": "https://i.ytimg.com/vi/AJtDXIazrMo/mqdefault.jpg"
+     },
+     "high": {
+      "url": "https://i.ytimg.com/vi/AJtDXIazrMo/hqdefault.jpg"
+     }
+    },
+    "channelTitle": "",
+    "liveBroadcastContent": "none"
+   }
+  },
+  {
+   "kind": "youtube#searchResult",
+   "etag": "tbWC5XrSXxe1WOAx6MK9z4hHSU8/JIWrEc_FN3sqvYs2xr8dN6sHXyw",
+   "id": {
+    "kind": "youtube#video",
+    "videoId": "first-video-id"
+   },
+   "snippet": {
+    "publishedAt": "2014-02-05T10:05:04.000Z",
+    "channelId": "UCdQnjeuggsBIqkqnhIwdxSA",
+    "title": "4 hours Peaceful & Relaxing Instrumental Music-Long Playlist",
+    "description": "4 hours of soothing background music for rest & relaxation. Follow on Instagram: ...",
+    "thumbnails": {
+     "default": {
+      "url": "https://i.ytimg.com/vi/first-video-id/default.jpg"
+     },
+     "medium": {
+      "url": "https://i.ytimg.com/vi/first-video-id/mqdefault.jpg"
+     },
+     "high": {
+      "url": "https://i.ytimg.com/vi/first-video-id/hqdefault.jpg"
+     }
+    },
+    "channelTitle": "utopiansounds",
+    "liveBroadcastContent": "none"
+   }
+  }
+ ]
+}

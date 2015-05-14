@@ -1,0 +1,111 @@
+{
+ "kind": "youtube#playlistListResponse",
+ "etag": "some-etag-playlist-list",
+ "pageInfo": {
+  "totalResults": 2,
+  "resultsPerPage": 2
+ },
+ "items": [
+  {
+   "kind": "youtube#playlist",
+   "etag": "some-etag-playlist-list",
+   "id": "playlist-1",
+   "snippet": {
+    "publishedAt": "2011-02-25T17:10:00.000Z",
+    "channelId": "UCwtKO1Vwz-7g0nBxBQcU4bg",
+    "title": "Billboard Top Songs 2015",
+    "description": "Billboard Top Songs 2015",
+    "thumbnails": {
+     "default": {
+      "url": "https://i.ytimg.com/vi/RgKAFK5djSk/default.jpg",
+      "width": 120,
+      "height": 90
+     },
+     "medium": {
+      "url": "https://i.ytimg.com/vi/RgKAFK5djSk/mqdefault.jpg",
+      "width": 320,
+      "height": 180
+     },
+     "high": {
+      "url": "https://i.ytimg.com/vi/RgKAFK5djSk/hqdefault.jpg",
+      "width": 480,
+      "height": 360
+     },
+     "standard": {
+      "url": "https://i.ytimg.com/vi/RgKAFK5djSk/sddefault.jpg",
+      "width": 640,
+      "height": 480
+     },
+     "maxres": {
+      "url": "https://i.ytimg.com/vi/RgKAFK5djSk/maxresdefault.jpg",
+      "width": 1280,
+      "height": 720
+     }
+    },
+    "channelTitle": "Chase Media Windsor",
+    "tags": [
+     "Billboard",
+     "Top",
+     "Songs",
+     "2011",
+     "Singles",
+     "updated",
+     "weekly"
+    ],
+    "localized": {
+     "title": "Billboard Top Songs 2015",
+     "description": "Billboard Top Songs 2015"
+    }
+   },
+   "contentDetails": {
+    "itemCount": 239
+   }
+  },
+  {
+   "kind": "youtube#playlist",
+   "etag": "some-etag-playlist-list",
+   "id": "playlist-2",
+   "snippet": {
+    "publishedAt": "2014-05-09T13:46:39.000Z",
+    "channelId": "UCE80FOXpJydkkMo-BYoJdEg",
+    "title": "Top Pop Music Tracks",
+    "description": "",
+    "thumbnails": {
+     "default": {
+      "url": "https://i.ytimg.com/vi/AJtDXIazrMo/default.jpg",
+      "width": 120,
+      "height": 90
+     },
+     "medium": {
+      "url": "https://i.ytimg.com/vi/AJtDXIazrMo/mqdefault.jpg",
+      "width": 320,
+      "height": 180
+     },
+     "high": {
+      "url": "https://i.ytimg.com/vi/AJtDXIazrMo/hqdefault.jpg",
+      "width": 480,
+      "height": 360
+     },
+     "standard": {
+      "url": "https://i.ytimg.com/vi/AJtDXIazrMo/sddefault.jpg",
+      "width": 640,
+      "height": 480
+     },
+     "maxres": {
+      "url": "https://i.ytimg.com/vi/AJtDXIazrMo/maxresdefault.jpg",
+      "width": 1280,
+      "height": 720
+     }
+    },
+    "channelTitle": "#PopMusic",
+    "localized": {
+     "title": "Top Pop Music Tracks",
+     "description": ""
+    }
+   },
+   "contentDetails": {
+    "itemCount": 500
+   }
+  }
+ ]
+}
