@@ -5,35 +5,36 @@ var VIEWS_DIST_DIR = '../../app/com/yetu/youtubeapp/views';
 
 // create dist-based path
 var dist = function(dir){
-	var args = Array.prototype.slice.call(arguments);
-	args.unshift(dir);
-	return path.join.apply(path, args);
-}
+    var args = Array.prototype.slice.call(arguments);
+    args.unshift(dir);
+    return path.join.apply(path, args);
+};
 
 var distAssets = function(){
-	return dist(SINGLE_DIST_DIR);
+    return dist(SINGLE_DIST_DIR);
 };
 
 // paths for scripts tasks
 var scripts = {
-	build: {
-		src: 'app-bundle.js',
-		dest: distAssets('/')
-	},
-	dev: {
-		src: 'app-bundle.js',
-		dest: 'bundle-js'
-	},
-    watch: ['js/**/*.js', 'js/**/*.html']
+    build: {
+        src: 'app-bundle.js',
+        dest: distAssets('/')
+    },
+    dev: {
+        src: 'app-bundle.js',
+        dest: 'bundle-js'
+    },
+    watch: ['js/**/*.js', 'js/**/*.html'],
+    lint: ['js/**/*.js']
 };
 
 // paths for styles tasks
 var styles = {
-	build: {
-		src: 'styles/app.styl',
-		dest: distAssets('/')+'/styles'
-	},
-	watch: ['styles/**', 'js/**/*.styl']
+    build: {
+        src: 'styles/app.styl',
+        dest: distAssets('/')+'/styles'
+    },
+    watch: ['styles/**', 'js/**/*.styl']
 };
 
 var fonts = {
@@ -68,17 +69,17 @@ var templates = {
 };
 
 module.exports = {
-	path: {
-		dist : SINGLE_DIST_DIR,
-		styles: styles,
-		scripts: scripts,
-		views: views,
+    path: {
+        dist : SINGLE_DIST_DIR,
+        styles: styles,
+        scripts: scripts,
+        views: views,
         img: img,
         templates: templates,
         fonts: fonts,
-		tests: {
-			src: 'test/**.spec.js',
-			configDir: 'test'
-		}
-	}
+        tests: {
+            src: 'test/**.spec.js',
+            configDir: 'test'
+        }
+    }
 };

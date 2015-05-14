@@ -10,7 +10,9 @@ module.exports = function (config) {
         preprocessors: {
             '**/*.html': ['ng-html2js'],
             '/**/*.browserify': ['browserify'],
-            'js/**/*.js': ['coverage']
+            'js/**/*.js': ['coverage'],
+            '../../public/youtube_producer/app-bundle.js' : ['coverage'],
+            'test/fixtures/**/*.json': ['json_fixtures']
         },
 
         files: [
@@ -25,8 +27,10 @@ module.exports = function (config) {
             {pattern: 'test/**/!(spec.js)+(.js)'},
             // include templates fo ng-html2js
             {pattern: 'js/**/*.html'},
-            // app?
-            //{pattern: 'js/**/*.js'}
+            // fixtures
+             'test/fixtures/**/*.json',
+            // app
+            //{pattern: 'js/**/*.js'} // TODO: make it working ;)
             '../../public/youtube_producer/app-bundle.js'
         ],
         exclude: [
@@ -43,6 +47,7 @@ module.exports = function (config) {
                 // includes all js files except spec from /js folder and watch their changes
                 {pattern: 'js/**/!(spec.js)+(.js)', watched: true, served: false, included: false},
                 {pattern: 'test/**/*.spec.js'},
+                {pattern: 'js/*/*.spec.js'}
             ]
         },
 
@@ -50,6 +55,7 @@ module.exports = function (config) {
             type : 'html',
             dir : 'test/jasmine.coverage/',
             subdir: function(browser) {
+                console.log(browser);
                 return browser.toLowerCase().split(/[ /-]/)[0];
             },
             reporters:[
@@ -57,6 +63,11 @@ module.exports = function (config) {
                 {type: 'html' },
                 {type: 'text-summary'}
             ]
+        },
+
+        jsonFixturesPreprocessor: {
+            stripPrefix: 'test/fixtures/',
+            variableName: '__fixtures__'
         },
 
         ngHtml2JsPreprocessor: {

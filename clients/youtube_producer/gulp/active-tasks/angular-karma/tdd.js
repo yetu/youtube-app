@@ -1,13 +1,13 @@
 var karma = require('karma').server,
 		path = require('path'),
-		cfg = require('../../common-config').path.tests,
+		cfg = require('../../common-config').path,
 		gulp = require('gulp');
 
 gulp.task('tdd', function () {
-	var options = {
-		configFile: path.join(cfg.configDir, 'ng-karma-config.js'),
+    var options = {
+		configFile: path.join(cfg.tests.configDir, 'ng-karma-config.js'),
 		singleRun: false
-	};
+    };
 
 	options.browsers = ['PhantomJS', 'Chrome'];
 	karma.start(options, console.error.bind(console));
@@ -15,12 +15,9 @@ gulp.task('tdd', function () {
 
 gulp.task('coverage', function () {
 	var options = {
-		configFile: path.join(cfg.configDir, 'ng-karma-config.js'),
+		configFile: path.join(cfg.tests.configDir, 'ng-karma-config.js'),
 		singleRun: false,
-        reporters: ['coverage'],
-        preprocessors: {
-            'js/**/*.js': 'coverage'
-        }
+        reporters: ['progress', 'coverage']
 	};
 
 	options.browsers = ['PhantomJS'];
