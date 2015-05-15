@@ -1,73 +1,8 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 require('./js/app');
-},{"./js/app":2}],2:[function(require,module,exports){
-var youtubeApp = angular.module('youtubeApp',
-	[
-		'ngRoute',
-		'ngResource',
-		'pascalprecht.translate',
-		'reactTo',
-		require('./yt_result').name,
-		require('./yt_search').name,
-		require('./yt_auth').name,
-		require('./yt_notification').name
-	]);
-
-youtubeApp.config(function ($routeProvider, $translateProvider, $httpProvider, $locationProvider, i18n) {
-	$httpProvider.defaults.useXDomain = true;
-	delete $httpProvider.defaults.headers.common['X-Requested-With'];
-
-	$locationProvider.html5Mode(true);
-
-	$routeProvider
-		.when('/', {
-			template: require('./mainTemplate.html')
-		})
-		.otherwise({
-			redirectTo: '/'
-		});
-
-	//initialize the $translateProvider with all languages including their strings that are in i18n config file
-    for(var i=0; i<i18n.languagesAvailable.length; i++){
-        var language = i18n.languagesAvailable[i];
-        $translateProvider.translations(language, i18n.languages[language]);
-    };
-    $translateProvider.preferredLanguage('en');
-});
-
-youtubeApp.run(function($location,$translate){
-    var params = $location.search();
-    if(params.lang){
-        $translate.use(params.lang);
-    }
-});
-
-youtubeApp.constant("SERVERPATHS", {
-    youtubeUrl: "/playlist",
-		notificationUrl: "/notification",
-		level2Url: "/level2tv",
-		imageUrl: "/assets/youtube_producer/img/"
-});
-
-youtubeApp.constant("SPECIALPURPOSE", {
-    notificationTriggers: ["yetu", "is", "awesome"],
-		successOnSentNotification: "A general notification was sent successfully!",
-		errorOnSentNotification: "There was an error sending the general notification",
-		displayTimeout: 2000
-});
-
-youtubeApp.constant("YOUTUBEREQUESTS", {
-    maxResults: 1,
-    playlistItems: {
-        url: 'https://www.googleapis.com/youtube/v3/playlistItems',
-        part: 'snippet'
-    },
-    video: {
-        url: 'https://www.googleapis.com/youtube/v3/videos',
-        part: 'snippet,contentDetails,statistics'
-    }
-});
-youtubeApp.constant('i18n', {
+},{"./js/app":11}],2:[function(require,module,exports){
+/* global module */
+module.exports = ({
     languagesAvailable: ['en', 'de'],
     languages: {
         en:{
@@ -79,14 +14,389 @@ youtubeApp.constant('i18n', {
     }
 });
 
-},{"./mainTemplate.html":3,"./yt_auth":4,"./yt_notification":6,"./yt_result":8,"./yt_search":14}],3:[function(require,module,exports){
-module.exports = "<div class=\"container\">\n  <yt-search class=\"yt-search\"></yt-search>\n  <yt-result class=\"yt-result\"></yt-result>\n\t<yt-auth class=\"ng-hide\"></yt-auth>\n</div>";
+},{}],3:[function(require,module,exports){
+/* global module, angular */
+module.exports = angular.module('_configs', [])
+	.constant('serverPathsConfig', require('./serverPathsConfig'))
+    .constant('ytYoutubeServiceConfig', require('./youtubeServiceConfig'))
+    .constant('i18n', require('./i18nConfig'));
 
-},{}],4:[function(require,module,exports){
+},{"./i18nConfig":2,"./serverPathsConfig":4,"./youtubeServiceConfig":5}],4:[function(require,module,exports){
+/* global module */
+module.exports = ({
+    youtubeUrl: '/playlist',
+    notificationUrl: '/notification',
+    level2Url: '/level2tv',
+    imageUrl: '/assets/youtube_producer/img/'
+});
+},{}],5:[function(require,module,exports){
+/* global module */
+module.exports = ({
+    search: {
+        url: 'https://www.googleapis.com/youtube/v3/search',
+        type: 'playlist,video',
+        part: 'snippet'
+    },
+    playlists: {
+        url: 'https://www.googleapis.com/youtube/v3/playlists',
+        part: 'snippet,contentDetails'
+    },
+    videos: {
+        url: 'https://www.googleapis.com/youtube/v3/videos',
+        part: 'contentDetails'
+    },
+    maxResults: 8,
+    regionCode: 'GB',
+    relevanceLanguage: 'en',
+    developerToken: config.youtubeDeveloperToken
+});
+},{}],6:[function(require,module,exports){
+/* global module */
+module.exports = (function($scope, ytYoutubeService, $routeParams, $location, appMode, $rootScope) {
+    // dummy init list
+    var dummyItem = [];
+    for(i = 0; i < 8; i++) {
+        dummyItem.push({ description: { text: 'To be implemented...'}});
+    }
+    $scope.mainResultList = [
+        { title: 'Category 1', items: [dummyItem[0], dummyItem[1], dummyItem[2], dummyItem[3]]},
+        { title: 'Category 2', items: [dummyItem[4], dummyItem[5], dummyItem[6], dummyItem[7]]}
+    ];
+
+    // temporary
+    $rootScope.appMode = appMode;
+
+    if($routeParams.action === 'search' && $routeParams.param) {
+        ytYoutubeService.getResult('search', $routeParams.param).then(function(data) {
+            $scope.mainResultList = data;
+            $scope.searchValue = $routeParams.param; // temporary as search inside
+        });
+    }
+
+    $scope.$on('app:search-value', function(event, query){
+        // temporary start search here
+        ytYoutubeService.getResult('search', query).then(function(data) {
+            $scope.mainResultList = data;
+            $scope.searchValue = $routeParams.param; // temporary as search inside
+        });
+        /* TODO: make path replace without reload
+        var action = '#/dashboard/search/' + query;
+        if(decodeURIComponent(window.location.hash) !== action) {
+            window.location = action; // replace with $location
+        }
+        */
+    });
+});
+},{}],7:[function(require,module,exports){
+module.exports = angular.module('_controllers', [])
+	.controller('DashboardCtrl', require('./dashboardController'))
+    .controller('ViewerCtrl', require('./viewerController'));
+
+},{"./dashboardController":6,"./viewerController":8}],8:[function(require,module,exports){
+/* global module */
+module.exports = (function($scope, ytYoutubeService, appMode, $rootScope, $routeParams) {
+
+    // temporary
+    $rootScope.temporaryMode = appMode.get() + 'mode';
+    $rootScope.temporaryType = $routeParams.mode;
+
+    $scope.$on('app:search-value', function(event, query){
+        // TODO: route to dashboard/search
+    });
+});
+
+},{}],9:[function(require,module,exports){
+/* global module */
+module.exports = (function() {
+    return function(time) {
+        // http://stackoverflow.com/a/19094191
+        var array = (time || '').match(/(\d+)(?=[MHS])/ig) || [];
+        return array.map(function(item) {
+            if(item.length < 2) return '0' + item;
+            return item;
+        })
+        .join(':');
+    };
+});
+},{}],10:[function(require,module,exports){
+/* global angular, module */
+module.exports = angular.module('_filters', [])
+	.filter('duration', require('./durationFilter'));
+
+},{"./durationFilter":9}],11:[function(require,module,exports){
+var youtubeApp = angular.module('youtubeApp',
+	[
+		'ngRoute',
+		'ngResource',
+		'pascalprecht.translate',
+		'reactTo',
+        // app modules
+        require('./app_search').name,
+        require('./app_mode').name,
+        require('./app_sendToTv').name,
+        require('./ui_videoList').name,
+		require('./yt_result').name,
+        require('./yt_search').name,
+		require('./yt_auth').name,
+		require('./yt_notification').name,
+        require('./yt_viewer').name,
+        // app main
+        require('./_controllers').name,
+        require('./_configs').name,
+        require('./_filters').name
+	]);
+
+youtubeApp.config(function ($routeProvider, $translateProvider, $httpProvider, $locationProvider, i18n) {
+	$httpProvider.defaults.useXDomain = true;
+	delete $httpProvider.defaults.headers.common['X-Requested-With'];
+
+	// $locationProvider.html5Mode(true);
+
+	$routeProvider
+		.when('/dashboard/:action?/:param?', {
+            controller: 'DashboardCtrl',
+			template: require('./dashboardTemplate.html')
+		})
+        .when('/view/:mode/:type/:id/:device?', {
+            controller: 'ViewerCtrl',
+			template: require('./viewerTemplate.html')
+		})
+		.otherwise({
+			redirectTo: '/dashboard'
+		});
+
+	//initialize the $translateProvider with all languages including their strings that are in i18n config file
+    for(var i=0; i<i18n.languagesAvailable.length; i++){
+        var language = i18n.languagesAvailable[i];
+        $translateProvider.translations(language, i18n.languages[language]);
+    }
+    $translateProvider.preferredLanguage('en');
+});
+
+youtubeApp.run(function($location, $translate){
+    var params = $location.search();
+    if(params.lang){
+        $translate.use(params.lang);
+    }
+});
+
+},{"./_configs":3,"./_controllers":7,"./_filters":10,"./app_mode":13,"./app_search":16,"./app_sendToTv":19,"./dashboardTemplate.html":20,"./ui_videoList":21,"./viewerTemplate.html":26,"./yt_auth":27,"./yt_notification":29,"./yt_result":31,"./yt_search":34,"./yt_viewer":36}],12:[function(require,module,exports){
+/**
+ * Service detecting application mode
+ */
+module.exports = (function ($routeParams) {
+	'use strict';
+
+    var _mode = null;
+
+    var set = function (mode) {
+        _mode = mode;
+    };
+
+    /**
+     * @returns string Application mode
+     */
+    var get = function() {
+        return _mode;
+    };
+
+    /**
+     * @returns bool Returns true if TV enviroment detected
+     */
+    var isTV = function() {
+        return 'tv' === get();
+    };
+
+    /**
+     * @returns bool Returns true if PC enviroment detected
+     */
+    var isPC = function() {
+        return 'tv' !== get();
+    };
+
+    var _detect = function() {
+        // temporary use link option
+        _mode = $routeParams.device ? $routeParams.device : 'pc';
+    };
+
+    _detect();
+
+    return {
+        set: set,
+        get: get,
+        isTV: isTV,
+        isPC: isPC
+    };
+});
+
+},{}],13:[function(require,module,exports){
+module.exports = angular.module('app_mode', [])
+	.service('appMode', require('./app_modeService'));
+
+},{"./app_modeService":12}],14:[function(require,module,exports){
+/* global module */
+/*
+ * <app-search placeholder="" value="" trigger-search="enter,button,auto" auto-delay="" allow-repeat="" on-search="" on-reset=""></app-search>
+ *
+ * @attr placeholder string Placeholder text
+ * @attr value string Predefined value
+ * @attr trigger-search string Comma separated triggers for searching start: enter - by Enter key, button - search button, auto - automatically started on typing
+ * @attr auto-delay integer Triggering search after X ms of change (0 for disable) - for auto trigger
+ * @attr allow-repeat boolean Allow repeatition of the same value if not changed (for example on enter and button)
+ * @attr on-search string|fn Search event name (default 'app:search-value') or callback function
+ * @attr on-reset string|fn Reset search event name (default 'app:search-reset') or callback function
+ */
+module.exports = function () {
+	return {
+		restrict: 'E',
+		template: require('./app_searchTemplate.html'),
+        scope: {
+            searchValue: '@value',
+            placeholder: '@placeholder'
+        },
+		link: function(scope, element, attr){
+            var _unbinder = [],
+                triggerButton = attr.triggerSearch && attr.triggerSearch.indexOf('button') > -1,
+                triggerEnter = attr.triggerSearch && attr.triggerSearch.indexOf('enter') > -1,
+                triggerAuto = attr.triggerSearch && attr.triggerSearch.indexOf('auto') > -1;
+			
+			scope.searchButtonClick = function() {
+                if (triggerButton === true) {
+                    scope.initSearch(element.find('input')[0].value);
+                }
+			};
+			scope.searchOnKeyUp = function (event) {
+				if (triggerEnter === true && event.keyCode === 13 && event.target.value !== "") {
+					scope.initSearch(event.target.value);
+				}
+			};
+			scope.initSearch = function(value) {
+                if (scope.emitted === value && attr.allowRepeat !== "true") {
+                    return;
+                }
+                if (value) {
+                    scope.$emit(attr.eventSearch || 'app:search-value', value);
+                } else {
+                    scope.$emit(attr.eventReset || 'app:search-reset');
+                }
+                scope.emitted = value;
+			};
+
+            if(triggerAuto) {
+                _unbinder.push(scope.$watch('searchValue', function (value) {
+                    if (value !== "") {
+                        scope.initSearch(value);
+                    }
+                }));
+            }
+
+            scope.$on('$destroy', function() {
+                _unbinder.forEach(function(unbind) {
+                  unbind();
+                });
+            });
+		}
+	};
+};
+
+
+},{"./app_searchTemplate.html":15}],15:[function(require,module,exports){
+module.exports = "<div class=\"app-search\">\r\n  <input class=\"query\" ng-model=\"searchValue\" ng-model-options=\"{ debounce: 500 }\" ng-keyup=\"searchOnKeyUp($event)\" type=\"text\"\r\n         placeholder=\"{{placeholder}}\" value=\"{{searchValue}}\">\r\n  <button class=\"search\" ng-click=\"searchButtonClick()\">\r\n    <svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\r\n\t    viewBox=\"0 0 21.7 21.7\" enable-background=\"new 0 0 21.7 21.7\" xml:space=\"preserve\">\r\n      <path fill=\"#333\" d=\"M21.7,20.3l-6-6c1.2-1.5,1.9-3.4,1.9-5.5c0-4.9-4-8.8-8.8-8.8C4,0,0,4,0,8.8c0,4.9,4,8.8,8.8,8.8\r\n        c2.1,0,4-0.7,5.5-1.9l6,6L21.7,20.3z M8.8,15.6C5.1,15.6,2,12.6,2,8.8C2,5.1,5.1,2,8.8,2c3.8,0,6.8,3.1,6.8,6.8\r\n        C15.6,12.6,12.6,15.6,8.8,15.6z\"/>\r\n    </svg>\r\n  </button>\r\n</div>";
+
+},{}],16:[function(require,module,exports){
+module.exports = angular.module('app_search', ['pascalprecht.translate'])
+	.directive('appSearch', require('./app_searchDirective'));
+
+},{"./app_searchDirective":14}],17:[function(require,module,exports){
+
+module.exports = function () {
+	return {
+		restrict: 'E',
+		template: require('./app_sendToTvTemplate.html'),
+        scope: {
+            class: '@class',
+            type: '@dataType',
+            id: '@id',
+            title: '@dataTitle'
+        },
+		link: function(scope, element){
+            scope.onSendButtonClick = function(e){
+                alert('Not implemented yet');
+			};
+		}
+	};
+};
+
+},{"./app_sendToTvTemplate.html":18}],18:[function(require,module,exports){
+module.exports = "<button class=\"{{ class || 'app-send-to-tv'}}\" ng-click=\"onSendButtonClick($event)\">->[]</button>\r\n";
+
+},{}],19:[function(require,module,exports){
+module.exports = angular.module('app_sendToTv', ['ngResource'])
+    .directive('appSendToTv', require('./app_sendToTvDirective'));
+    //.service('appSendToTvService', require('./app_sendToTvService'));
+
+
+},{"./app_sendToTvDirective":17}],20:[function(require,module,exports){
+module.exports = "<app-search class=\"app-search\" placeholder=\"Search YouTube\" value=\"{{ searchValue }}\" trigger-search=\"button,enter,auto\" auto-delay=\"500\"></app-search>\r\n<!-- TODO: distinguish type on application mode tv/pc -> regular/inline -->\r\n<yt-result-set ng-model=\"mainResultList\" play-link=\"#/view/:type/:id\" display=\"\" control=\"\"></yt-result-set>\r\n";
+
+},{}],21:[function(require,module,exports){
+module.exports = angular.module('ui_videoList', ['ngResource', 'pascalprecht.translate'])
+	.directive('uiVideoList', require('./ui_videoListDirective'))
+	.directive('uiVideoListItem', require('./ui_videoListItemDirective'));
+
+
+},{"./ui_videoListDirective":22,"./ui_videoListItemDirective":23}],22:[function(require,module,exports){
+/*
+ * <ui-video-list ng-model="" display="floating" control="pc" play-link=""></ui-video-list>
+ *
+ * @attr ng-model array Scope model to be used as data feed - with elements containing: { type, id, item, img, created, description, ...}, where type: playlist|video
+ * @attr display string Display type - 'horizontal' or 'floating' (default) for styling and controls behaviour
+ * @attr control string Control style - 'tv' or 'pc' (default) - used for control and reacting on events @todo
+ * @attr play-link string Link pattern to open video - will replace :attribute if found in element item properties (e.g. '#/show/:type/:id')
+ */
+module.exports = function () {
+	return {
+		restrict: 'E',
+		template: require('./ui_videoListTemplate.html'),
+        scope: {
+            class: '@class',
+            videoList: '=ngModel',
+            playLink: '@playLink',
+            displayType: '@display',
+            controlType: '@control'
+        },
+		controller: function($scope){
+		},
+		link: function(scope, element){
+		}
+	};
+};
+},{"./ui_videoListTemplate.html":25}],23:[function(require,module,exports){
+
+module.exports = function () {
+	return {
+		restrict: 'E',
+		template: require('./ui_videoListItemTemplate.html'),
+		link: function(scope, element){
+		}
+	};
+};
+
+},{"./ui_videoListItemTemplate.html":24}],24:[function(require,module,exports){
+module.exports = "<div class=\"img\">\r\n    <img ng-if=\"item.img\" src=\"{{item.img}}\"/>\r\n    <a class=\"playimg\" ng-href=\"#/view/expand/{{item.type}}/{{item.id}}\"> <!-- TODO: replace href with {{ link | replaceParams }} -->\r\n        <img data-index=\"{{$index}}\" data-id=\"{{item.playlistId}}\" src=\"assets/youtube_producer/img/play-icon.svg\" />\r\n    </a>\r\n    <div ng-if=\"item.type == 'video'\" class=\"duration\"><span>{{ item.duration | duration }}</span></div>\r\n    <div ng-if=\"item.type == 'playlist'\" class=\"items\"><span>{{ item.totalItems}}</span></div>\r\n</div>\r\n<div class=\"metadata\">\r\n    <p class=\"title\">{{item.title}}</p>\r\n    <p class=\"subtitle\" ng-if=\"item.channel\">\r\n        <span>by {{item.channel}}</span><br />\r\n        <span>{{ item.description.createDate | timeAgo }}</span>\r\n    </p>\r\n    <p class=\"description\" data-type=\"description\" cw-reveal-label ng-if=\"item.description.text\">\r\n        {{item.description.text}}\r\n    </p>\r\n    <p class=\"description\" ng-if=\"!item.description.text\">No description available.</p>\r\n</div>\r\n<div class=\"buttons\">\r\n    <app-send-to-tv id=\"{{ item.id}}\" data-type=\"{{ item.type}}\" data-title=\"{{ item.title}}\"></app-send-to-tv>\r\n</div>\r\n<!-- TODO: <ng-transclude></ng-transclude> for send2tv component? -->";
+
+},{}],25:[function(require,module,exports){
+module.exports = "<ul class=\"{{ class || 'ui-video-list'}} clearfix\">\r\n    <li class=\"ui-video-list-item\" ng-repeat=\"item in videoList\">\r\n        <ui-video-list-item></ui-video-list-item>\r\n    </li>\r\n    <div ng-if=\"videoList.length == 0\">\r\n        {{ 'No results found' | translate }}\r\n    </div>\r\n</ul>\r\n";
+
+},{}],26:[function(require,module,exports){
+module.exports = "<yt-viewer></yt-viewer>\r\n";
+
+},{}],27:[function(require,module,exports){
 module.exports = angular.module('yt_auth', ['ngResource'])
 	.directive('ytAuth', require('./yt_authDirective'));
 
-},{"./yt_authDirective":5}],5:[function(require,module,exports){
+},{"./yt_authDirective":28}],28:[function(require,module,exports){
+/* global angular, module, config */
 module.exports = function ($window, $http, $interval, $log) {
     'use strict';
     return {
@@ -123,7 +433,7 @@ module.exports = function ($window, $http, $interval, $log) {
                 }
                 var stat = event.data;
                 $log.log('poller | received message:' + stat);
-                if (stat == 'invalid') {
+                if (stat === 'invalid') {
                     $log.log('session=invalid! Logging out and redirecting');
                     clearInterval(timerID);
                     $window.location.href = '/signOut';
@@ -132,12 +442,12 @@ module.exports = function ($window, $http, $interval, $log) {
 
             angular.element($window).on('message', receiveMessageP);
         }
-    }
+    };
 };
-},{}],6:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 module.exports = angular.module('yt_notification', ['ngResource'])
 .service('ytNotification', require('./ytNotification'));
-},{"./ytNotification":7}],7:[function(require,module,exports){
+},{"./ytNotification":30}],30:[function(require,module,exports){
 module.exports = function($http, SERVERPATHS, SPECIALPURPOSE) {
 	'use strict';
 	//array object with possible payloads
@@ -182,470 +492,258 @@ module.exports = function($http, SERVERPATHS, SPECIALPURPOSE) {
 	};
 };
 
-},{}],8:[function(require,module,exports){
-module.exports = angular.module('yt_result', ['ngResource', 'pascalprecht.translate', 'reactTo'])
-	.directive('ytResult', require('./yt_resultDirective'))
-	.service('ytPlaylistService', require('./yt_playlistService'))
-	.directive('ytResultItem', require('./yt_resultItemDirective'));
+},{}],31:[function(require,module,exports){
+module.exports = angular.module('yt_result', ['ngResource', 'pascalprecht.translate', 'reactTo', 'ui_videoList'])
+    .directive('ytResultSet', require('./yt_resultSetDirective'));
 
 
-},{"./yt_playlistService":9,"./yt_resultDirective":10,"./yt_resultItemDirective":11}],9:[function(require,module,exports){
-module.exports = function ($http, $location, $translate, SERVERPATHS, YOUTUBEREQUESTS) {
-	'use strict';
-	this.playlistSendResult = null;
-	var that = this;
-	this.deletePlaylistSendResult = function(){
-		that.playlistSendResult = null;
-	};
-
-	var sendPlaylist = function(playlist){
-		var streamTitle = playlist.headline || '';
-		$http.post(SERVERPATHS.youtubeUrl,playlist).success(function(data){
-			that.playlistSendResult = {
-				name: decodeURI(streamTitle),
-				sended: "YES"
-			};
-		}).error(function(data, status){
-			if(status === 401){
-				that.playlistSendResult = {
-					name: decodeURI(streamTitle),
-					sended: 401
-				};
-			}else {
-				that.playlistSendResult = {
-					name: decodeURI(streamTitle),
-					sended: "ERROR"
-				};
-			}
-
-		});
-	};
-
-	// call youtube data api to get playlist item of specified playlist id
-	var getYtPlaylistItems = function(playlistId){
-		return $http.get(YOUTUBEREQUESTS.playlistItems.url, {
-			params: {
-				maxResults: YOUTUBEREQUESTS.maxResults,
-				part: YOUTUBEREQUESTS.playlistItems.part,
-				key: config.youtubeDeveloperToken,
-				playlistId: playlistId,
-
-			}
-		});
-	};
-
-	// call youtube data api to get video item of specified video id
-	var getYtVideo = function (videoId){
-		return $http.get(YOUTUBEREQUESTS.video.url, {
-			params: {
-				maxResults: YOUTUBEREQUESTS.maxResults,
-				part: YOUTUBEREQUESTS.video.part,
-				key: config.youtubeDeveloperToken,
-				id: videoId
-			}
-		});
-	};
-
-	var parseYtPlaylistItems = function (playlistItems) {
-		var parsedItem = {};
-		if (playlistItems.length > 0) {
-			var item = playlistItems[0];
-			if (item && item.snippet){
-				parsedItem.owner = item.snippet.channelTitle || ''; //playlist owner
-				parsedItem.title = item.snippet.title || ''; //video title
-				if(item.snippet.thumbnails && item.snippet.thumbnails.maxres && item.snippet.thumbnails.maxres.url){
-					parsedItem.image = item.snippet.thumbnails.maxres.url;
-				}else if(item.snippet.thumbnails && item.snippet.thumbnails.high && item.snippet.thumbnails.high.url) {
-					parsedItem.image = item.snippet.thumbnails.high.url;
-				}else if(item.snippet.thumbnails && item.snippet.thumbnails.medium && item.snippet.thumbnails.medium.url) {
-					parsedItem.image = item.snippet.thumbnails.medium.url;
-				}else if(item.snippet.thumbnails && item.snippet.thumbnails.standard && item.snippet.thumbnails.standard.url) {
-					parsedItem.image = item.snippet.thumbnails.standard.url;
-				}else if(item.snippet.thumbnails && item.snippet.thumbnails.default && item.snippet.thumbnails.default.url){
-					parsedItem.image = item.snippet.thumbnails.default.url;
-				}else {
-					parsedItem.image = '';
-				}
-				if (item.snippet.resourceId){
-					parsedItem.videoId = item.snippet.resourceId.videoId || '';
-				} else {
-					parsedItem.videoId = '';
-				}
-			}
-		}
-		return parsedItem;
-	};
-
-	var parseYtVideoData = function (data) {
-		var video = {};
-		if (data.items && data.items.length > 0 && data.items[0].contentDetails && data.items[0].snippet &&  data.items[0].statistics) {
-			video = {
-				duration: data.items[0].contentDetails.duration,
-				publishDate: data.items[0].snippet.publishedAt,
-				definition: data.items[0].contentDetails.definition,
-				viewCount: data.items[0].statistics.viewCount
-			};
-		}
-		return video;
-	};
-
-	this.sendPlaylistItem = function(playlistId, playlistTitle, urlToApp){
-		var playlistItem, videoItem;
-
-		getYtPlaylistItems(playlistId).success(function(ptData){
-			playlistItem = parseYtPlaylistItems(ptData.items);
-			getYtVideo(playlistItem.videoId).success(function(vData){
-				videoItem = parseYtVideoData(vData);
-
-				$translate(['COMMIT_BUTTON_LABEL']).then(function (translations) {
-					var url =  $location.protocol() + '://' + $location.host() + ":" + $location.port();
-					var playlist = {
-						action:{
-							url: url + SERVERPATHS.level2Url,
-							type: 'open',
-							parameter:{
-								playlistId: playlistId,
-								itemIndex: 0
-							},
-							button:{
-								icon: url + SERVERPATHS.imageUrl + "notification_play.svg",
-								label: translations.COMMIT_BUTTON_LABEL
-							}
-						},
-						headline: encodeURI(playlistTitle),
-						stream: {
-							owner:playlistItem.owner,
-							title: encodeURI(playlistItem.title),
-							image: playlistItem.image,
-							duration: videoItem.duration,
-							publishDate: videoItem.publishDate,
-							viewCount: videoItem.viewCount,
-							resolution: videoItem.resolution
-						}
-					};
-					sendPlaylist(playlist);
-				});
-
-			}).error(function(data){
-                console.error("error happening on getYtVideo: ", data);
-			});
-		}).error(function(data){
-            console.error("error happening on getYtPlaylistItems: ", data);
-		});
-	};
-};
-
-
-},{}],10:[function(require,module,exports){
-
-module.exports = function (reactTo, $rootScope, ytPlaylistService, $timeout) {
+},{"./yt_resultSetDirective":32}],32:[function(require,module,exports){
+/*
+ * <yt-result-set ng-model="" display="" control="" play-link=""></yt-result-set>
+ *
+ * @attr ng-model array Scope model to be used as data feed - with elements containing: { list_type, title, items},
+ *                      where list_type determines search strategy - used by search/load
+ * @attr display @see ui-video-list
+ * @attr control @see ui-video-list
+ * @attr play-link @see ui-video-list
+ *
+ */
+module.exports = function () {
 	return {
 		restrict: 'E',
-		template: require('./yt_resultTemplate.html'),
-		controller: function($scope, ytSearchState){
-			$scope.resultLists = null;
-			$scope.resultListsState = 'initial';
-			var react = reactTo($scope, false, true);
-			react(ytSearchState,'resultLists', function(newV){
-				if(newV){
-					$scope.resultLists = newV;
-				}
-			});
-			react(ytSearchState,'resultListsState', function(newV){
-				if(newV){
-					$scope.resultListsState = newV;
-				}
-			});
+		template: require('./yt_resultSetTemplate.html'),
+        scope: {
+            class: '@class',
+            resultLists: '=ngModel',
+            playLink: '@playLink',
+            displayType: '@display',
+            controlType: '@control'
+        },
+		controller: function($scope) {
 		},
-		link: function(scope,element){
-			var react = reactTo(scope, false, true);
-			scope.sendOverlay = false;
-			scope.playListName = '';
-			scope.playListSended = null;
-			var timeoutId;
-			react(ytPlaylistService, 'playlistSendResult', function(newV){
-				if(newV){
-					scope.playListName = newV.name;
-					scope.playListSended = newV.sended;
-					scope.sendOverlay = true;
-					timeoutId = $timeout(function(){
-						scope.sendOverlay = false;
-						ytPlaylistService.deletePlaylistSendResult()
-					},3000);
-				}
-			});
-			window.onresize=function(){
-				$rootScope.$broadcast('RESIZE');
-			};
-
-			document.body.onclick = function(){
-				if(timeoutId){
-					$timeout.cancel(timeoutId);
-					scope.sendOverlay = false;
-					scope.$apply();
-				}
-			};
+		link: function(scope, element){
+            // TODO: handling next/prev links using ytYoutubeService
 		}
-	}
+	};
 };
-},{"./yt_resultTemplate.html":13}],11:[function(require,module,exports){
+},{"./yt_resultSetTemplate.html":33}],33:[function(require,module,exports){
+module.exports = "<div class=\"{{ class || 'yt-result-set' }}\">\r\n  <div ng-repeat=\"videoList in resultLists\" class=\"result\">\r\n    <h2>{{ videoList.title }}</h2>\r\n    <ui-video-list ng-model=\"videoList.items\" play-link=\"{{ playLink }}\" type=\"{{ listType }}\"></ui-video-list>\r\n    <!-- TODO: prev/next links based on attributes in videoList -->\r\n  </div>\r\n</div>\r\n";
 
-module.exports = function (ytPlaylistService, ytSearchState) {
-	var player = null, index = null;
-	// 2. This code loads the IFrame Player API code asynchronously.
-	var tag = document.createElement('script');
+},{}],34:[function(require,module,exports){
+module.exports = angular.module('yt_search', ['ngResource', 'yaru22.angular-timeago'])
+	.service('ytYoutubeService', require('./yt_youtubeService'));
 
-	tag.src = "https://www.youtube.com/iframe_api";
-	var firstScriptTag = document.getElementsByTagName('script')[0];
-	firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+},{"./yt_youtubeService":35}],35:[function(require,module,exports){
+/* global angular, module, config */
+module.exports = (function ($http, $q, ytYoutubeServiceConfig) {
+    'use strict';
+    var settings = ytYoutubeServiceConfig || {
+            search: {
+                url: 'https://www.googleapis.com/youtube/v3/search',
+                type: 'playlist,video',
+                part: 'snippet'
+            },
+            playlists: {
+                url: 'https://www.googleapis.com/youtube/v3/playlists',
+                part: 'snippet,contentDetails'
+            },
+            videos: {
+                url: 'https://www.googleapis.com/youtube/v3/videos',
+                part: 'contentDetails'
+            },
+            maxResults: 8,
+            regionCode: 'GB',
+            relevanceLanguage: 'en',
+            developerToken: config.youtubeDeveloperToken
+        },
+        searchValue;
+
+    var processResultList = function(type, data){
+        var list = [],
+            playlists = [],
+            playlists_map = [],
+            durations = [],
+            durations_map = [];
+        
+        data.items.forEach(function(item){
+            var kind = item.id.kind.replace('youtube#', ''),
+                id = item.id[kind+'Id'];
+                
+            var newListItem = {
+                type: kind,
+                id : id,
+                title: item.snippet.title,
+                img: item.snippet.thumbnails.medium.url,
+                channel: 'video' === kind ? item.snippet.channelTitle : '',
+                description: {
+                    createDate: item.snippet.publishedAt,
+                    text: item.snippet.description
+                }
+            };
+
+            if(kind === 'playlist') {
+                playlists.push(id);
+                playlists_map[id] = list.length;
+                // gets video id from image in case of video duration need
+                // id = item.snippet.thumbnails.medium.url.match(/vi\/(.+?)\//)[1];
+            } else {
+                durations.push(id);
+                durations_map[id] = list.length;
+            }            
+
+            list.push(newListItem);
+        });
+
+        if(playlists.length) {
+            $http.get(settings.playlists.url, {
+                params: {
+                    id: playlists.join(','),
+                    key: settings.developerToken,
+                    part: settings.playlists.part,
+                    maxResults: playlists.length
+                }
+            }).success(function(data){
+                data.items.forEach(function(item) {
+                    list[playlists_map[item.id]].channel = item.snippet.channelTitle;
+                    list[playlists_map[item.id]].totalItems = item.contentDetails.itemCount;
+                });
+            });
+        }
+
+        if(durations.length) {
+            $http.get(settings.videos.url, {
+                params: {
+                    id: durations.join(','),
+                    key: settings.developerToken,
+                    part: settings.videos.part,
+                    maxResults: durations.length
+                }
+            }).success(function(data){
+                data.items.forEach(function(item) {
+                    list[durations_map[item.id]].duration = item.contentDetails.duration;
+                });
+            });
+        }
+
+        // TODO: distinguish result set depending on type
+        return [
+            {
+                etag: data.etag,
+                found: data.pageInfo.totalResults,
+                perPage: data.pageInfo.resultsPerPage,
+                type: type,
+                title: 'Results for "' + searchValue + '"',
+                next: data.nextPageToken,
+                prev: data.prevPageToken,
+                items: list
+            }
+        ];
+    };
+
+    var getResult = function(type, query, number) {
+        var deferred = $q.defer();
+        
+        searchValue = query;
+        $http.get(settings.search.url, {
+            params: {
+                maxResults: number || settings.maxResults,
+                relevanceLanguage: settings.relevanceLanguage,
+                regionCode: settings.regionCode,
+                q: query,
+                part: settings.search.part,
+                key: settings.developerToken,
+                type: settings.search.type
+            }
+        }).success(function(data){
+            deferred.resolve(processResultList(type, data));
+        }).error(function(data){
+            console.error("error happening on .setSearchResult:", data);
+            deferred.reject();
+        });
+
+        return deferred.promise;
+    };
+
+    return {
+        getResult: getResult
+        // TODO:
+        // getNext: getNext,
+        // getPrev: getPrev
+        // setMaxResults
+        // setRegionCode
+        // setRelevanceLanguage
+        // getDetails
+    };
+});
+},{}],36:[function(require,module,exports){
+module.exports = angular.module('yt_viewer', ['ngResource', 'pascalprecht.translate'])
+    .directive('ytViewer', require('./yt_viewerDirective'))
+    .directive('ytPlayer', require('./yt_playerDirective'))
+    .directive('ytVideoDescription', require('./yt_videoDescriptionDirective'))
+    .directive('ytPlaylist', require('./yt_playlistDirective'));
+
+
+},{"./yt_playerDirective":37,"./yt_playlistDirective":39,"./yt_videoDescriptionDirective":41,"./yt_viewerDirective":43}],37:[function(require,module,exports){
+
+module.exports = function () {
 	return {
 		restrict: 'E',
-		template: require('./yt_resultItemTemplate.html'),
-		link: function(scope,element){
-			scope.playing = false;
-			scope.onPlay = function(e){
-				index = angular.element(e.target).attr('data-index');
-				var playlistId = angular.element(e.target).attr('data-id');
-				loadPlayerAndVideo(playlistId);
-			}
-			scope.onPlaylistSendButtonClick = function(e){
-				var title = angular.element(e.target).attr('data-title')
-				var playlistId = angular.element(e.target).attr('data-id');
-				ytPlaylistService.sendPlaylistItem(playlistId, title);
-			};
-			
-			scope.onClose = function(){
-				angular.element(element.find('iframe')[0]).remove();
-				angular.element(element.find('div')[3]).append('<div id="player'+index+'" class="yt-result-list-item--player">');
-				player = null;
-				scope.playing=false;
-
-			};
-
-			var loadPlayerAndVideo = function (id){
-				window.scrollTo(0,0);
-				if (player===null) {
-					player = new YT.Player('player'+index, {
-						height: '281',
-						width: '500',
-						playerVars:
-						{
-							listType:'playlist',
-							list: id,
-							autoplay: 1,
-							controls: 1,
-							showinfo: 0
-						}
-					});
-				}
-				if (player.loadPlaylist) {
-					player.loadPlaylist(id, "playlist", 0, 0, 'highres');
-					if (player.getVideoUrl && player.getPlaylist()[0]) {
-						player.loadVideoById(player.getPlaylist()[0], 0, 'highres');
-					} else if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
-						player.playVideo();
-					}
-				}
-				scope.playing=true;
-
-			};
-
-
-
+		template: require('./yt_playerTemplate.html'),
+		controller: function($scope) {
+		},
+		link: function(scope, element){
 		}
-	}
+	};
 };
+},{"./yt_playerTemplate.html":38}],38:[function(require,module,exports){
+module.exports = "<div class=\"yt-player\">\r\nPlayer\r\n</div>";
 
-},{"./yt_resultItemTemplate.html":12}],12:[function(require,module,exports){
-module.exports = "<li class=\"yt-result-list-item\">\n  <div class=\"yt-result-list-item--img\">\n    <img ng-if=\"resultList.img\" class=\"yt-result-list-item--img\" src=\"{{resultList.img}}\"/>\n    <img data-index=\"{{$index}}\" data-id=\"{{resultList.playlistId}}\" class=\"yt-result-list-item--playimg\" src=\"assets/youtube_producer/img/play-icon.svg\" ng-click=\"onPlay($event)\"/>\n  </div>\n  <div class=\"yt-result-list-item--rightContent\">\n    <h1 class=\"yt-result-list-item--title\">\n      <p class=\"yt-result-list-item--title-container\" data-type=\"title\" cw-reveal-label><span>{{resultList.title}}</span></p>\n    </h1>\n    <p class=\"yt-result-list-item--subtitle\">\n      <span>by {{resultList.channel}}</span>\n      <span class=\"point\">*</span>\n      <span>{{resultList.description.createDate}}</span>\n    </p>\n    <p class=\"yt-result-list-item--description\" data-type=\"description\" cw-reveal-label ng-if=\"resultList.description.text\">\n      <span>{{resultList.description.text}}</span>\n    </p>\n    <p class=\"yt-result-list-item--description\" ng-if=\"!resultList.description.text\">No description available.</p>\n  </div>\n  <div class=\"yt-result-list-item--buttons\">\n    <button class=\"yt-result-list-item--button\"\n            ng-click=\"onPlaylistSendButtonClick($event)\"\n            data-title=\"{{resultList.title}}\" data-id=\"{{resultList.playlistId}}\" data-channeltitle=\"{{resultList.channel}}\">\n      Play on TV\n      </button>\n  </div>\n  <div class=\"yt-result-list-item--video\"  ng-class=\"{'visible':playing}\" ng-click=\"onClose()\">\n    <div id=\"{{'player'+$index}}\" class=\"yt-result-list-item--player\">\n    </div>\n    <div ng-click=\"onClose()\" class=\"yt-result-list-item--close\">x</div>\n  </div>\n</li>";
+},{}],39:[function(require,module,exports){
 
-},{}],13:[function(require,module,exports){
-module.exports = "<div>\n<div class=\"yt-send-overlay\" ng-class=\"{visible: sendOverlay}\">\n  <p ng-if=\"playListSended==='YES'\">\n    YouTube Playlist \"{{playListName}}\" is now sent to your TV!\n  </p>\n  <p ng-if=\"playListSended==='ERROR'\">\n    YouTube Playlist \"{{playListName}}\" could not be sent to your TV!\n  </p>\n  <p ng-if=\"playListSended===401\">\n    You are not allowed to send the YouTube Playlist \"{{playListName}}\" to TV!\n  </p>\n</div>\n<ul class=\"yt-result-list\">\n  <yt-result-item ng-repeat=\"resultList in resultLists\">‚\n  </yt-result-item>\n  <div ng-if=\"resultListsState==='empty'\">\n    No results found.\n  </div>\n</ul>\n</div>";
-
-},{}],14:[function(require,module,exports){
-module.exports = angular.module('yt_search', ['ngResource','pascalprecht.translate'])
-	.service('ytSearchState', require('./yt_searchState'))
-	.directive('ytSearch', require('./yt_searchDirective'));
-
-},{"./yt_searchDirective":15,"./yt_searchState":16}],15:[function(require,module,exports){
-module.exports = function (ytSearchState, ytNotification, SPECIALPURPOSE, $timeout) {
+module.exports = function () {
 	return {
 		restrict: 'E',
-		template: require('./yt_searchTemplate.html'),
-		link: function(scope, element, attr){
-			scope.searchValue = ytSearchState.getSearchValue(true);
-			if(scope.searchValue){
-				ytSearchState.setSearchResult();
-			}
-			scope.searchButtonClick = function() {
-				scope.initSearch(element.find('input')[0].value);
-			};
-			scope.searchOnKeyUp = function (event) {
-				if (event.keyCode === 13 && event.target.value !== "") {
-					scope.initSearch(event.target.value);
-				}
-			};
-			scope.initSearch = function(value){
-				//if a special search query is entered we send a general notification
-				if(ytNotification.isSpecialTrigger(value)){
-					var result = ytNotification.sendGeneralNotification();
-					result.then(function() {
-						element.find('input')[0].value = SPECIALPURPOSE.successOnSentNotification;
-					}, function() {
-						element.find('input')[0].value = SPECIALPURPOSE.errorOnSentNotification;
-					});
-					$timeout(function(){
-						element.find('input')[0].value = '';
-					}, SPECIALPURPOSE.displayTimeout);
-					return;
-				//from here on it is normal search
-				} else {
-					ytSearchState.setSearchValue(value);
-					scope.searchValue = ytSearchState.getSearchValue(false);
-					ytSearchState.setSearchResult();
-				}
-			};
+		template: require('./yt_playlistTemplate.html'),
+		controller: function($scope) {
+		},
+		link: function(scope, element){
 		}
 	};
 };
+},{"./yt_playlistTemplate.html":40}],40:[function(require,module,exports){
+module.exports = "<div class=\"yt-playlist\">\r\nPlaylist\r\n</div>";
 
+},{}],41:[function(require,module,exports){
 
-},{"./yt_searchTemplate.html":17}],16:[function(require,module,exports){
-module.exports = function ($location, $http) {
-	'use strict';
-	var searchValue;
-	this.resultLists = [];
-	this.resultListsState = 'initial'; //Enum initial/full/empty
-
-	var that = this;
-
-	this.getSearchValue = function (searchFromUrl) {
-		if(!searchValue||searchFromUrl){
-			searchValue = $location.search().search;
-			if(searchValue){
-				searchValue = decodeURI(searchValue);
-			}
+module.exports = function () {
+	return {
+		restrict: 'E',
+		template: require('./yt_videoDescriptionTemplate.html'),
+		controller: function($scope) {
+		},
+		link: function(scope, element){
 		}
-		return searchValue;
-	};
-
-	this.setSearchValue = function(value){
-		searchValue = value;
-	}
-
-
-	var getDate = function(timestamp){
-		var timespan;
-		var date = new Date();
-		var createDate = new Date(timestamp);
-		var hoursDivide = (1000*60*60);
-		var length = (date.getTime()/hoursDivide) - (createDate.getTime()/hoursDivide);
-		var hours;
-		var days;
-		var months;
-		var years;
-		if(length>24){
-			days = parseInt(length/24);
-			hours = parseInt(length - (days*24));
-			if(days >30){
-				months = parseInt(days/30);
-				days = days - (months*30);
-				if(months >12){
-					years = parseInt(months/12);
-					months = months - (years*12);
-				}
-				else{
-					years = 0;
-				}
-			}
-			else{
-				months = 0;
-				years = 0;
-			}
-		}
-		else{
-			hours = length;
-			days = 0;
-			months = 0;
-			years = 0;
-		}
-		var s = "s"
-		if(years>0){
-			if(years===1){
-				s="";
-			}
-			timespan = years+ ' year'+ s +' ago';
-		}
-		else if(years===0 && months>0){
-			if(months===1){
-				s="";
-			}
-			timespan = months+ ' month'+ s +' ago';
-		}
-		else if(years===0 && months===0 && days>0){
-			if(days===1){
-				s="";
-			}
-			timespan = days+ ' day'+ s +' ago';
-		}
-		else if(years===0 && months===0 && days===0 && hours>0){
-			if(hours===1){
-				s="";
-			}
-			timespan = hours+ ' hour'+ s +' ago';
-		}
-		return timespan;
-	};
-
-	var fillResultList = function(data){
-		that.resultLists = [];
-		data.items.forEach(function(item){
-			var newListItem = {
-				playlistId : item.id.playlistId,
-				title: item.snippet.title,
-				img: item.snippet.thumbnails.medium.url,
-				description: {
-					createDate: getDate(item.snippet.publishedAt),
-					text: item.snippet.description
-				}
-			};
-			$http.get('https://www.googleapis.com/youtube/v3/channels', {
-				params: {
-					id: item.snippet.channelId,
-					key: config.youtubeDeveloperToken,
-					part: 'snippet'
-				}
-			}).success(function(data){
-				newListItem.channel = data.items[0].snippet.title;
-			});
-			that.resultLists.push(newListItem)
-		});
-		if(that.resultLists.length>0){
-			that.resultListsState = 'full';
-		}
-		else{
-			that.resultListsState = 'empty';
-		}
-	};
-
-	this.setSearchResult = function() {
-		$http.get('https://www.googleapis.com/youtube/v3/search', {
-			params: {
-				maxResults: 10,
-				q: searchValue,
-				part: 'snippet',
-				key: config.youtubeDeveloperToken,
-				type: 'playlist'
-			}
-		}).success(function(data){
-			fillResultList(data);
-		}).error(function(data){
-			console.error("error happening on .setSearchResult:", data);
-		});
-
 	};
 };
-},{}],17:[function(require,module,exports){
-module.exports = "<div>\n  <input class=\"yt-search--input\" ng-keyup=\"searchOnKeyUp($event)\" type=\"text\" placeholder=\"Search YouTube Playlist\" value=\"{{searchValue}}\">\n  <button class=\"yt-search--button\" ng-click=\"searchButtonClick()\">\n    <svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t    viewBox=\"0 0 21.7 21.7\" enable-background=\"new 0 0 21.7 21.7\" xml:space=\"preserve\">\n      <path fill=\"#333\" d=\"M21.7,20.3l-6-6c1.2-1.5,1.9-3.4,1.9-5.5c0-4.9-4-8.8-8.8-8.8C4,0,0,4,0,8.8c0,4.9,4,8.8,8.8,8.8\n        c2.1,0,4-0.7,5.5-1.9l6,6L21.7,20.3z M8.8,15.6C5.1,15.6,2,12.6,2,8.8C2,5.1,5.1,2,8.8,2c3.8,0,6.8,3.1,6.8,6.8\n        C15.6,12.6,12.6,15.6,8.8,15.6z\"/>\n    </svg>\n  </button>\n</div>";
+},{"./yt_videoDescriptionTemplate.html":42}],42:[function(require,module,exports){
+module.exports = "<div class=\"yt-video-description\">\r\nDescription\r\n</div>";
+
+},{}],43:[function(require,module,exports){
+
+module.exports = function () {
+	return {
+		restrict: 'E',
+		template: require('./yt_viewerTemplate.html'),
+        scope: {
+            class: '@class'
+        },
+		controller: function($scope) {
+		},
+		link: function(scope, element){
+		}
+	};
+};
+},{"./yt_viewerTemplate.html":44}],44:[function(require,module,exports){
+module.exports = "<div class=\"{{ class || 'yt-viewer' }}\">\r\n  <div class=\"video\">\r\n    <yt-player>Player</yt-player>\r\n    <div class=\"yt-controls\">Controls</div><!-- TODO: separate directive -->\r\n    <yt-video-description>Description</yt-video-description>\r\n  </div>\r\n  <div class=\"playlist\">\r\n    <yt-playlist></yt-playlist>\r\n  </div>\r\n</div>";
 
 },{}]},{},[1])

@@ -1,92 +1,92 @@
 .ui-video-list {
-  list-style: none;
-  list-style-position: outside;
-  padding: 0;
+    list-style: none;
+    list-style-position: outside;
+    padding: 0;
+    display: block;
+    clearfix();
 }
 
 .ui-video-list-item {
-  position: relative;
-  padding: 0;
-  background-color: #f4f4f4;
-  width: 23%;
-  float: left;
-  margin: 0 0 1% 1%;
-
-  .img {
     position: relative;
-    width: 90%;
-    margin: 5px auto 5px auto;
-    display: block;
-    min-height: 150px;
+    padding: 0;
+    background-color: ui-video-list-item-bgc;
+    float: left;
 
-    img {
-      width: 100%;
-      min-height: 150px;
+    .img {
+        position: relative;
+        width: 90%;
+        margin: 5px auto 5px auto;
+        display: block;
+        min-height: 150px;
+
+        img {
+            width: 100%;
+            min-height: 150px;
+        }
+
+        .duration,
+        .items {
+            position: absolute;
+            bottom: 5px;
+            right: 0px;
+            width: 60px;
+            height: 30px;
+            background-color: #000;
+            color: #fff;
+            font-size: 18px;
+            padding: 2px;
+        }
+
+        .items span::before {
+            content: "PL: "
+        }
     }
 
-    .duration,
-    .items {
+    .playimg {
         position: absolute;
-        bottom: 5px;
-        right: 0px;
-        width: 60px;
-        height: 30px;
-        background-color: #000;
-        color: #fff;
-        font-size: 18px;
-        padding: 2px;
+        top: 10px;
+        height: 50px;
+        opacity: 0.8;
+        -moz-transform: scaleX(-1);
+        -o-transform: scaleX(-1);
+        -webkit-transform: scaleX(-1);
+        transform: scaleX(-1);
+        filter: FlipH;
+        -ms-filter: "FlipH";
+        &:hover{
+            cursor: pointer;
+            opacity: 1.0;
+        }
     }
 
-    .items span::before {
-        content: "PL: "
-    }
-  }
+    .metadata {
+        height: 150px;
+        padding: 5px 10px;
 
-  .playimg {
-    position: absolute;
-    top: 10px;
-    height: 50px;
-    opacity: 0.8;
-    -moz-transform: scaleX(-1);
-    -o-transform: scaleX(-1);
-    -webkit-transform: scaleX(-1);
-    transform: scaleX(-1);
-    filter: FlipH;
-    -ms-filter: "FlipH";
-    &:hover{
-      cursor: pointer;
-      opacity: 1.0;
-    }
-  }
+        .title{
+            color: #C4110B;
+            padding: 0;
+            margin: 0;
+            font-size: 24px;
+            font-weight: lighter;
+            font-family: source_sans_prolight;
+        }
 
-  .metadata {
-    height: 150px;
-    padding: 5px 10px;
+        .subtitle {
+            padding: 0;
+            margin: 5px 0;
+        }
 
-    .title{
-      color: #C4110B;
-      padding: 0;
-      margin: 0;
-      font-size: 24px;
-      font-weight: lighter;
-      font-family: source_sans_prolight;
+        .description{
+            padding: 0;
+            margin: 5px 0;
+        }
     }
 
-    .subtitle {
-      padding: 0;
-      margin: 5px 0;
+    .buttons {
+        position: absolute;
+        right: 10px;
+        top: 5px; 
+        width: 50px;
     }
-
-    .description{
-      padding: 0;
-      margin: 5px 0;
-    }
-  }
-
-  .buttons {
-    position: absolute;
-    right: 10px;
-    top: 5px; 
-    width: 50px;
-  }
 }

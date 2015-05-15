@@ -1,7 +1,8 @@
-<ul class="{{ class || 'ui-video-list'}}">
-  <ui-video-list-item ng-repeat="item in videoList">
-  </ui-video-list-item>
-  <div ng-if="videoList.length == 0">
-    {{ 'No results found' | translate }}
-  </div>
+<ul class="{{ class || 'ui-video-list'}} clearfix">
+    <li class="ui-video-list-item" ng-repeat="item in videoList">
+        <ui-video-list-item></ui-video-list-item>
+    </li>
+    <div ng-if="videoList.length == 0">
+        {{ 'No results found' | translate }}
+    </div>
 </ul>
