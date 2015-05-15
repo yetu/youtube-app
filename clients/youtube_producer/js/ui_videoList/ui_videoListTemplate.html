@@ -1,7 +1,7 @@
-<div class="{{ class || 'ui-video-list'}}">
+<ul class="{{ class || 'ui-video-list'}}">
   <ui-video-list-item ng-repeat="item in videoList">
   </ui-video-list-item>
   <div ng-if="videoList.length == 0">
     {{ 'No results found' | translate }}
   </div>
-</div>
+</ul>
