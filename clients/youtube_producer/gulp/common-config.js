@@ -78,7 +78,7 @@ module.exports = {
         templates: templates,
         fonts: fonts,
         tests: {
-            src: 'test/**.spec.js',
+            src: 'test/**/*.spec.js',
             configDir: 'test'
         }
     }

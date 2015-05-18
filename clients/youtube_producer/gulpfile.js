@@ -10,4 +10,4 @@ var gulp = require('./gulp')();
 // define high-level tasks here
 // copy-ref-templates task is included in copy-assets.js file
 gulp.task('build-yt-producer', ['build-scripts', 'copy-assets', 'copy-ref-templates', 'build-style']);
-gulp.task('watch-yt-producer', ['build-scripts', 'copy-assets', 'copy-ref-templates', 'build-style', 'dev-watch']);
+gulp.task('watch-yt-producer', ['build-scripts', 'copy-assets', 'copy-ref-templates', 'build-style', 'dev-lint', 'coverage', 'dev-watch-extended']);
