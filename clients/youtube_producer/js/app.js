@@ -33,7 +33,13 @@ youtubeApp.config(function ($routeProvider, $translateProvider, $httpProvider, $
 		})
         .when('/view/:mode/:type/:id/:device?', {
             controller: 'ViewerCtrl',
-			template: require('./viewerTemplate.html')
+			template: require('./viewerTemplate.html'),
+            resolve: {
+                // needed to init categories first for detailed views
+                YouTubeCategories: function(ytYoutubeService) {
+                    return ytYoutubeService.initialize();
+                }
+            }
 		})
 		.otherwise({
 			redirectTo: '/dashboard'
