@@ -1,4 +1,4 @@
-<ul class="{{ class || 'ui-video-list'}}">
+<ul class="{{ class || 'ui-video-list'}} {{ displayType }}">
   <ui-video-list-item ng-repeat="item in videoList">
   </ui-video-list-item>
   <div ng-if="videoList.length == 0">

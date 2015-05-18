@@ -11,30 +11,31 @@ describe('Directive: ui-video-list', function () {
         $rootScope = _$rootScope_;
     }));
 
-    it('should compile to div with default class', function() {
+    it('should compile to ul with default class and type', function() {
         var element = $compile('<ui-video-list></ui-video-list>')($rootScope);
         $rootScope.$digest();
-        expect(element.find('div').eq(0).attr('class')).toBe('ui-video-list');
+        expect(element.find('ul').eq(0).attr('class')).toBe('ui-video-list ');
     });
 
-    it('should compile to div with specified class', function() {
-        var element = $compile('<ui-video-list class="some class"></ui-video-list>')($rootScope);
+    it('should compile to ul with specified class', function() {
+        var element = $compile('<ui-video-list class="some-class"></ui-video-list>')($rootScope);
         $rootScope.$digest();
-        expect(element.find('div').eq(0).attr('class')).toBe('some class');
+        expect(element.find('ul').eq(0).attr('class')).toBe('some-class ');
+    });
+
+    it('should compile to ul with specified class and type', function() {
+        var element = $compile('<ui-video-list class="some-class" display="list"></ui-video-list>')($rootScope);
+        $rootScope.$digest();
+        expect(element.find('ul').eq(0).attr('class')).toBe('some-class list');
     });
 
     it('should compile element properly', function() {
-        $rootScope.videos = [{id: 'id123', title: 'Some title', type: 'video', img: 'some.img', description: { text: 'Some description'}},
-                             {id: 'id333', title: 'Some other title', type: 'playlist', img: 'other.img', description: { text: 'Some other description'}}];
-        var element = $compile('<ui-video-list ng-model="videos"></ui-video-list>')($rootScope);
+        $rootScope.videos = [{id: 'id123', title: 'Some title', type: 'video', img: 'some.img', description: 'Some description'},
+                             {id: 'id333', title: 'Some other title', type: 'playlist', img: 'other.img', description: 'Some other description'}];
+        var element = $compile('<ui-video-list ng-model="videos" play-link="#/view/expand/:type/:id"></ui-video-list>')($rootScope);        
         $rootScope.$digest();
         expect(element.find('a').eq(0).attr('href')).toBe('#/view/expand/video/id123');
         expect(element.find('a').eq(1).attr('href')).toBe('#/view/expand/playlist/id333');
-        expect(element.find('app-send-to-tv').eq(0).attr('id')).toBe('id123');
-        expect(element.find('app-send-to-tv').eq(0).attr('data-title')).toBe('Some title');
-        expect(element.find('app-send-to-tv').eq(0).attr('data-type')).toBe('video');
-        expect(element.find('app-send-to-tv').eq(1).attr('id')).toBe('id333');
-        expect(element.find('app-send-to-tv').eq(1).attr('data-title')).toBe('Some other title');
-        expect(element.find('app-send-to-tv').eq(1).attr('data-type')).toBe('playlist');
+        expect(element.find('app-send-to-tv').length).toEqual(2);
     });
 });
