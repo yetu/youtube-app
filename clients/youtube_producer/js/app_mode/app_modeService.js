@@ -39,6 +39,13 @@ module.exports = (function ($routeParams, $rootScope) {
     };
 
     /**
+     * @returns {String} View mode depending on view type (if applied)
+     */
+    var getView = function() {
+        return $routeParams.mode;
+    };
+
+    /**
      * @returns {String} Application mode depending on system ('tv'|'pc')
      */
     var _detect = function() {
@@ -56,6 +63,7 @@ module.exports = (function ($routeParams, $rootScope) {
         get: get,
         isTV: isTV,
         isPC: isPC,
-        getClass: getClass
+        getClass: getClass,
+        getView: getView
     };
 });
