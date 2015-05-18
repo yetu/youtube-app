@@ -1,5 +1,5 @@
 
-module.exports = function () {
+module.exports = function (appMode) {
 	return {
 		restrict: 'E',
 		template: require('./yt_viewerTemplate.html'),
@@ -14,6 +14,8 @@ module.exports = function () {
             scope.playVideo = function(index) {
                 scope.video = scope.playlist.items[index];
             };
+
+            scope.playlistVisible = appMode.getView() !== 'expand';
 		}
 	};
 };
