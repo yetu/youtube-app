@@ -1,9 +1,20 @@
 .yt-viewer {
-  width: 800px;
+    width: 1200px;
 
-  .video {
-    float: left;
-  }
+    .video {
+        float: left;
+    }
+
+    .buttons {
+        position: relative;
+        padding: 5px;
+        
+        .toggle-playlist {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+        }
+    }
 }
 
 .yt-player {
@@ -13,16 +24,38 @@
 }
 
 .yt-video-description {
-  width: 800px;
-  height: 300px;
-  border: solid orange 2px;
+    width: 780px;
+    height: 300px;
+    border: solid orange 2px;
+    padding: 10px;
+
+    .metadata {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: solid gray 1px
+
+        div {
+            float: left;
+            width: 200px;
+
+            &.row {
+                clear: both;
+            }
+        }
+    }
 }
 
-.yt-playlist {
-  width: 300px;
-  height: 900px;
-  border: solid black 2px;
-  margin-left: 800px;
+.yt-viewer .playlist {
+    width: 380px;
+    height: 900px;
+    border: solid black 2px;
+    float: right;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .app-send-to-tv {
+        display: none;
+    }
 }
 
 .yt-controls {
@@ -51,7 +84,7 @@
   }
 
   .yt-video-description,
-  .yt-playlist {
+  .playlist {
      display: none;
   }
 }

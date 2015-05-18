@@ -1,3 +1,13 @@
 <div class="yt-video-description">
-Description
+    <div class="text">
+        <span ng-show="!expanded">{{ video.description | limitTo : 300 }}</span><!-- TODO: trust as html and | nl2br filter? -->
+        <span ng-show="!expanded" ng-if="video.description.length > 300" ng-click="expanded = true">...</span>
+        <span ng-show="expanded">{{ video.description }}</span>
+    </div>
+    <div class="metadata">
+        <div class="row">{{ ::('From' | translate) }}: {{ video.channel }}</div>
+        <div>{{ ::('Added' | translate) }}: {{ video.created | date }}</div>
+        <div class="row">{{ ::('Category' | translate) }}: {{ video.category }}</div>
+        <div>{{ ::('Views' | translate) }}: {{ video.views }}</div>
+    </div>
 </div>

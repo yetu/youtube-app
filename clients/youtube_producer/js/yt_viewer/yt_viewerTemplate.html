@@ -1,10 +1,18 @@
+<app-search class="app-search" placeholder="Search YouTube" value="{{ searchValue }}" trigger-search="button,enter,auto" auto-delay="500"></app-search>
+
 <div class="{{ class || 'yt-viewer' }}">
+  <h2 class="title">{{ video.title }} </h2>
   <div class="video">
-    <yt-player>Player</yt-player>
+    <yt-player></yt-player>
     <div class="yt-controls">Controls</div><!-- TODO: separate directive -->
-    <yt-video-description>Description</yt-video-description>
+    <div class="buttons">
+        <app-send-to-tv ng-model="video"></app-send-to-tv>
+        <button class="toggle-playlist" ng-show="true">{{ ::('Hide video list' | translate) }}</button>
+    </div>
+    <yt-video-description></yt-video-description>
   </div>
   <div class="playlist">
-    <yt-playlist></yt-playlist>
+    <h3>{{ ::(playlist.title | translate) }}</h3>
+    <ui-video-list ng-model="playlist.items" display="list" play-fn="playVideo"></ui-video-list>
   </div>
 </div>
