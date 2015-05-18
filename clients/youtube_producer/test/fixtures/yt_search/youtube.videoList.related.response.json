@@ -15,6 +15,9 @@
    },
    "contentDetails": {
     "duration": "PT4H44S"
+   },
+   "statistics": {
+    "viewCount": "111"
    }
   },
   {
@@ -26,6 +29,9 @@
    },
    "contentDetails": {
     "duration": "PT5H55S"
+   },
+   "statistics": {
+    "viewCount": "222"
    }
   }
  ]

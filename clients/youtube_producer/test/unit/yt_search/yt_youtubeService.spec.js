@@ -62,7 +62,7 @@ describe('Service: yt_youtubeService', function () {
             expected = {
                 search: 'https://www.googleapis.com/youtube/v3/search?maxResults=8&part=snippet&q=yetu&regionCode=GB&relevanceLanguage=en&type=playlist,video',
                 playlist: 'https://www.googleapis.com/youtube/v3/playlists?id=playlist-1,playlist-2&maxResults=2&part=snippet,contentDetails',
-                video: 'https://www.googleapis.com/youtube/v3/videos?id=first-video-id&maxResults=1&part=snippet,contentDetails',
+                video: 'https://www.googleapis.com/youtube/v3/videos?id=first-video-id&maxResults=1&part=snippet,contentDetails,statistics',
                 item00: {
                     type: 'playlist', id: 'playlist-1', title: 'Billboard Top Songs 2015', img: 'https://i.ytimg.com/vi/RgKAFK5djSk/mqdefault.jpg',
                     channel: '', created: '2011-02-25T17:10:00.000Z', description: 'Billboard Top Songs 2015.', views: null}
@@ -88,7 +88,7 @@ describe('Service: yt_youtubeService', function () {
             expected = {
                 video: 'https://www.googleapis.com/youtube/v3/videos?id=first-video-id&maxResults=20&part=snippet,contentDetails,statistics',
                 search: 'https://www.googleapis.com/youtube/v3/search?maxResults=20&part=snippet&regionCode=GB&relatedToVideoId=first-video-id&relevanceLanguage=en&type=video',
-                related: 'https://www.googleapis.com/youtube/v3/videos?id=rel-video-1,rel-video-2&maxResults=2&part=snippet,contentDetails',                
+                related: 'https://www.googleapis.com/youtube/v3/videos?id=rel-video-1,rel-video-2&maxResults=2&part=snippet,contentDetails,statistics',
                 videoData: {
                     type: 'video', id: 'first-video-id', title: '4 hours Peaceful & Relaxing', img: 'https://i.ytimg.com/vi/first-video-id/mqdefault.jpg',
                     channel: 'utopiansounds', created: '2014-02-05T10:05:04.000Z', description: '4 hours of soothing background music', views: '111', duration: 'PT4H44S',
@@ -120,7 +120,7 @@ describe('Service: yt_youtubeService', function () {
             },
             expected = {
                 playlistitems: 'https://www.googleapis.com/youtube/v3/playlistItems?maxResults=20&part=snippet&playlistId=some-playlist-id',
-                videos: 'https://www.googleapis.com/youtube/v3/videos?id=first-video-id&maxResults=1&part=snippet,contentDetails',
+                videos: 'https://www.googleapis.com/youtube/v3/videos?id=first-video-id&maxResults=1&part=snippet,contentDetails,statistics',
                 videoData: {
                     type : 'video', id : 'first-video-id', title : 'Wiz Khalifa - See You Again', img : 'https://i.ytimg.com/vi/first-video-id/mqdefault.jpg',
                     channel : '#PopMusic', created : '2015-05-17T06:32:10.000Z', description : 'See Wiz on tour this summer', views : null },

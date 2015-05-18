@@ -41,10 +41,11 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig) {
                 playlists_map[id] = list.length;
                 // gets video id from image in case of video duration need
                 // id = item.snippet.thumbnails.medium.url.match(/vi\/(.+?)\//)[1];
-            } else if(item.snippet && item.contentDetails) {
+            } else if(item.snippet && item.contentDetails && item.statistics) {
                 // if already get just use without next request
                 newListItem.duration = item.contentDetails.duration;
                 newListItem.category = categories[item.snippet.categoryId] ? categories[item.snippet.categoryId].title : null;
+                newListItem.views = item.statistics.viewCount;
             } else {
                 videos.push(id);
                 videos_map[id] = list.length;
@@ -74,13 +75,14 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig) {
                 params: {
                     id: videos.join(','),
                     key: settings.developerToken,
-                    part: 'snippet,contentDetails', // both needed for duration and categoyId
+                    part: 'snippet,contentDetails,statistics', // needed for duration, categoyId and views
                     maxResults: videos.length
                 }
             }).success(function(data){
                 data.items.forEach(function(item) {
                     list[videos_map[item.id]].category = categories[item.snippet.categoryId] ? categories[item.snippet.categoryId].title : null;
                     list[videos_map[item.id]].duration = item.contentDetails.duration;
+                    list[videos_map[item.id]].views = item.statistics.viewCount;
                 });
             });
         }
