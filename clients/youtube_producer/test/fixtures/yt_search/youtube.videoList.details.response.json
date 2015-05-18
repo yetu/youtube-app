@@ -1,0 +1,38 @@
+{
+ "kind": "youtube#videoListResponse",
+ "etag": "some-etag-video-list",
+ "pageInfo": {
+  "totalResults": 1,
+  "resultsPerPage": 1
+ },
+ "items": [
+  {
+   "kind": "youtube#video",
+   "etag": "some-etag-video-list",
+   "id": "first-video-id",
+   "snippet": {
+    "publishedAt": "2014-02-05T10:05:04.000Z",
+    "channelId": "UCdQnjeuggsBIqkqnhIwdxSA",
+    "title": "4 hours Peaceful & Relaxing",
+    "description": "4 hours of soothing background music",
+    "thumbnails": {
+     "medium": {
+      "url": "https://i.ytimg.com/vi/first-video-id/mqdefault.jpg"
+     }
+    },
+    "channelTitle": "utopiansounds",
+    "liveBroadcastContent": "none"
+   },
+   "statistics": {
+    "viewCount": "111"
+   },
+   "contentDetails": {
+    "duration": "PT4H44S",
+    "dimension": "2d",
+    "definition": "hd",
+    "caption": "false",
+    "licensedContent": false
+   }
+  }
+ ]
+}
