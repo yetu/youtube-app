@@ -27,22 +27,26 @@
         <script>
         var config = @Html(config.toString);
         </script>
-            <!--<link rel="stylesheet" href="css/app.css"/>-->
+        <!--<link rel="stylesheet" href="css/app.css"/>-->
     </head>
-    <body ng-app="youtubeApp">
-            <!--[if lt IE 7]>
-<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
-    your browser</a> to improve your experience.</p>
-<![endif]-->
+    <body ng-app="youtubeApp" class="{{ appModeClass }}">
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+            your browser</a> to improve your experience.</p>
+        <![endif]-->
 
-        <div class="tp-container" ng-include="'assets/youtube_producer/js/mainTemplate.html'"></div>
+        <div class="tp-header">
+            Youtube logo
+        </div>
+        <div class="container" ng-view></div>
+        <yt-auth class="ng-hide"></yt-auth>
 
         <script src="assets/bower_components/angular/angular.js"></script>
         <script src="assets/bower_components/angular-resource/angular-resource.js"></script>
         <script src="assets/bower_components/angular-route/angular-route.js"></script>
         <script src="assets/bower_components/angular-translate/angular-translate.min.js"></script>
         <script src="assets/bower_components/reactTo/reactTo.js"></script>
-
+        <script src="assets/bower_components/angular-timeago/dist/angular-timeago.min.js"></script>
         <script type="text/javascript" src="assets/youtube_producer/app-bundle.js"></script>
     </body>
 </html>
