@@ -1,14 +1,14 @@
 'use strict';
 
 describe('Directive: app_search', function () {
-    var $compile,
-        scope;
+    var $compile, scope, $timeout;
 
     beforeEach(module('youtubeApp'));
 
-    beforeEach(inject(function(_$compile_, $rootScope){
+    beforeEach(inject(function(_$compile_, $rootScope, _$timeout_){
         $compile = _$compile_;
         scope = $rootScope.$new();
+        $timeout = _$timeout_;
     }));
 
     it('should compile to div with default class with input and button elements inside', function() {
@@ -27,10 +27,11 @@ describe('Directive: app_search', function () {
         expect(element.find('input').eq(0).attr('value')).toBe('some search value');
     });
 
-    xit('should react on click', function() {
+    it('should react on click', function() {
         var element = $compile('<app-search trigger-search="button" value="yetu"></app-search>')(scope);
         var elementScope = element.isolateScope();
         spyOn(elementScope, '$emit');
+        scope.$digest();
         element.find('button').eq(0).triggerHandler('click');
         expect(elementScope.$emit).toHaveBeenCalledWith("app:search-value", "yetu");
         expect(elementScope.emitted).toBe('yetu');
@@ -45,37 +46,41 @@ describe('Directive: app_search', function () {
         expect(elementScope.emitted).not.toBe('yetu');
     });
 
-    xit('should react on enter', function() {
+    it('should react on enter', function() {
         var element = $compile('<app-search trigger-search="enter" value="yetu"></app-search>')(scope);
         var elementScope = element.isolateScope();
         spyOn(elementScope, '$emit');
-        // TODO: integrate jQuery or use another way to create key event
-        var e = jQuery.Event("keydown", {
-            keyCode: 13
-        });
-        element.trigger(e);
-        expect(elementScope.$emit).toHaveBeenCalledWith("app:search-value");
+        scope.$digest();
+        element.find('input').eq(0).triggerHandler({type: 'keyup', keyCode: 13});
+        expect(elementScope.$emit).toHaveBeenCalledWith('app:search-value', 'yetu');
         expect(elementScope.emitted).toBe('yetu');
     });
 
-    xit('should reset search', function() {
+    it('should reset search', function() {
         var element = $compile('<app-search trigger-search="button" value="test"></app-search>')(scope);
         var elementScope = element.isolateScope();
         spyOn(elementScope, '$emit');
+        scope.$digest();
         element.find('button').eq(0).triggerHandler('click');
         expect(elementScope.emitted).toBe('test');
-        element.find('input').eq(0).attr('value', '');
+        elementScope.$emit.calls.reset();
+        element.find('input').eq(0).prop('value', '');
         element.find('button').eq(0).triggerHandler('click');
         expect(elementScope.$emit).toHaveBeenCalledWith("app:search-reset");
         expect(elementScope.emitted).toBe('');
     });
 
-    xit('should react on what? (triggerAuto)', function() {
-        var element = $compile('<app-search trigger-search="auto" value="yetu"></app-search>')(scope);
+    it('should debounce input value', function() {
+        var element = $compile('<app-search trigger-search="auto"></app-search>')(scope);
         var elementScope = element.isolateScope();
         spyOn(elementScope, '$emit');
-        expect(elementScope.$emit).toHaveBeenCalledWith("app:search-value", "yetu");
-        expect(elementScope.emitted).toBe('yetu');
+        scope.$digest();
+        element.find('input').eq(0).prop('value', 'ye');
+        element.find('input').eq(0).prop('value', 'yetu');
+        expect(elementScope.$emit).not.toHaveBeenCalled();
+        $timeout(function() {
+            expect(elementScope.$emit).toHaveBeenCalledWith("app:search-value", "yetu");
+            expect(elementScope.emitted).toBe('yetu');
+        });
     });
-
 });
