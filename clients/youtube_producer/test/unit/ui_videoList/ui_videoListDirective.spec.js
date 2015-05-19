@@ -14,19 +14,19 @@ describe('Directive: ui-video-list', function () {
     it('should compile to ul with default class and type', function() {
         var element = $compile('<ui-video-list></ui-video-list>')($rootScope);
         $rootScope.$digest();
-        expect(element.find('ul').eq(0).attr('class')).toBe('ui-video-list ');
+        expect(element.find('ul').eq(0).attr('class')).toBe('ui-video-list  clearfix');
     });
 
     it('should compile to ul with specified class', function() {
         var element = $compile('<ui-video-list class="some-class"></ui-video-list>')($rootScope);
         $rootScope.$digest();
-        expect(element.find('ul').eq(0).attr('class')).toBe('some-class ');
+        expect(element.find('ul').eq(0).attr('class')).toBe('some-class  clearfix');
     });
 
     it('should compile to ul with specified class and type', function() {
         var element = $compile('<ui-video-list class="some-class" display="list"></ui-video-list>')($rootScope);
         $rootScope.$digest();
-        expect(element.find('ul').eq(0).attr('class')).toBe('some-class list');
+        expect(element.find('ul').eq(0).attr('class')).toBe('some-class list clearfix');
     });
 
     it('should compile element properly', function() {
