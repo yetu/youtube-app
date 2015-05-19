@@ -5,12 +5,12 @@ module.exports = function (config) {
         frameworks: ['jasmine'],
         browsers: ['Chrome', 'PhantomJS', 'Firefox'],
         autoWatch: true,
-
+        reporters: ['progress', 'coverage'],
         // ng template bundler
         preprocessors: {
             '**/*.html': ['ng-html2js'],
-            '/**/*.browserify': ['browserify'],
             'js/**/*.js': ['coverage'],
+            '/**/*.browserify': ['browserify'],
             '../../public/youtube_producer/app-bundle.js' : ['coverage'],
             'test/fixtures/**/*.json': ['json_fixtures']
         },
@@ -58,15 +58,14 @@ module.exports = function (config) {
         },
 
         coverageReporter: {
-            type : 'html',
-            dir : 'test/jasmine.coverage/',
+            dir : 'test/coverage',
             subdir: function(browser) {
                 return browser.toLowerCase().split(/[ /-]/)[0];
             },
             reporters:[
-                {type: 'cobertura' },
-                {type: 'html' },
-                {type: 'text-summary'}
+                { type: 'cobertura', subdir: '.', file: 'cobertura.txt' },
+                { type: 'html', subdir: 'report-html' },
+                { type: 'text-summary', subdir: '.', file: 'text-summary.txt' }
             ]
         },
 

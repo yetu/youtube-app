@@ -30,7 +30,7 @@ body.tvmode {
   color: #333;
   width: 96%;
   height: auto;
-  margin: 25px auto;
+  margin: 25px 2% 25px 2%;
   font-family: source_sans_prolight;
   font-size: 14px;
   font-weight: normal;
@@ -97,13 +97,14 @@ body.tvmode {
   list-style: none;
   list-style-position: outside;
   padding: 0;
-  display: block;
 }
 .ui-video-list-item {
   position: relative;
   padding: 0;
   background-color: #f4f4f4;
+  width: 23%;
   float: left;
+  margin: 0 0 1% 1%;
 }
 .ui-video-list-item .img {
   position: relative;
@@ -136,7 +137,6 @@ body.tvmode {
   top: 10px;
   height: 50px;
   opacity: 0.8;
-  -webkit-transform: scaleX(-1);
   -webkit-transform: scaleX(-1);
   -ms-transform: scaleX(-1);
   transform: scaleX(-1);
@@ -174,6 +174,17 @@ body.tvmode {
   top: 5px;
   width: 50px;
 }
+.ui-video-list.list .ui-video-list-item {
+  width: 100%;
+}
+.ui-video-list.list .ui-video-list-item .img {
+  width: 40%;
+  float: left;
+  margin-right: 5px;
+}
+.ui-video-list.list .ui-video-list-item .img img {
+  min-height: initial;
+}
 .yt-result-set .result {
   clear: both;
 }
@@ -181,25 +192,58 @@ body.tvmode {
   margin-bottom: 0;
 }
 .yt-viewer {
-  width: 800px;
+  width: 1200px;
+  margin: 10px auto;
 }
 .yt-viewer .video {
+  width: 1200px;
   float: left;
 }
-.yt-player {
+.yt-viewer .buttons {
+  position: relative;
+  padding: 5px;
+}
+.yt-viewer .buttons .toggle-playlist {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+.yt-viewer.playlist-visible .video {
   width: 800px;
+}
+.yt-player {
+  width: 100%;
   height: 600px;
   border: solid #f00 2px;
 }
 .yt-video-description {
-  width: 800px;
-  height: 300px;
+  width: 100%;
+  height: 200px;
   border: solid #ffa500 2px;
+  padding: 10px;
 }
-.yt-playlist {
-  width: 300px;
+.yt-video-description .metadata {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: solid #808080 1px;
+}
+.yt-video-description .metadata div {
+  float: left;
+  width: 200px;
+}
+.yt-video-description .metadata div.row {
+  clear: both;
+}
+.yt-viewer .playlist {
+  width: 380px;
   height: 900px;
   border: solid #000 2px;
+  float: right;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.yt-viewer .playlist .app-send-to-tv {
+  display: none;
 }
 .yt-controls {
   display: none;
@@ -223,7 +267,7 @@ body.tvmode {
   display: block;
 }
 .tvmode .yt-video-description,
-.tvmode .yt-playlist {
+.tvmode .playlist {
   display: none;
 }
 button.app-send-to-tv {
@@ -240,197 +284,4 @@ button.app-send-to-tv {
 button.app-send-to-tv:hover {
   cursor: pointer;
   background: #333;
-}
-@media (min-width: 320px) {
-  .container,
-  .ui-video-list-item {
-    width: 300px;
-    height: auto;
-    position: relative;
-  }
-  .ui-video-list-item {
-    margin: 0 0 30px 0;
-  }
-  .yt-viewer,
-  .yt-player,
-  .yt-video-description,
-  .yt-playlist {
-    width: 100%;
-  }
-  .yt-viewer .video {
-    float: none;
-  }
-  .yt-player {
-    height: 225px;
-  }
-}
-@media (min-width: 480px) {
-  .container {
-    width: 460px;
-  }
-  .ui-video-list-item {
-    width: 215px;
-    margin: 0 0 30px 30px;
-  }
-  .ui-video-list-item:nth-child(odd) {
-    margin-left: 0;
-  }
-  .yt-playlist .ui-video-list-item {
-    width: 100%;
-  }
-  .yt-player {
-    height: 345px;
-  }
-}
-@media (min-width: 640px) {
-  .container {
-    width: 620px;
-  }
-  .ui-video-list-item {
-    width: 290px;
-    margin: 0 0 30px 30px;
-  }
-  .yt-player .ui-video-list-item {
-    width: 100%;
-  }
-}
-@media (min-width: 768px) {
-  .container {
-    width: 750px;
-  }
-  .ui-video-list-item {
-    width: 360px;
-    margin: 0 0 30px 30px;
-  }
-  .ui-video-list-item:nth-child(odd) {
-    margin-left: 0;
-  }
-  .yt-viewer .video {
-    width: 580px;
-  }
-  .yt-viewer .ui-video-list-item {
-    width: 100%;
-  }
-  .yt-player {
-    width: 100%;
-    height: 435px;
-    -webkit-transition: all 0.5s;
-    transition: all 0.5s;
-  }
-  .yt-video-description {
-    width: 100%;
-    height: 565px;
-  }
-  .yt-playlist {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 150px;
-    height: 900px;
-    -webkit-transition: width 0.5s;
-    transition: width 0.5s;
-  }
-  .yt-viewer.playlist-hidden .video {
-    width: 100%;
-  }
-  .yt-viewer.playlist-hidden .video .yt-player {
-    height: 563px;
-    -webkit-transition: all 0.5s;
-    transition: all 0.5s;
-  }
-  .yt-viewer.playlist-hidden .yt-playlist {
-    width: 0px;
-    -webkit-transition: width 0.5s;
-    transition: width 0.5s;
-  }
-  .yt-viewer.playlist-hidden .yt-playlist span {
-    display: none;
-  }
-}
-@media (min-width: 992px) {
-  .container {
-    width: 960px;
-  }
-  .ui-video-list-item {
-    width: 300px;
-    margin-left: 30px;
-  }
-  .ui-video-list-item:nth-child(odd) {
-    margin-left: 30px;
-  }
-  .ui-video-list-item:nth-child(3n+1) {
-    margin-left: 0;
-  }
-  .yt-viewer .video {
-    width: 580px;
-  }
-  .yt-viewer .ui-video-list-item {
-    width: 100%;
-  }
-  .yt-player {
-    width: 100%;
-    height: 435px;
-  }
-  .yt-video-description {
-    width: 100%;
-    height: 565px;
-  }
-  .yt-playlist {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 150px;
-  }
-  .yt-viewer.playlist-hidden .video {
-    width: 100%;
-    -webkit-transition: all 0.5s;
-    transition: all 0.5s;
-  }
-  .yt-viewer.playlist-hidden .yt-playlist {
-    width: 0px;
-    -webkit-transition: width 0.5s;
-    transition: width 0.5s;
-  }
-  .yt-viewer.playlist-hidden .yt-playlist span {
-    display: none;
-  }
-}
-@media (min-width: 1200px) {
-  .container {
-    width: 1170px;
-  }
-  .ui-video-list-item {
-    width: 270px;
-    margin-left: 30px;
-  }
-  .ui-video-list-item:first-child {
-    margin-left: 0;
-  }
-  .ui-video-list-item:nth-child(4n) {
-    margin-left: 30px;
-  }
-}
-@media (min-width: 1400px) {
-  .container {
-    width: 1370px;
-  }
-  .ui-video-list-item {
-    width: 320px;
-  }
-}
-@media (min-width: 1600px) {
-  .container {
-    width: 1570px;
-  }
-  .ui-video-list-item {
-    width: 370px;
-  }
-}
-@media (min-width: 1800px) {
-  .container {
-    width: 1770px;
-  }
-  .ui-video-list-item {
-    width: 420px;
-  }
 }
