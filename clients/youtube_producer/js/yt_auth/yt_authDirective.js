@@ -30,11 +30,11 @@ module.exports = function ($window, $http, $interval, $log) {
                     event = event.originalEvent;
                 }
                 if (event.origin !== config.authServer) {
-                    $log.log('event.origin domain [' + event.origin + '] does not match the configured domain [' + config.authServer + ']');
+                    // $log.log('event.origin domain [' + event.origin + '] does not match the configured domain [' + config.authServer + ']');
                     return;
                 }
                 var stat = event.data;
-                $log.log('poller | received message:' + stat);
+                // $log.log('poller | received message:' + stat);
                 if (stat === 'invalid') {
                     $log.log('session=invalid! Logging out and redirecting');
                     clearInterval(timerID);
