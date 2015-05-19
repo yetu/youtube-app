@@ -15,7 +15,7 @@ module.exports = function (appMode) {
                 scope.video = scope.playlist.items[index];
             };
 
-            scope.playlistVisible = appMode.getView() !== 'expand';
+            scope.playlistVisible = appMode.getView() === 'normal';
 		}
 	};
 };

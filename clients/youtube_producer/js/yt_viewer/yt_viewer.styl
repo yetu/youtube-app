@@ -74,9 +74,16 @@
 
   .yt-viewer, .video, .yt-player {
     height: 100%;
-    width: 100%;
+    width: 100% !important;
     position: relative;
   }
+
+    .yt-viewer {
+        h2,
+        .buttons {
+            display:none;
+        }
+    }
 
   .yt-player {
     position: absolute;
@@ -91,6 +98,7 @@
     display: block;
   }
 
+  app-search,
   .yt-video-description,
   .playlist {
      display: none;
