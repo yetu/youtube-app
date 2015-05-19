@@ -39,6 +39,12 @@ module.exports = function (config) {
             'test/ng-karma-config.js'
         ],
 
+        proxies: {
+            '/some.img': 'test/fixtures/fake.img',
+            '/other.img': 'test/fixtures/fake.img',
+            '/assets/youtube_producer/img/play-icon.svg': 'test/fixtures/fake.img',
+        },
+
         // Files to browserify
         browserify: {
             files: [
@@ -55,7 +61,6 @@ module.exports = function (config) {
             type : 'html',
             dir : 'test/jasmine.coverage/',
             subdir: function(browser) {
-                console.log(browser);
                 return browser.toLowerCase().split(/[ /-]/)[0];
             },
             reporters:[

@@ -1,0 +1,36 @@
+{
+ "kind": "youtube#playlistItemListResponse",
+ "etag": "some-etag-search",
+ "nextPageToken": "CBQQAA",
+ "pageInfo": {
+  "totalResults": 500,
+  "resultsPerPage": 20
+ },
+ "items": [
+  {
+   "kind": "youtube#playlistItem",
+   "etag": "",
+   "id": "PL5U0JwZScvKDwLP0s8FjWPhxIC-wPRv8mX1LahC05aEw",
+   "snippet": {
+    "publishedAt": "2015-05-17T06:32:10.000Z",
+    "channelId": "UCE80FOXpJydkkMo-BYoJdEg",
+    "title": "Wiz Khalifa - See You Again",
+    "description": "See Wiz on tour this summer",
+    "thumbnails": {
+     "medium": {
+      "url": "https://i.ytimg.com/vi/first-video-id/mqdefault.jpg",
+      "width": 320,
+      "height": 180
+     }
+    },
+    "channelTitle": "#PopMusic",
+    "playlistId": "PLDcnymzs18LVXfO_x0Ei0R24qDbVtyy66",
+    "position": 0,
+    "resourceId": {
+     "kind": "youtube#video",
+     "videoId": "first-video-id"
+    }
+   }
+  }
+ ]
+}

@@ -16,7 +16,7 @@ gulp.task('tdd', function () {
 gulp.task('coverage', function () {
 	var options = {
 		configFile: path.join(cfg.tests.configDir, 'ng-karma-config.js'),
-		singleRun: false,
+		singleRun: true,
         reporters: ['progress', 'coverage']
 	};
 

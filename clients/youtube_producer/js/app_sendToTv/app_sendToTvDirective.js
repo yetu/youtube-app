@@ -5,9 +5,7 @@ module.exports = function () {
 		template: require('./app_sendToTvTemplate.html'),
         scope: {
             class: '@class',
-            type: '@dataType',
-            id: '@id',
-            title: '@dataTitle'
+            data: '=ngModel'
         },
 		link: function(scope, element){
             scope.onSendButtonClick = function(e){

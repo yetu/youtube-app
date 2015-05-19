@@ -1,0 +1,16 @@
+{
+ "kind": "youtube#videoCategoryListResponse",
+ "etag": "NO6QTeg0-3ShswIeqLchQ_mzWJs/1v2mrzYSYG6onNLt2qTj13hkQZk",
+ "items": [
+  {
+   "kind": "youtube#videoCategory",
+   "etag": "NO6QTeg0-3ShswIeqLchQ_mzWJs/Xy1mB4_yLrHy_BmKmPBggty2mZQ",
+   "id": "1",
+   "snippet": {
+    "channelId": "UCBR8-60-B28hp2BmDPdntcQ",
+    "title": "Film & Animation",
+    "assignable": true
+   }
+  }
+ ]
+}

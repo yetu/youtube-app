@@ -1,0 +1,53 @@
+{
+ "kind": "youtube#searchListResponse",
+ "etag": "some-etag-search",
+ "nextPageToken": "CAgQAA",
+ "pageInfo": {
+  "totalResults": 3,
+  "resultsPerPage": 3
+ },
+ "items": [
+  {
+   "kind": "youtube#searchResult",
+   "etag": "tbWC5XrSXxe1WOAx6MK9z4hHSU8/JIWrEc_FN3sqvYs2xr8dN6sHXyw",
+   "id": {
+    "kind": "youtube#video",
+    "videoId": "rel-video-1"
+   },
+   "snippet": {
+    "publishedAt": "2014-02-05T10:05:04.000Z",
+    "channelId": "UCdQnjeuggsBIqkqnhIwdxSA",
+    "title": "4 hours Peaceful & Relaxing Instrumental Music-Long Playlist",
+    "description": "4 hours of soothing background music for rest & relaxation. Follow on Instagram: ...",
+    "thumbnails": {
+     "medium": {
+      "url": "https://i.ytimg.com/vi/first-video-id/mqdefault.jpg"
+     }
+    },
+    "channelTitle": "utopiansounds",
+    "liveBroadcastContent": "none"
+   }
+  },
+  {
+   "kind": "youtube#searchResult",
+   "etag": "tbWC5XrSXxe1WOAx6MK9z4hHSU8/JIWrEc_FN3sqvYs2xr8dN6sHXyw",
+   "id": {
+    "kind": "youtube#video",
+    "videoId": "rel-video-2"
+   },
+   "snippet": {
+    "publishedAt": "2014-02-05T10:05:04.000Z",
+    "channelId": "UCdQnjeuggsBIqkqnhIwdxSA",
+    "title": "4 hours Peaceful & Relaxing Instrumental Music-Long Playlist",
+    "description": "4 hours of soothing background music for rest & relaxation. Follow on Instagram: ...",
+    "thumbnails": {
+     "medium": {
+      "url": "https://i.ytimg.com/vi/first-video-id/mqdefault.jpg"
+     }
+    },
+    "channelTitle": "utopiansounds",
+    "liveBroadcastContent": "none"
+   }
+  }
+ ]
+}

@@ -1,23 +1,25 @@
 <div class="img">
-    <img ng-if="item.img" src="{{item.img}}"/>
-    <a class="playimg" ng-href="#/view/expand/{{item.type}}/{{item.id}}"> <!-- TODO: replace href with {{ link | replaceParams }} -->
-        <img data-index="{{$index}}" data-id="{{item.playlistId}}" src="assets/youtube_producer/img/play-icon.svg" />
+    <img ng-if="item.img" ng-src="{{::item.img}}"/>
+    <a ng-if="playLink" class="playimg" ng-href="#/view/expand/{{::item.type}}/{{::item.id}}"> <!-- TODO: replace href with {{ playLink | replaceParams }} -->
+        <img src="assets/youtube_producer/img/play-icon.svg" />
     </a>
-    <div ng-if="item.type == 'video'" class="duration"><span>{{ item.duration | duration }}</span></div>
-    <div ng-if="item.type == 'playlist'" class="items"><span>{{ item.totalItems}}</span></div>
+    <a ng-if="playFn" class="playimg" ng-click="playFunction($index)">
+      <img src="assets/youtube_producer/img/play-icon.svg" />
+    </a>
+    <div ng-if="item.type == 'video'" class="duration"><span>{{ item.duration | duration }}</span></div><!-- TODO: one-time binding with filter? -->
+    <div ng-if="item.type == 'playlist'" class="items"><span>{{ ::item.totalItems }}</span></div>
 </div>
 <div class="metadata">
-    <p class="title">{{item.title}}</p>
+    <p class="title">{{::item.title}}</p>
     <p class="subtitle" ng-if="item.channel">
-        <span>by {{item.channel}}</span><br />
-        <span>{{ item.description.createDate | timeAgo }}</span>
+        <span>by {{::item.channel}}</span><br />
+        <span>{{ ::item.created | timeAgo }}</span>
     </p>
-    <p class="description" data-type="description" cw-reveal-label ng-if="item.description.text">
-        {{item.description.text}}
+    <p class="description" data-type="description" cw-reveal-label ng-if="item.description">
+        {{::item.description}}
     </p>
-    <p class="description" ng-if="!item.description.text">No description available.</p>
+    <p class="description" ng-if="!item.description">No description available.</p>
 </div>
 <div class="buttons">
-    <app-send-to-tv id="{{ item.id}}" data-type="{{ item.type}}" data-title="{{ item.title}}"></app-send-to-tv>
+      <app-send-to-tv ng-model="::item"></app-send-to-tv>
 </div>
-<!-- TODO: <ng-transclude></ng-transclude> for send2tv component? -->

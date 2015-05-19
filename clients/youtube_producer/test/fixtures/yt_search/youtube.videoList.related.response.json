@@ -9,19 +9,29 @@
   {
    "kind": "youtube#video",
    "etag": "some-etag-video-list",
-   "id": "first-video-id",
+   "id": "rel-video-1",
    "snippet": {
     "categoryId": "1"
    },
+   "contentDetails": {
+    "duration": "PT4H44S"
+   },
    "statistics": {
     "viewCount": "111"
+   }
+  },
+  {
+   "kind": "youtube#video",
+   "etag": "some-etag-video-list",
+   "id": "rel-video-2",
+   "snippet": {
+    "categoryId": "1"
    },
    "contentDetails": {
-    "duration": "PT4H44S",
-    "dimension": "2d",
-    "definition": "hd",
-    "caption": "false",
-    "licensedContent": false
+    "duration": "PT5H55S"
+   },
+   "statistics": {
+    "viewCount": "222"
    }
   }
  ]
