@@ -1,4 +1,7 @@
 /* global module */
+/*
+ * Dashbord controller
+ */
 module.exports = (function($scope, ytYoutubeService, $routeParams, $location, appMode, $rootScope) {
     // dummy init list
     var dummyItem = [];
@@ -24,7 +27,6 @@ module.exports = (function($scope, ytYoutubeService, $routeParams, $location, ap
         }
         ytYoutubeService.getResult('search', query).then(function(data) {
             $scope.mainResultList = [data];
-            $scope.searchValue = $routeParams.param; // temporary as search inside
         });
         /* TODO: make path replace without reload
         var action = '#/dashboard/search/' + query;

@@ -1,4 +1,7 @@
 /* global module */
+/*
+ * Viewer controller
+ */
 module.exports = (function($scope, ytYoutubeService, appMode, $routeParams) {
 
     ytYoutubeService.getDetails($routeParams.type, $routeParams.id).then(function(data) {
