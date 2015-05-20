@@ -1,19 +1,18 @@
 'use strict';
 
 describe('Service: yt_youtubeService', function () {
-    var $httpBackend,
-        $rootScope,
-        service;
+    var $httpBackend, $rootScope, service, localStorageService;
 
     beforeEach(module('youtubeApp'));
 
-    beforeEach(inject(function(_$httpBackend_, _$rootScope_, ytYoutubeService){
+    beforeEach(inject(function(_$httpBackend_, _$rootScope_, ytYoutubeService, _localStorageService_){
         $httpBackend = _$httpBackend_;
         $rootScope = _$rootScope_;
         service = ytYoutubeService;
+        localStorageService = _localStorageService_;
     }));
     
-    it('should return category valid if initialized and exists', function() {
+    it('should initialize categories', function() {
         var respond = {
                 categories: __fixtures__['yt_search/youtube.videoCategories.response'],
             },
@@ -21,30 +20,20 @@ describe('Service: yt_youtubeService', function () {
                 categories: 'https://www.googleapis.com/youtube/v3/videoCategories?part=snippet&regionCode=GB',
                 category: {title: 'Film & Animation'}
             };
-
+        spyOn(localStorageService, 'get').and.returnValue(null);
         $httpBackend.expectGET(expected.categories).respond(200, respond.categories);
-        service.initialize().then(function() {
-            var cat = service.getCategory(1);
-            expect(cat).toEqual(expected.category);
-        });
+        service.initialize();
         $httpBackend.flush();
     });
 
     it('should return empty objects if initialized and doesnt exist', function() {
-        var respond = {
-                categories: __fixtures__['yt_search/youtube.videoCategories.response'],
-            },
-            expected = {
-                categories: 'https://www.googleapis.com/youtube/v3/videoCategories?part=snippet&regionCode=GB',
-                category: {}
-            };
-
-        $httpBackend.expectGET(expected.categories).respond(200, respond.categories);
-        service.initialize().then(function() {
-            var cat = service.getCategory(2);
-            expect(cat).toEqual(expected.category);
-        });
-        $httpBackend.flush();
+        var setCategory = {'1': 'some'},
+            expectedCategory = {},
+            cat;
+        spyOn(localStorageService, 'get').and.returnValue(setCategory);
+        service.initialize();
+        cat = service.getCategory(2);
+        expect(cat).toEqual(expectedCategory);
     });
 
     it('should report error if category requested before initialization', function() {
@@ -62,7 +51,7 @@ describe('Service: yt_youtubeService', function () {
             expected = {
                 search: 'https://www.googleapis.com/youtube/v3/search?maxResults=8&part=snippet&q=yetu&regionCode=GB&relevanceLanguage=en&type=playlist,video',
                 playlist: 'https://www.googleapis.com/youtube/v3/playlists?id=playlist-1,playlist-2&maxResults=2&part=snippet,contentDetails',
-                video: 'https://www.googleapis.com/youtube/v3/videos?id=first-video-id&maxResults=1&part=snippet,contentDetails,statistics',
+                video: 'https://www.googleapis.com/youtube/v3/videos?id=first-video-id&maxResults=1&part=contentDetails',
                 item00: {
                     type: 'playlist', id: 'playlist-1', title: 'Billboard Top Songs 2015', img: 'https://i.ytimg.com/vi/RgKAFK5djSk/mqdefault.jpg',
                     channel: '', created: '2011-02-25T17:10:00.000Z', description: 'Billboard Top Songs 2015.', views: null}
@@ -156,6 +145,7 @@ describe('Service: yt_youtubeService', function () {
     it('should report error if initialize request failed', function() {
         var respond = { error: 'Some error'};
         spyOn(console, 'error');
+        spyOn(localStorageService, 'get').and.returnValue(null);
 
         $httpBackend.whenGET(/.+/).respond(500, respond);
         service.initialize();
