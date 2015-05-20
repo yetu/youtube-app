@@ -26,6 +26,13 @@ youtubeApp.config(function ($routeProvider, $translateProvider, $httpProvider, $
 
 	// $locationProvider.html5Mode(true);
 
+    var resolve = {
+        // needed to init categories first for detailed views
+        YouTubeCategories: function(ytYoutubeService) {
+            return ytYoutubeService.initialize();
+        }
+    };
+
 	$routeProvider
 		.when('/dashboard/:action?/:param?', {
             controller: 'DashboardCtrl',
@@ -34,12 +41,7 @@ youtubeApp.config(function ($routeProvider, $translateProvider, $httpProvider, $
         .when('/view/:mode/:type/:id/:device?', {
             controller: 'ViewerCtrl',
 			template: require('./viewerTemplate.html'),
-            resolve: {
-                // needed to init categories first for detailed views
-                YouTubeCategories: function(ytYoutubeService) {
-                    return ytYoutubeService.initialize();
-                }
-            }
+            resolve: resolve
 		})
 		.otherwise({
 			redirectTo: '/dashboard'
@@ -53,10 +55,9 @@ youtubeApp.config(function ($routeProvider, $translateProvider, $httpProvider, $
     $translateProvider.preferredLanguage('en');
 });
 
-youtubeApp.run(function($location, $translate, $rootScope, appMode){
+youtubeApp.run(function($location, $translate){
     var params = $location.search();
     if(params.lang){
         $translate.use(params.lang);
     }
-    $rootScope.appMode = appMode;
 });
