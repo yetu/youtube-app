@@ -2,6 +2,7 @@ var youtubeApp = angular.module('youtubeApp',
 	[
 		'ngRoute',
 		'ngResource',
+        'ngCookies',
 		'pascalprecht.translate',
 		'reactTo',
         // app modules
