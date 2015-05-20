@@ -15,6 +15,7 @@
     "stringjs": "~1.8.0",
     "yetu-tv-message-client": "https://github.com/yetu/yetu-tv-message-client.git#v1.0.3",
     "angular-timeago": "~0.1.10",
-    "angular-cookies": "~1.3.15"
+    "angular-cookies": "~1.3.15",
+    "angular-local-storage": "~0.2.1"
   }
 }
