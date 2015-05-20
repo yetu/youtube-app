@@ -1,21 +1,24 @@
 .ui-video-list {
+    display: block;
+    width: 100%;
+    height: auto;
+    position: relative;
     list-style: none;
     list-style-position: outside;
     padding: 0;
-    display: block;
-    clearfix();
+    
 }
 
 .ui-video-list-item {
     position: relative;
-    padding: 0;
-    background-color: ui-video-list-item-bgc;
+    background-color: bg-video-list-item;
     float: left;
-
+    overflow: hidden;
+    padding-bottom: 10px;
+    
     .img {
         position: relative;
-        width: 90%;
-        margin: 5px auto 5px auto;
+        margin: 10px 10px 0px;
         display: block;
         min-height: 150px;
 
@@ -27,14 +30,19 @@
         .duration,
         .items {
             position: absolute;
-            bottom: 5px;
-            right: 0px;
-            width: 60px;
-            height: 30px;
+            right: 0;
+            bottom: 6px;
+            width: 40px;
+            height: 20px;
             background-color: #000;
             color: #fff;
-            font-size: 18px;
-            padding: 2px;
+            font-size: 13px;
+            span {
+                display: block;
+                width: 100%;
+                text-align: center;
+                padding-top:2px;
+            }
         }
 
         .items span::before {
@@ -61,18 +69,27 @@
 
     .metadata {
         height: 150px;
-        padding: 5px 10px;
+        padding: 0 10px;
+        overflow: hidden;
 
         .title{
-            color: #C4110B;
+            color: color-title;
             padding: 0;
             margin: 0;
-            font-size: 24px;
-            font-weight: lighter;
-            font-family: source_sans_prolight;
+            font-size: 17px;
+            line-height: 100%;
+            font-weight: normal;
+            font-family: source_sans_proregular;
         }
 
         .subtitle {
+            .channel {
+                color: color-author;
+            }
+            .created {
+                color: color-created;
+            }
+            
             padding: 0;
             margin: 5px 0;
         }
@@ -84,10 +101,7 @@
     }
 
     .buttons {
-        position: absolute;
-        right: 10px;
-        top: 5px; 
-        width: 50px;
+        display:none;
     }
 }
 

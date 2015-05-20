@@ -6,8 +6,8 @@
     <div class="buttons">
         <app-send-to-tv ng-model="video"></app-send-to-tv>
         <button class="toggle-playlist" ng-click="playlistVisible = !playlistVisible">
-            <span ng-show="playlistVisible">{{ ::('Hide video list' | translate) }}</span>
-            <span ng-hide="playlistVisible">{{ ::('Show video list' | translate) }}</span>
+            <span class="label_hidePlaylist" ng-show="playlistVisible">{{ ::('Hide video list' | translate) }}<img ng-src="assets/youtube_producer/js/yt_viewer/assets/arrow.svg"></span>
+            <span class="label_showPlaylist" ng-hide="playlistVisible"><img ng-src="assets/youtube_producer/js/yt_viewer/assets/arrow.svg">{{ ::('Show video list' | translate) }}</span>
         </button>
     </div>
     <yt-video-description></yt-video-description>

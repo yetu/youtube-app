@@ -1,1 +1,4 @@
-<button class="{{ class || 'app-send-to-tv'}}" ng-click="onSendButtonClick($event)">->[]</button>
+<button class="{{ class || 'app-send-to-tv'}}" ng-click="onSendButtonClick($event)">
+    <span class="label_sendToTv"><img ng-src="assets/youtube_producer/js/app_sendToTv/assets/sendToTv.svg">Play on TV</span>
+    <span class="label_stopStreaming">Stop Streaming<img ng-src="assets/youtube_producer/js/app_sendToTv/assets/stop_streaming.svg"></span>
+</button>

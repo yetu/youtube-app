@@ -1,37 +1,48 @@
 html, body {
-  padding:0;
-  margin:0;
-  height: 100%;
-
-  &.tvmode {
-    border: solid green 1px;
-    width: 100%;
-    min-height: 100%;
+    padding:0;
+    margin:0;
     height: 100%;
-  }
+
+    &.tvmode {
+        border: solid green 1px;
+        width: 100%;
+        min-height: 100%;
+        height: 100%;
+    }
 }
 .container {
-  background: #fff;
-  color: #333;
-  width: 96%;
-  height: auto;
-  margin: 25px auto;
-  font-family: source_sans_prolight;
-  font-size: 14px;
-  font-weight: normal;
+    font-family: source_sans_prolight;
+    font-size: 14px;
+    font-weight: normal;
+    height: 100%;
+    background: bg-container;
+    color: #333;
+    margin: 0 auto;
+    padding: 0 30px;
+    clearfix();
+}
+
+h2 {
+    font-size: 25px;
+    line-height: 200%;
+    margin: 0;
 }
 
 .pcmode,
 .fullscreen {
-  .tp-header {
-    display:none;
-  }
+    .tp-header {
+        display:none;
+    }
 }
 
 .tvmode {
-  .container {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-  }
+    .container {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+    }
+}
+
+.clearfix {
+    clearfix();
 }

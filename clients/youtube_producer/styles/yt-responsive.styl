@@ -4,10 +4,14 @@
     .container, .yt-viewer, .yt-video-description {
         width: 300px;
     }
+    
     .container {
-        height: auto;
         position: relative;
-        margin: 10px auto;
+    }
+    
+    .app-search .query {
+        padding-left: 10px;
+        width: 290px;
     }
     
     .ui-video-list-item {
@@ -42,6 +46,11 @@
         width: 460px;
     }
     
+    .app-search .query {
+        padding-left: 10px;
+        width: 460px;
+    }
+    
     .ui-video-list-item {
         width: 215px;
         margin: 0 0 30px 30px;
@@ -52,6 +61,8 @@
             width: 100%;
         }
     }
+    
+    
     
     .yt-viewer {
         .video {
@@ -98,7 +109,7 @@
             width: 750px;
             transition(width 0.5s);
             .yt-player {
-                height: 562.5px;
+                //height: 562.5px;
                 transition(height 0.5s);
             }
             .yt-video-description {
@@ -123,7 +134,7 @@
                 width: 500px;
                 transition(width 0.5s);
                 .yt-player {
-                    height: 375px;
+                    //height: 375px;
                     transition(height 0.5s);
                 }
                 .yt-video-description {
@@ -164,7 +175,7 @@
         .video {
             width: 960px;
             .yt-player {
-                height: 720px;
+                //height: 720px;
             }
             .yt-video-description {
                 width: 960px;
@@ -175,7 +186,7 @@
             .video {
                 width: 640px;
                 .yt-player {
-                    height: 480px;
+                    //height: 480px;
                 }
                 .yt-video-description {
                     width: 640px;
@@ -213,7 +224,7 @@
         .video {
             width: 1170px;
             .yt-player {
-                height: 877.5px;
+                //height: 877.5px;
             }
             .yt-video-description {
                 width: 1170px;
@@ -224,7 +235,7 @@
             .video {
                 width: 780px;
                 .yt-player {
-                    height: 585px;
+                    //height: 585px;
                 }
                 .yt-video-description {
                     width: 780px;
@@ -255,7 +266,7 @@
         .video {
             width: 1350px;
             .yt-player {
-                height: 1012.5px;
+                //height: 1012.5px;
             }
             .yt-video-description {
                 width: 1350px;
@@ -266,7 +277,7 @@
             .video {
                 width: 900px;
                 .yt-player {
-                    height: 675px;
+                   // height: 675px;
                 }
                 .yt-video-description {
                     width: 900px;
@@ -283,21 +294,22 @@
 @media (min-width: 1600px) {
     .container {
         width: 1530px;
+        padding: 0 30px;
     }
     
     .ui-video-list-item {
-        width: 360px;
+        width: 345px;
     }
     
     .yt-viewer, .video {
-        width: 1530px;
+        width: 1480px;
     }
     
     .yt-viewer {
         .video {
-            width: 1530px;
+            width: 1480px;
             .yt-player {
-                height: 1012.5px;
+                //min-height: 832.5px;
             }
             .yt-video-description {
                 width: 1530px;
@@ -308,7 +320,7 @@
             .video {
                 width: 1020px;
                 .yt-player {
-                    height: 765px;
+                    //height: 765px;
                 }
                 .yt-video-description {
                     width: 1020px;
@@ -324,41 +336,55 @@
 
 @media (min-width: 1800px) {
     .container {
-        width: 1710px;
+        width: 1050px;
+    }
+    
+    .app-search {
+        .query {
+            padding-left: 20px;
+            width: 1030px;
+        }
+        button.search {
+            margin-right: 20px;
+        }
     }
     
     .ui-video-list-item {
-        width: 405px;
+        width: 240px;
+        height: 260px;
     }
     
     .yt-viewer, .video {
-        width: 1710px;
+        width: 1050px;
     }
     
     .yt-viewer {
         .video {
-            width: 1710px;
+            width: 930px;
+            margin: 60px 60px 0;
             .yt-player {
-                height: 1282.5px;
+                min-height: 524px;
             }
             .yt-video-description {
-                width: 1710px;
+                width: 930px;
             }
         }
         
         &.playlist-visible {
             .video {
-                width: 1140px;
+                width: 620px;
+                margin-right:0;
                 .yt-player {
-                    height: 855px;
+                    min-height: 349px;
                 }
                 .yt-video-description {
-                    width: 1140px;
+                    width: 620px;
                 }
             }
             
             .playlist {
-                width: 540px;
+                width: 280px;
+                margin-right: 60px;
             }
         }
     }

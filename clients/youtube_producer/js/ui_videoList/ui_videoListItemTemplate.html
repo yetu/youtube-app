@@ -12,8 +12,8 @@
 <div class="metadata">
     <p class="title">{{::item.title}}</p>
     <p class="subtitle" ng-if="item.channel">
-        <span>by {{::item.channel}}</span><br />
-        <span>{{ ::item.created | timeAgo }}</span>
+        <span class="channel">by {{::item.channel}}</span><br />
+        <span class="created">{{ ::item.created | timeAgo }}</span>
     </p>
     <p class="description" data-type="description" cw-reveal-label ng-if="item.description">
         {{::item.description}}

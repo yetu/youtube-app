@@ -1,7 +1,7 @@
 <div class="{{ class || 'yt-result-set' }}">
   <div ng-repeat="videoList in resultLists" class="result">
     <h2>{{ videoList.title }}</h2>
-    <ui-video-list ng-model="videoList.items" play-link="{{ playLink }}" type="{{ listType }}"></ui-video-list>
+    <ui-video-list class="{{ class || 'ui-video-list'}} {{ displayType }} clearfix" ng-model="videoList.items" play-link="{{ playLink }}" type="{{ listType }}"></ui-video-list>
     <!-- TODO: prev/next links based on attributes in videoList -->
   </div>
 </div>
