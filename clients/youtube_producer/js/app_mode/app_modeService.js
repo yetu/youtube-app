@@ -50,7 +50,7 @@ module.exports = (function ($routeParams, $rootScope) {
      */
     var _detect = function() {
         // temporary use link option
-        _mode = $routeParams.device ? $routeParams.device : 'pc';
+        _mode = $routeParams.device ? $routeParams.device.replace(/&.+/gi, '') : 'pc';
 
         // set global application class directly
         $rootScope.appModeClass = getClass();
