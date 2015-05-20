@@ -1,32 +1,44 @@
 
 @media (min-width: 320px) {
-    .container, .ui-video-list-item  {
+    
+    .container, .yt-viewer, .yt-video-description {
         width: 300px;
+    }
+    .container {
         height: auto;
         position: relative;
+        margin: 10px auto;
     }
     
     .ui-video-list-item {
+        width: 300px;
         margin: 0 0 30px 0;
     }
     
-    .yt-viewer, .yt-player, .yt-video-description, .yt-playlist {
-        width: 100%;
-    }
-    
     .yt-viewer {
-        .video {
-            float: none;
+        .buttons {
+            .toggle-playlist {
+                display: none;
+            }
         }
-    }
-    
-    .yt-player {
-        height: 225px;
+        
+        .playlist {
+            width: 100%;
+            .ui-video-list-item {
+                margin: 0;
+            }
+        }
+        .video {
+            .yt-player {
+                width:100%;
+                height: 225px;
+            }
+        }
     }
 }
 
 @media (min-width: 480px) {
-    .container {
+    .container, .yt-viewer, .yt-video-description {
         width: 460px;
     }
     
@@ -41,13 +53,17 @@
         }
     }
     
-    .yt-player {
-        height: 345px;
+    .yt-viewer {
+        .video {
+            .yt-player {
+                height: 345px;
+            }
+        }
     }
 }
 
 @media (min-width: 640px) {
-    .container {
+    .container, .yt-viewer, .yt-player, .yt-video-description {
         width: 620px;
     }
     
@@ -73,55 +89,55 @@
         }
     }
     
-    .yt-viewer {
-        .video {
-            width: 580px;
-        }
-        .ui-video-list-item {
-            width: 100%;
-        }
-    }
-
-    .yt-player {
-        width: 100%;
-        height: 435px;
-        transition(all 0.5s);
-    }
-
-    .yt-video-description {
-        width: 100%;
-        height: 565px;
-    }
-
-    .yt-playlist {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 150px;
-        height: 900px;
-        transition(width 0.5s);        
+    .yt-viewer, .video {
+        width: 750px;
     }
     
     .yt-viewer {
-        &.playlist-hidden {
+        .video {
+            width: 750px;
+            transition(width 0.5s);
+            .yt-player {
+                height: 562.5px;
+                transition(height 0.5s);
+            }
+            .yt-video-description {
+                width: 750px;
+                transition(all 0.5s);
+            }
+            .buttons {
+                .toggle-playlist {
+                    display: block;
+                }
+            }
+        }
+        
+        .playlist {
+            float: right;
+            width: 0;
+            transition(width 0.5s);
+        }
+        
+        &.playlist-visible {
             .video {
-                width: 100%;
+                width: 500px;
+                transition(width 0.5s);
                 .yt-player {
-                    height: 563px;
+                    height: 375px;
+                    transition(height 0.5s);
+                }
+                .yt-video-description {
+                    width: 500px;
                     transition(all 0.5s);
                 }
             }
             
-            .yt-playlist {
-                span {
-                    display:none;
-                }
-                width: 0px;
+            .playlist {
+                width: 230px;
                 transition(width 0.5s);
             }
         }
     }
-    
 }
 
 @media (min-width: 992px){
@@ -140,49 +156,37 @@
         }
     }
     
+    .yt-viewer, .video {
+        width: 960px;
+    }
+    
     .yt-viewer {
         .video {
-            width: 580px;
+            width: 960px;
+            .yt-player {
+                height: 720px;
+            }
+            .yt-video-description {
+                width: 960px;
+            }
         }
-        .ui-video-list-item {
-            width: 100%;
-        }
-    }
-
-    .yt-player {
-        width: 100%;
-        height: 435px;
-    }
-
-    .yt-video-description {
-        width: 100%;
-        height: 565px;
-    }
-
-    .yt-playlist {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 150px;
-    }
-    
-    .yt-viewer {
-        &.playlist-hidden {
+        
+        &.playlist-visible {
             .video {
-                width: 100%;
-                transition(all 0.5s);
+                width: 640px;
+                .yt-player {
+                    height: 480px;
+                }
+                .yt-video-description {
+                    width: 640px;
+                }
             }
             
-            .yt-playlist {
-                span {
-                    display:none;
-                }
-                width: 0px;
-                transition(width 0.5s);
+            .playlist {
+                width: 290px;
             }
         }
     }
-    
 }
 
 @media (min-width: 1200px) {
@@ -193,42 +197,170 @@
     .ui-video-list-item {
         width: 270px;
         margin-left: 30px;
-        &:first-child {
+        &:nth-child(3n+1) {
+            margin-left: 30px;
+        }
+        &:nth-child(4n+1) {
             margin-left: 0;
         }
-        &:nth-child(4n) {
-            margin-left: 30px;
+    }
+    
+    .yt-viewer, .video {
+        width: 1170px;
+    }
+    
+    .yt-viewer {
+        .video {
+            width: 1170px;
+            .yt-player {
+                height: 877.5px;
+            }
+            .yt-video-description {
+                width: 1170px;
+            }
+        }
+        
+        &.playlist-visible {
+            .video {
+                width: 780px;
+                .yt-player {
+                    height: 585px;
+                }
+                .yt-video-description {
+                    width: 780px;
+                }
+            }
+            
+            .playlist {
+                width: 360px;
+            }
         }
     }
 }
 
 @media (min-width: 1400px) {
     .container {
-        width: 1370px;
+        width: 1350px;
     }
     
     .ui-video-list-item {
-        width: 320px;
+        width: 315px;
+    }
+    
+    .yt-viewer, .video {
+        width: 1350px;
+    }
+    
+    .yt-viewer {
+        .video {
+            width: 1350px;
+            .yt-player {
+                height: 1012.5px;
+            }
+            .yt-video-description {
+                width: 1350px;
+            }
+        }
+        
+        &.playlist-visible {
+            .video {
+                width: 900px;
+                .yt-player {
+                    height: 675px;
+                }
+                .yt-video-description {
+                    width: 900px;
+                }
+            }
+            
+            .playlist {
+                width: 420px;
+            }
+        }
     }
 }
 
 @media (min-width: 1600px) {
     .container {
-        width: 1570px;
+        width: 1530px;
     }
     
     .ui-video-list-item {
-        width: 370px;
+        width: 360px;
+    }
+    
+    .yt-viewer, .video {
+        width: 1530px;
+    }
+    
+    .yt-viewer {
+        .video {
+            width: 1530px;
+            .yt-player {
+                height: 1012.5px;
+            }
+            .yt-video-description {
+                width: 1530px;
+            }
+        }
+        
+        &.playlist-visible {
+            .video {
+                width: 1020px;
+                .yt-player {
+                    height: 765px;
+                }
+                .yt-video-description {
+                    width: 1020px;
+                }
+            }
+            
+            .playlist {
+                width: 480px;
+            }
+        }
     }
 }
 
 @media (min-width: 1800px) {
     .container {
-        width: 1770px;
+        width: 1710px;
     }
     
     .ui-video-list-item {
-        width: 420px;
+        width: 405px;
+    }
+    
+    .yt-viewer, .video {
+        width: 1710px;
+    }
+    
+    .yt-viewer {
+        .video {
+            width: 1710px;
+            .yt-player {
+                height: 1282.5px;
+            }
+            .yt-video-description {
+                width: 1710px;
+            }
+        }
+        
+        &.playlist-visible {
+            .video {
+                width: 1140px;
+                .yt-player {
+                    height: 855px;
+                }
+                .yt-video-description {
+                    width: 1140px;
+                }
+            }
+            
+            .playlist {
+                width: 540px;
+            }
+        }
     }
 }
 

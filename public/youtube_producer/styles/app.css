@@ -30,7 +30,7 @@ body.tvmode {
   color: #333;
   width: 96%;
   height: auto;
-  margin: 25px 2% 25px 2%;
+  margin: 25px auto;
   font-family: source_sans_prolight;
   font-size: 14px;
   font-weight: normal;
@@ -69,8 +69,7 @@ body.tvmode {
   font-family: source_sans_prolight;
   font-size: 24px;
   display: block;
-  width: 96%;
-  padding: 0 2%;
+  width: 100%;
   height: 50px;
   background-color: #f4f4f4;
   border: 0;
@@ -97,14 +96,13 @@ body.tvmode {
   list-style: none;
   list-style-position: outside;
   padding: 0;
+  display: block;
 }
 .ui-video-list-item {
   position: relative;
   padding: 0;
   background-color: #f4f4f4;
-  width: 23%;
   float: left;
-  margin: 0 0 1% 1%;
 }
 .ui-video-list-item .img {
   position: relative;
@@ -137,6 +135,7 @@ body.tvmode {
   top: 10px;
   height: 50px;
   opacity: 0.8;
+  -webkit-transform: scaleX(-1);
   -webkit-transform: scaleX(-1);
   -ms-transform: scaleX(-1);
   transform: scaleX(-1);
@@ -192,35 +191,22 @@ body.tvmode {
   margin-bottom: 0;
 }
 .yt-viewer {
-  width: 1200px;
   margin: 10px auto;
 }
 .yt-viewer .video {
-  width: 1200px;
   float: left;
 }
 .yt-viewer .buttons {
   position: relative;
-  padding: 5px;
+  margin: 5px auto;
 }
 .yt-viewer .buttons .toggle-playlist {
   position: absolute;
   right: 5px;
   top: 5px;
 }
-.yt-viewer.playlist-visible .video {
-  width: 800px;
-}
 .yt-player {
-  width: 100%;
   height: 600px;
-  border: solid #f00 2px;
-}
-.yt-video-description {
-  width: 100%;
-  height: 200px;
-  border: solid #ffa500 2px;
-  padding: 10px;
 }
 .yt-video-description .metadata {
   margin-top: 10px;
@@ -235,10 +221,7 @@ body.tvmode {
   clear: both;
 }
 .yt-viewer .playlist {
-  width: 380px;
   height: 900px;
-  border: solid #000 2px;
-  float: right;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -252,8 +235,12 @@ body.tvmode {
 .tvmode .video,
 .tvmode .yt-player {
   height: 100%;
-  width: 100%;
+  width: 100% !important;
   position: relative;
+}
+.tvmode .yt-viewer h2,
+.tvmode .yt-viewer .buttons {
+  display: none;
 }
 .tvmode .yt-player {
   position: absolute;
@@ -266,6 +253,7 @@ body.tvmode {
   border: solid #ffc0cb 2px;
   display: block;
 }
+.tvmode app-search,
 .tvmode .yt-video-description,
 .tvmode .playlist {
   display: none;
@@ -284,4 +272,307 @@ button.app-send-to-tv {
 button.app-send-to-tv:hover {
   cursor: pointer;
   background: #333;
+}
+@media (min-width: 320px) {
+  .container,
+  .yt-viewer,
+  .yt-video-description {
+    width: 300px;
+  }
+  .container {
+    height: auto;
+    position: relative;
+    margin: 10px auto;
+  }
+  .ui-video-list-item {
+    width: 300px;
+    margin: 0 0 30px 0;
+  }
+  .yt-viewer .buttons .toggle-playlist {
+    display: none;
+  }
+  .yt-viewer .playlist {
+    width: 100%;
+  }
+  .yt-viewer .playlist .ui-video-list-item {
+    margin: 0;
+  }
+  .yt-viewer .video .yt-player {
+    width: 100%;
+    height: 225px;
+  }
+}
+@media (min-width: 480px) {
+  .container,
+  .yt-viewer,
+  .yt-video-description {
+    width: 460px;
+  }
+  .ui-video-list-item {
+    width: 215px;
+    margin: 0 0 30px 30px;
+  }
+  .ui-video-list-item:nth-child(odd) {
+    margin-left: 0;
+  }
+  .yt-playlist .ui-video-list-item {
+    width: 100%;
+  }
+  .yt-viewer .video .yt-player {
+    height: 345px;
+  }
+}
+@media (min-width: 640px) {
+  .container,
+  .yt-viewer,
+  .yt-player,
+  .yt-video-description {
+    width: 620px;
+  }
+  .ui-video-list-item {
+    width: 290px;
+    margin: 0 0 30px 30px;
+  }
+  .yt-player .ui-video-list-item {
+    width: 100%;
+  }
+}
+@media (min-width: 768px) {
+  .container {
+    width: 750px;
+  }
+  .ui-video-list-item {
+    width: 360px;
+    margin: 0 0 30px 30px;
+  }
+  .ui-video-list-item:nth-child(odd) {
+    margin-left: 0;
+  }
+  .yt-viewer,
+  .video {
+    width: 750px;
+  }
+  .yt-viewer .video {
+    width: 750px;
+    -webkit-transition: width 0.5s;
+    transition: width 0.5s;
+  }
+  .yt-viewer .video .yt-player {
+    height: 562.5px;
+    -webkit-transition: height 0.5s;
+    transition: height 0.5s;
+  }
+  .yt-viewer .video .yt-video-description {
+    width: 750px;
+    -webkit-transition: all 0.5s;
+    transition: all 0.5s;
+  }
+  .yt-viewer .video .buttons .toggle-playlist {
+    display: block;
+  }
+  .yt-viewer .playlist {
+    float: right;
+    width: 0;
+    -webkit-transition: width 0.5s;
+    transition: width 0.5s;
+  }
+  .yt-viewer.playlist-visible .video {
+    width: 500px;
+    -webkit-transition: width 0.5s;
+    transition: width 0.5s;
+  }
+  .yt-viewer.playlist-visible .video .yt-player {
+    height: 375px;
+    -webkit-transition: height 0.5s;
+    transition: height 0.5s;
+  }
+  .yt-viewer.playlist-visible .video .yt-video-description {
+    width: 500px;
+    -webkit-transition: all 0.5s;
+    transition: all 0.5s;
+  }
+  .yt-viewer.playlist-visible .playlist {
+    width: 230px;
+    -webkit-transition: width 0.5s;
+    transition: width 0.5s;
+  }
+}
+@media (min-width: 992px) {
+  .container {
+    width: 960px;
+  }
+  .ui-video-list-item {
+    width: 300px;
+    margin-left: 30px;
+  }
+  .ui-video-list-item:nth-child(odd) {
+    margin-left: 30px;
+  }
+  .ui-video-list-item:nth-child(3n+1) {
+    margin-left: 0;
+  }
+  .yt-viewer,
+  .video {
+    width: 960px;
+  }
+  .yt-viewer .video {
+    width: 960px;
+  }
+  .yt-viewer .video .yt-player {
+    height: 720px;
+  }
+  .yt-viewer .video .yt-video-description {
+    width: 960px;
+  }
+  .yt-viewer.playlist-visible .video {
+    width: 640px;
+  }
+  .yt-viewer.playlist-visible .video .yt-player {
+    height: 480px;
+  }
+  .yt-viewer.playlist-visible .video .yt-video-description {
+    width: 640px;
+  }
+  .yt-viewer.playlist-visible .playlist {
+    width: 290px;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    width: 1170px;
+  }
+  .ui-video-list-item {
+    width: 270px;
+    margin-left: 30px;
+  }
+  .ui-video-list-item:nth-child(3n+1) {
+    margin-left: 30px;
+  }
+  .ui-video-list-item:nth-child(4n+1) {
+    margin-left: 0;
+  }
+  .yt-viewer,
+  .video {
+    width: 1170px;
+  }
+  .yt-viewer .video {
+    width: 1170px;
+  }
+  .yt-viewer .video .yt-player {
+    height: 877.5px;
+  }
+  .yt-viewer .video .yt-video-description {
+    width: 1170px;
+  }
+  .yt-viewer.playlist-visible .video {
+    width: 780px;
+  }
+  .yt-viewer.playlist-visible .video .yt-player {
+    height: 585px;
+  }
+  .yt-viewer.playlist-visible .video .yt-video-description {
+    width: 780px;
+  }
+  .yt-viewer.playlist-visible .playlist {
+    width: 360px;
+  }
+}
+@media (min-width: 1400px) {
+  .container {
+    width: 1350px;
+  }
+  .ui-video-list-item {
+    width: 315px;
+  }
+  .yt-viewer,
+  .video {
+    width: 1350px;
+  }
+  .yt-viewer .video {
+    width: 1350px;
+  }
+  .yt-viewer .video .yt-player {
+    height: 1012.5px;
+  }
+  .yt-viewer .video .yt-video-description {
+    width: 1350px;
+  }
+  .yt-viewer.playlist-visible .video {
+    width: 900px;
+  }
+  .yt-viewer.playlist-visible .video .yt-player {
+    height: 675px;
+  }
+  .yt-viewer.playlist-visible .video .yt-video-description {
+    width: 900px;
+  }
+  .yt-viewer.playlist-visible .playlist {
+    width: 420px;
+  }
+}
+@media (min-width: 1600px) {
+  .container {
+    width: 1530px;
+  }
+  .ui-video-list-item {
+    width: 360px;
+  }
+  .yt-viewer,
+  .video {
+    width: 1530px;
+  }
+  .yt-viewer .video {
+    width: 1530px;
+  }
+  .yt-viewer .video .yt-player {
+    height: 1012.5px;
+  }
+  .yt-viewer .video .yt-video-description {
+    width: 1530px;
+  }
+  .yt-viewer.playlist-visible .video {
+    width: 1020px;
+  }
+  .yt-viewer.playlist-visible .video .yt-player {
+    height: 765px;
+  }
+  .yt-viewer.playlist-visible .video .yt-video-description {
+    width: 1020px;
+  }
+  .yt-viewer.playlist-visible .playlist {
+    width: 480px;
+  }
+}
+@media (min-width: 1800px) {
+  .container {
+    width: 1710px;
+  }
+  .ui-video-list-item {
+    width: 405px;
+  }
+  .yt-viewer,
+  .video {
+    width: 1710px;
+  }
+  .yt-viewer .video {
+    width: 1710px;
+  }
+  .yt-viewer .video .yt-player {
+    height: 1282.5px;
+  }
+  .yt-viewer .video .yt-video-description {
+    width: 1710px;
+  }
+  .yt-viewer.playlist-visible .video {
+    width: 1140px;
+  }
+  .yt-viewer.playlist-visible .video .yt-player {
+    height: 855px;
+  }
+  .yt-viewer.playlist-visible .video .yt-video-description {
+    width: 1140px;
+  }
+  .yt-viewer.playlist-visible .playlist {
+    width: 540px;
+  }
 }
