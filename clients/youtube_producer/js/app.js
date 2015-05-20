@@ -53,9 +53,10 @@ youtubeApp.config(function ($routeProvider, $translateProvider, $httpProvider, $
     $translateProvider.preferredLanguage('en');
 });
 
-youtubeApp.run(function($location, $translate){
+youtubeApp.run(function($location, $translate, $rootScope, appMode){
     var params = $location.search();
     if(params.lang){
         $translate.use(params.lang);
     }
+    $rootScope.appMode = appMode;
 });
