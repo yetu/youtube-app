@@ -1,5 +1,4 @@
-
-module.exports = function () {
+module.exports = function (appSendToTvService) {
 	return {
 		restrict: 'E',
 		template: require('./app_sendToTvTemplate.html'),
@@ -7,9 +6,9 @@ module.exports = function () {
             class: '@class',
             data: '=ngModel'
         },
-		link: function(scope, element){
-            scope.onSendButtonClick = function(e){
-                alert('Not implemented yet');
+		link: function(scope){
+            scope.onSendButtonClick = function(scope){
+              appSendToTvService.sendToTv(scope.data);
 			};
 		}
 	};
