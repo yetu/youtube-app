@@ -1,11 +1,11 @@
 /* global angular, module, config */
-module.exports = (function ($http, $q, ytYoutubeServiceConfig) {
+module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageService) {
     'use strict';
     var settings = ytYoutubeServiceConfig,
-        searchValue,
-        categories = [];
+        _initialized = false,
+        categories = {};
 
-    var processResultList = function(type, data){
+    var processResultList = function(type, data, query){
         var list = [],
             playlists = [],
             playlists_map = [],
@@ -75,14 +75,21 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig) {
                 params: {
                     id: videos.join(','),
                     key: settings.developerToken,
-                    part: 'snippet,contentDetails,statistics', // needed for duration, categoyId and views
+                    // duration, categoyId and views for detailed views, duration only for search/categories
+                    part: 'search' === type || 'popular' === type ? 'contentDetails' : 'snippet,contentDetails,statistics',
                     maxResults: videos.length
                 }
             }).success(function(data){
                 data.items.forEach(function(item) {
-                    list[videos_map[item.id]].category = categories[item.snippet.categoryId] ? categories[item.snippet.categoryId].title : null;
-                    list[videos_map[item.id]].duration = item.contentDetails.duration;
-                    list[videos_map[item.id]].views = item.statistics.viewCount;
+                    if(item.snippet) {
+                        list[videos_map[item.id]].category = categories[item.snippet.categoryId] ? categories[item.snippet.categoryId].title : null;
+                    }
+                    if(item.contentDetails) {
+                        list[videos_map[item.id]].duration = item.contentDetails.duration;
+                    }
+                    if(item.statistics) {
+                        list[videos_map[item.id]].views = item.statistics.viewCount;
+                    }
                 });
             });
         }
@@ -98,7 +105,7 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig) {
         switch(type) {
             case 'search': {
                 meta.type = type;
-                meta.title = 'Results for "' + searchValue + '"';
+                meta.title = 'Results for "' + query + '"';
                 meta.items = list;
                 return meta;
             }
@@ -117,13 +124,19 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig) {
                 meta.items = list;
                 return meta;
             }
+            case 'popular': {
+                meta.type = type;
+                meta.title = getCategory(query).title;
+                meta.items = list;
+                return meta;
+            }
         }
     };
 
     /**
      *
-     * @param {String} type Query type: 'search'|'related'
-     * @param {String} query Query - searched phrase for search type, video id for related
+     * @param {String} type Query type: 'search'|'related'|'popular'
+     * @param {String} query Query - searched phrase for search type, video id for related, category id for popular
      * @param {Number} number Optional number of results
      * @returns {Promise} Then data -
      */
@@ -131,30 +144,40 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig) {
         var deferred = $q.defer(),
             params = {
                 maxResults: number || settings.search.maxResults,
-                relevanceLanguage: settings.relevanceLanguage,
                 regionCode: settings.regionCode,
                 part: settings.search.part,
                 key: settings.developerToken
-            };
+            },
+            url;
 
         switch(type) {
             case 'search': {
-                searchValue = query;
+                url = settings.search.url;
                 params.q = query;
                 params.type = settings.search.type;
+                params.relevanceLanguage = settings.relevanceLanguage;
                 break;
             }
             case 'related': {
+                url = settings.search.url;
+                params.relevanceLanguage = settings.relevanceLanguage;
                 params.relatedToVideoId = query;
                 params.type = 'video';
                 break;
             }
+            case 'popular': {
+                url = settings.video.url;
+                params.videoCategoryId = query;
+                params.chart = 'mostPopular';
+                params.type = settings.search.type;
+                break;
+            }
         }
 
-        $http.get(settings.search.url, {
+        $http.get(url, {
             params: params
         }).success(function(data){
-            deferred.resolve(processResultList(type, data));
+            deferred.resolve(processResultList(type, data, query));
         }).error(function(data){
             console.error("error happening on .getResult:", data);
             deferred.reject();
@@ -209,7 +232,7 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig) {
     };
 
     var getCategory = function(id) {
-        if(categories.length) {
+        if(_initialized) {
             return categories[id] ? categories[id] : {};
         } else {
             console.error('Categories unitialized - use initialize() first and then()');
@@ -217,7 +240,17 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig) {
     };
 
     var initialize = function() {
-        var promise = $http.get(settings.category.url, {
+        var promise, data;
+        
+        // check if already stored locally and return
+        data = localStorageService.get('youtube:categories:' + settings.regionCode);
+        if(data) {
+            categories = data;
+            _initialized = true;
+            return true;
+        }
+        // get and store otherwide
+        promise = $http.get(settings.category.url, {
             params: {
                 regionCode: settings.regionCode,
                 key: settings.developerToken,
@@ -230,6 +263,8 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig) {
                     title: item.snippet.title
                 };
             });
+            localStorageService.set('youtube:categories:' + settings.regionCode, categories);
+            _initialized = true;
         })
         .error(function(data){
             console.error("error happening on .initCategories:", data);

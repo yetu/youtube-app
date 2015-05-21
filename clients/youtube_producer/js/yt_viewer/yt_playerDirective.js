@@ -1,12 +1,12 @@
-module.exports = function(ytPlayerConfig, $window, $rootScope, $interval, appMode) {
-	'use strict';
-	return {
-		restrict: 'E',
-		template: require('./yt_playerTemplate.html'),
+module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
+    'use strict';
+    return {
+        restrict: 'E',
+        template: require('./yt_playerTemplate.html'),
         controller: function($scope) {
         },
-		link: function(scope, element, attrs) {
-			var _unbinder = [],
+        link: function(scope, element, attrs) {
+            var _unbinder = [],
                 player,
                 firstScriptTag = document.getElementsByTagName('script')[0];
 
@@ -27,8 +27,6 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, $interval, appMod
                 $rootScope.YTloaded = true;
                 angular.element($window).on('message', receiveMessage);
             };
-
-            console.debug('ytPlayerConfig', ytPlayerConfig);
 
             if(!$rootScope.YTloaded) {
                 var tag = document.createElement('script');
@@ -86,26 +84,27 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, $interval, appMod
             };
 
             _unbinder.push(scope.$watchCollection('player.API', function(n) {
-				if(n.loaded && scope.video && !n.initialized) {
+                if(n.loaded && scope.video && !n.initialized) {
                     initPlayer();
                 }
-			}));
+            }));
 
             _unbinder.push(scope.$watch('video', function(n, o) {
-				if(n && (scope.player.API.loaded || YT && YT.loaded) && !scope.player.API.initialized) {
+                if(n && (scope.player.API.loaded || YT && YT.loaded) && !scope.player.API.initialized) {
                     initPlayer();
                 }
                 if(n && o && n.id !== o.id) {
                     loadVideo();
                 }
-			}));
+            }));
 
-			scope.$on('$destroy', function() {
-				player = null;
+            scope.$on('$destroy', function() {
+                player = null;
+                angular.element($window).off('message', receiveMessage);
                 _unbinder.forEach(function(unbind) {
                   unbind();
                 });
-			});
-		}
-	};
+            });
+        }
+    };
 };

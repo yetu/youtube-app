@@ -8,7 +8,8 @@ module.exports = function (config) {
 
         // ng template bundler
         preprocessors: {
-            'js/**/*.js': ['coverage']
+            'js/**/*.js': ['coverage'],
+            'test/fixtures/**/*.json': ['json_fixtures']
         },
 
         files: [
@@ -23,8 +24,10 @@ module.exports = function (config) {
             {pattern: 'test/**/!(spec.js)+(.js)'},
             // include templates fo ng-html2js
             {pattern: 'js/**/*.html'},
-            // app?
-            //{pattern: 'js/**/*.js'}
+            // fixtures
+             'test/fixtures/**/*.json',
+            // app
+            //{pattern: 'js/**/*.js'} // TODO: make it working ;)
             '../../public/youtube_producer/app-bundle.js'
         ],
         exclude: [
@@ -32,6 +35,24 @@ module.exports = function (config) {
             'test/jasmine.coverage/**/*',
             'test/ng-karma-config.js'
         ],
+
+        proxies: {
+            '/some.img': 'test/fixtures/fake.img',
+            '/other.img': 'test/fixtures/fake.img',
+            '/assets/youtube_producer/img/play-icon.svg': 'test/fixtures/fake.img'
+        },
+
+        // Files to browserify
+        browserify: {
+            files: [
+                // includes all js files except spec from /js folder
+                //{pattern: 'js/**/!(spec.js)+(.js)'},
+                // includes all js files except spec from /js folder and watch their changes
+                {pattern: 'js/**/!(spec.js)+(.js)', watched: true, served: false, included: false},
+                {pattern: 'test/**/*.spec.js'},
+                {pattern: 'js/*/*.spec.js'}
+            ]
+        },
 
         coverageReporter: {
             type : 'html',
@@ -44,6 +65,11 @@ module.exports = function (config) {
                 {type: 'html' },
                 {type: 'text-summary'}
             ]
+        },
+
+        jsonFixturesPreprocessor: {
+            stripPrefix: 'test/fixtures/',
+            variableName: '__fixtures__'
         }
     });
 };

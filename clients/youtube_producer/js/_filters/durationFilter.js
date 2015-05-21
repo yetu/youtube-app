@@ -1,4 +1,7 @@
 /* global module */
+/*
+ * Duration Filter to convert the youtube duration to format hh:mm:ss
+ */
 module.exports = (function() {
     return function(time) {
         // http://stackoverflow.com/a/19094191

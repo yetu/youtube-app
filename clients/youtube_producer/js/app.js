@@ -2,8 +2,10 @@ var youtubeApp = angular.module('youtubeApp',
 	[
 		'ngRoute',
 		'ngResource',
+        'ngCookies',
 		'pascalprecht.translate',
 		'reactTo',
+        'LocalStorageModule',
         // app modules
         require('./app_search').name,
         require('./app_mode').name,
@@ -20,26 +22,29 @@ var youtubeApp = angular.module('youtubeApp',
         require('./_filters').name
 	]);
 
-youtubeApp.config(function ($routeProvider, $translateProvider, $httpProvider, $locationProvider, i18n) {
+youtubeApp.config(function ($routeProvider, $translateProvider, $httpProvider, i18n) {
 	$httpProvider.defaults.useXDomain = true;
 	delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
 	// $locationProvider.html5Mode(true);
 
+    var resolve = {
+        // needed to init categories first for detailed views
+        YouTubeCategories: function(ytYoutubeService) {
+            return ytYoutubeService.initialize();
+        }
+    };
+
 	$routeProvider
 		.when('/dashboard/:action?/:param?', {
             controller: 'DashboardCtrl',
-			template: require('./dashboardTemplate.html')
+			template: require('./dashboardTemplate.html'),
+            resolve: resolve
 		})
         .when('/view/:mode/:type/:id/:device?', {
             controller: 'ViewerCtrl',
 			template: require('./viewerTemplate.html'),
-            resolve: {
-                // needed to init categories first for detailed views
-                YouTubeCategories: function(ytYoutubeService) {
-                    return ytYoutubeService.initialize();
-                }
-            }
+            resolve: resolve
 		})
 		.otherwise({
 			redirectTo: '/dashboard'
