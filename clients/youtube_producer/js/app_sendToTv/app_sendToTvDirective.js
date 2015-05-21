@@ -7,7 +7,7 @@ module.exports = function (appSendToTvService) {
             data: '=ngModel'
         },
 		link: function(scope){
-            scope.onSendButtonClick = function(scope){
+            scope.onSendButtonClick = function(){
               appSendToTvService.sendToTv(scope.data);
 			};
 		}
