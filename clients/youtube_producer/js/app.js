@@ -10,6 +10,7 @@ var youtubeApp = angular.module('youtubeApp',
         // app modules
         require('./app_search').name,
         require('./app_mode').name,
+        require('./app_remoteControl').name,
         require('./app_sendToTv').name,
         require('./ui_videoList').name,
         require('./yt_result').name,
