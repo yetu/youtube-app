@@ -89,75 +89,81 @@
 
 @media (min-width: 768px) {
     .container {
-        width: 750px;
+        width: 510px;
     }
     
-    .ui-video-list-item {
-        width: 360px;
-        margin: 0 0 30px 30px;
-        &:nth-child(odd) {
-            margin-left: 0;
+    .app-search {
+        .query {
+            padding-left: 15px;
+            width: 495px;
+        }
+        button.search {
+            margin-right: 15px;
         }
     }
     
-    .yt-viewer, .video {
-        width: 750px;
+    .ui-video-list-item {
+        width: 240px;
+        height: 260px;
+        .img {
+           height: 124px;
+           margin-bottom: 10px;
+        }
+        margin-left: 30px;
+        
+        &:nth-child(odd) {
+            margin-left: 0;
+        }
+        &:nth-child(even) {
+            margin-left: 30px;
+        }
+    }
+    
+    .yt-viewer {
+        width: 510px;
     }
     
     .yt-viewer {
         .video {
-            width: 750px;
-            transition(width 0.5s);
+            width: 450px;
+            margin: 30px;
+            clearfix();
+            
             .yt-player {
-                //height: 562.5px;
-                transition(height 0.5s);
+                height: 245px;
             }
             .yt-video-description {
-                width: 750px;
-                transition(all 0.5s);
-            }
-            .buttons {
-                .toggle-playlist {
-                    display: block;
-                }
+                width: 450px;
             }
         }
         
         .playlist {
-            float: right;
-            width: 0;
-            transition(width 0.5s);
-        }
-        
-        &.playlist-visible {
-            .video {
-                width: 500px;
-                transition(width 0.5s);
-                .yt-player {
-                    //height: 375px;
-                    transition(height 0.5s);
-                }
-                .yt-video-description {
-                    width: 500px;
-                    transition(all 0.5s);
-                }
-            }
-            
-            .playlist {
-                width: 230px;
-                transition(width 0.5s);
-            }
+            width: 450px;
+            position: relative;
+            left: 30px;
+            top: 0;
         }
     }
 }
 
 @media (min-width: 992px){
     .container {
-        width: 960px;
+        width: 780px;
+        padding: 0 30px;
+    }
+    
+    .app-search {
+        .query {
+            padding-left: 20px;
+            width: 760px;
+        }
+        button.search {
+            margin-right: 20px;
+        }
     }
     
     .ui-video-list-item {
-        width: 300px;
+        width: 240px;
         margin-left: 30px;
         &:nth-child(odd) {
             margin-left: 30px;
@@ -167,40 +173,127 @@
         }
     }
     
-    .yt-viewer, .video {
-        width: 960px;
+    .yt-viewer {
+        width: 780px;
+        .buttons {
+            .toggle-playlist {
+                display: block;
+            }
+        }
     }
     
     .yt-viewer {
         .video {
-            width: 960px;
+            width: 720px;
+            margin: 60px 0 0 30px;
+            transition: width 0.5s ease-in-out;
             .yt-player {
-                //height: 720px;
+                height: 405px;
+                transition: height 0.5s ease-in-out;
             }
             .yt-video-description {
-                width: 960px;
+                width: 720px;
+                transition: all 0.5s ease-in-out;
             }
+        }
+        
+        .playlist {
+            width: 290px;
+            float: right;
+            margin-right: -320px;
+            transition: margin-right 0.5s ease-in-out;
         }
         
         &.playlist-visible {
             .video {
-                width: 640px;
+                width: 400px;
+                transition: width 0.5s ease-in-out;
                 .yt-player {
-                    //height: 480px;
+                    height: 225px;
+                    transition: height 0.5s ease-in-out;
                 }
                 .yt-video-description {
-                    width: 640px;
+                    width: 400px;
+                    transition: all 0.5s ease-in-out;
                 }
             }
             
             .playlist {
-                width: 290px;
+                margin-right: 60px;
+                transition: margin-right 0.5s ease-in-out;
             }
         }
     }
 }
 
 @media (min-width: 1200px) {
+    .container {
+        width: 1050px;
+    }
+    
+    .app-search {
+        .query {
+            padding-left: 20px;
+            width: 1030px;
+        }
+        button.search {
+            margin-right: 20px;
+        }
+    }
+    
+    .ui-video-list-item {
+        width: 240px;
+        height: 260px;
+        margin-left: 30px;
+        &:nth-child(3n+1) {
+            margin-left: 30px;
+        }
+        &:nth-child(4n+1) {
+            margin-left: 0;
+        }
+    }
+    
+    .yt-viewer{
+        width: 1050px;
+    }
+    
+    .yt-viewer {
+        .video {
+            width: 930px;
+            margin: 60px 60px 0;
+            .yt-player {
+                height: 524px;
+            }
+            .yt-video-description {
+                width: 930px;
+            }
+        }
+        
+        &.playlist-visible {
+            .video {
+                width: 520px;
+                margin-right:0;
+                .yt-player {
+                    height: 350px;
+                }
+                .yt-video-description {
+                    width: 520px;
+                }
+            }
+            
+            .playlist {
+                width: 350px;
+                margin-right: 90px;
+            }
+        }
+    }
+}
+
+
+
+
+
+/*@media (min-width: 1200px) {
     .container {
         width: 1170px;
     }
@@ -332,61 +425,5 @@
             }
         }
     }
-}
-
-@media (min-width: 1800px) {
-    .container {
-        width: 1050px;
-    }
-    
-    .app-search {
-        .query {
-            padding-left: 20px;
-            width: 1030px;
-        }
-        button.search {
-            margin-right: 20px;
-        }
-    }
-    
-    .ui-video-list-item {
-        width: 240px;
-        height: 260px;
-    }
-    
-    .yt-viewer, .video {
-        width: 1050px;
-    }
-    
-    .yt-viewer {
-        .video {
-            width: 930px;
-            margin: 60px 60px 0;
-            .yt-player {
-                min-height: 524px;
-            }
-            .yt-video-description {
-                width: 930px;
-            }
-        }
-        
-        &.playlist-visible {
-            .video {
-                width: 620px;
-                margin-right:0;
-                .yt-player {
-                    min-height: 349px;
-                }
-                .yt-video-description {
-                    width: 620px;
-                }
-            }
-            
-            .playlist {
-                width: 280px;
-                margin-right: 60px;
-            }
-        }
-    }
-}
+}*/
 

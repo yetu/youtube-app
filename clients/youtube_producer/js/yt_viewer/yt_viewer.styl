@@ -1,20 +1,30 @@
 .yt-viewer {
-    margin: 10px auto;
+    margin: 0 auto 30px;
     background-color: bg-yt-viewer;
-    height: 100%;
+    min-height: 75vh;
+    overflow: hidden;
+    padding-bottom: 30px;
+    box-shadow: 7px 7px 10px 0 rgba(0,0,0,0.3);
+    
     
     h2 {
-        display:none;
+        display: none;
+        color:color-title;
+    }
+    
+    h3 {
+        font-family: 'source_sans_prolight';
+        font-size: 1.4275em;
+        margin: 20px 0 13px;
     }
     
     .video {
         float: left;
-        
     }
 
     .buttons {
         position: relative;
-        margin: 5px auto;
+        margin: 15px auto 0;
         clearfix();
         
         button {
@@ -27,7 +37,9 @@
             background: bg-button;
             border: 0;
             outline: 0;
-            color: #fff;
+            color: color-button-text;
+            
+            box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.3);
 
             &:hover {
                 cursor: pointer;
@@ -47,20 +59,21 @@
                     width: auto;
                     position: relative;
                     top: 3px;
+                    margin: 0 0 0 5px;
                 }
             }
             
             .label_showPlaylist {
                 img {
                     transform: rotate(180deg);
+                    margin: 0 5px 0 0;
                 }
             }
         }
     }
 
     &.playlist-visible {
-        .video {
-        }
+        background-color: bg-yt-viewer-pl-visible;
     }
 }
 
@@ -69,10 +82,13 @@
 }
 
 .yt-video-description {
+    margin-top: 30px;
     .metadata {
         margin-top: 10px;
         padding-top: 10px;
-        border-top: solid gray 1px;
+        border-top: solid #666666 1px;
+        color: color-text;
+        font-size: 1em;
 
         div {
             float: left;
@@ -86,16 +102,83 @@
 }
 
 .yt-viewer .playlist {
-    height: 900px;
-    overflow-y: auto;
-    overflow-x: hidden;
+    height: 75vh;
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+    .ui-video-list {
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
 
     .app-send-to-tv {
         display: none;
     }
     
     .ui-video-list-item {
+        clearfix();
         width: 100%;
+        height: auto;
+        padding: 0;
+        background-color: bg-playlist-item;
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #ccc;
+        &:first-child {
+            border-top: 0;
+        }
+        .playBtn {
+            position: relative;
+            top: 0;
+            left: 0;
+            float:left;
+            width: 70px;
+            height: 70px;
+            padding: 5px;
+            .playimg {
+                img {
+                    position: relative;
+                    top: 15px;
+                    left: 15px;
+                      
+                    &.showOnResultList {
+                        display: none;
+                    }
+                    &.showOnPlaylist {
+                        display: block;
+                    }
+                }
+            }
+        }
+        .img {
+            margin: 0;
+            width: 125px;
+            height: 70px;
+            float: left;
+            margin: 5px auto;
+        }
+        .metadata {
+            padding: 10px;
+            height: auto;
+            .title {
+                color: color-text;
+                font-size: 1.125em;
+                width: 100%;
+                line-height: 150%;
+                height: 25px;
+                margin-bottom: 5px;
+                overflow: hidden;
+                white-space: nowrap;
+            }
+            .channel {
+                font-size: 0.8125em;
+                width: 100%;
+                overflow: hidden;
+                height: 13px;
+            }
+            .description, .created {
+                display: none;
+            }
+        }
     }
 }
 

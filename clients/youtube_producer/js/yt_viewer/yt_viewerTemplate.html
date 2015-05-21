@@ -1,20 +1,20 @@
 <div class="{{ class || 'yt-viewer' }}" ng-class="{ 'playlist-visible': playlistVisible }">
-  <h2 class="title">{{ video.title }} </h2>
-  <div class="video">
-    <yt-player></yt-player>
-    <div class="yt-controls">Controls</div><!-- TODO: separate directive -->
-    <div class="buttons">
-        <app-send-to-tv ng-model="video"></app-send-to-tv>
-        <button class="toggle-playlist" ng-click="playlistVisible = !playlistVisible">
-            <span class="label_hidePlaylist" ng-show="playlistVisible">{{ ::('Hide video list' | translate) }}<img ng-src="assets/youtube_producer/js/yt_viewer/assets/arrow.svg"></span>
-            <span class="label_showPlaylist" ng-hide="playlistVisible"><img ng-src="assets/youtube_producer/js/yt_viewer/assets/arrow.svg">{{ ::('Show video list' | translate) }}</span>
-        </button>
+    <h2 class="title">{{ video.title}} </h2>
+    <div class="video">
+        <yt-player></yt-player>
+        <div class="yt-controls">Controls</div><!-- TODO: separate directive -->
+        <div class="buttons">
+            <app-send-to-tv ng-model="video"></app-send-to-tv>
+            <button class="toggle-playlist" ng-click="playlistVisible = !playlistVisible">
+                <span class="label_hidePlaylist" ng-show="playlistVisible">{{ ::('Hide video list' | translate) }}<img ng-src="assets/youtube_producer/js/yt_viewer/assets/arrow.svg"></span>
+                <span class="label_showPlaylist" ng-hide="playlistVisible"><img ng-src="assets/youtube_producer/js/yt_viewer/assets/arrow.svg">{{ ::('Show video list' | translate) }}</span>
+            </button>
+        </div>
+        <yt-video-description></yt-video-description>
     </div>
-    <yt-video-description></yt-video-description>
-  </div>
-  <div class="playlist">
-    <h3>{{ ::(playlist.title | translate) }}</h3>
-    <ui-video-list ng-model="playlist.items" display="list" play-fn="playVideo"></ui-video-list>
-  </div>
+    <div class="playlist">
+        <h3>{{ ::(playlist.title | translate) }}</h3>
+        <ui-video-list class="ui-video-list" ng-model="playlist.items" display="list" play-fn="playVideo"></ui-video-list>
+    </div>
 </div>
 <!-- TODO: remove ng-show/hide and base on css visibility? -->
