@@ -84,6 +84,8 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
     return {
         setController: setController,
         register: register,
+        deregister: deregister,
+        activate: activate,
         deactivate: deactivate
     };
 });
