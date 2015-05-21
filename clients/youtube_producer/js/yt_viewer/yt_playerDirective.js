@@ -1,4 +1,4 @@
-module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
+module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemoteControlService) {
     'use strict';
     return {
         restrict: 'E',
@@ -40,7 +40,7 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
                     //height: '1080',
                     //width: '1920',
                     playerVars: {
-                        autoplay: 1,
+                        autoplay: 0,
                         controls: appMode.isPC() ? 1 : 0,
                         showinfo: 0
                     },
@@ -83,6 +83,31 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
                 }
             };
 
+            var remoteControl = function(command) {
+                console.debug('player control called with ', command);
+                switch(command) {
+                    case 'activate': {
+                        element.attr('activated', true);
+                        break;
+                    }
+                    case 'play': {
+                        if(scope.player.info.isPlaying) {
+                            player.pauseVideo();
+                        } else if(scope.player.API.ready) {
+                            player.playVideo();
+                        }
+                        break;
+                    }
+                    case 'back': {
+                        player.pauseVideo();
+                        appRemoteControlService.deactivate('player'); // just concept example
+                        break;
+                    }
+                }
+            };
+
+            appRemoteControlService.register('player', remoteControl);
+
             _unbinder.push(scope.$watchCollection('player.API', function(n) {
                 if(n.loaded && scope.video && !n.initialized) {
                     initPlayer();
@@ -99,6 +124,7 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
             }));
 
             scope.$on('$destroy', function() {
+                appRemoteControlService.deregister('player');
                 player = null;
                 angular.element($window).off('message', receiveMessage);
                 _unbinder.forEach(function(unbind) {

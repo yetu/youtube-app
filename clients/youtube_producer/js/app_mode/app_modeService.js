@@ -1,7 +1,7 @@
 /**
  * Service detecting application mode
  */
-module.exports = (function ($routeParams, $rootScope) {
+module.exports = (function ($routeParams, $rootScope, $window) {
 	'use strict';
 
     var _mode = null;
@@ -51,9 +51,12 @@ module.exports = (function ($routeParams, $rootScope) {
     var _detect = function() {
         // temporary use link option
         _mode = $routeParams.device ? $routeParams.device.replace(/&.+/gi, '') : 'pc';
-
         // set global application class directly
         $rootScope.appModeClass = getClass();
+        if(_mode !== 'tv') {
+            $rootScope.authEnabled = true;
+            $window.yetu = null;
+        }
     };
 
     _detect();
