@@ -2,7 +2,7 @@
 /*
  * Viewer controller
  */
-module.exports = (function($scope, ytYoutubeService, appMode, $routeParams) {
+module.exports = (function($scope, ytYoutubeService, appMode, $routeParams, $window) {
 
     ytYoutubeService.getDetails($routeParams.type, $routeParams.id).then(function(data) {
         $scope.video = data.video;
@@ -13,6 +13,6 @@ module.exports = (function($scope, ytYoutubeService, appMode, $routeParams) {
 
     $scope.$on('app:search-value', function(event, query){
         var action = '#/dashboard/search/' + query;
-        window.location = action; // replace with $location
+        $window.location.href = action;
     });
 });
