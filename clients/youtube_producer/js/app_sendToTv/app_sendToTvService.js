@@ -1,37 +1,29 @@
 module.exports = (function ($rootScope, $http, $location, $filter, serverPathsConfig) {
     'use strict';
 
-    var sendResult;
     var sendPayload = function(payload) {
-        var videoTitle = payload.headline || '';
 
-        $http.post(serverPathsConfig.youtubeUrl, payload).success(function(payload){
-            sendResult = {
-                name: decodeURI(videoTitle),
+        var sendResult = {
+                name: decodeURI(payload.headline || ''),
                 sended: "YES"
             };
+
+        $http.post(serverPathsConfig.youtubeUrl, payload).success(function(){
             $rootScope.$broadcast("appSendToTv:send", sendResult);
         }).error(function(data, status){
-            if(status === 401){
-                sendResult = {
-                    name: decodeURI(videoTitle),
-                    sended: 401
-                };
-            } else {
-                sendResult = {
-                    name: decodeURI(videoTitle),
-                    sended: "ERROR"
-                };
-            }
+            // replace default success with error
+            sendResult.sended = status === 401 ? 401 : "ERROR";
             $rootScope.$emit("appSendToTv:send", sendResult);
         });
   };
 
   var sendToTv = function (data) {
-    var url = $location.protocol() + '://' + $location.host() + ":" + $location.port();
+    var url = $location.protocol() + '://' + $location.host() + ":" + $location.port(),
+        actTime = data.actTime - 5 < 0 ? 0 : data.actTime - 5;
+
     var payload = {
       action: {
-        url: url + "/#/view/fullscreen/" + data.type + "/" + data.id + "/tv",
+        url: url + "/#/view/fullscreen/" + data.type + "/" + data.id + "/" + actTime + "/tv",
         // for localhost testing use the one below
         // url: "https://youtubeapp-dev.yetu.me" + "/#/view/fullscreen/" + data.type + "/" + data.id + "/tv",
         type: "open",

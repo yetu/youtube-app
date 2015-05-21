@@ -5,6 +5,9 @@
 module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $routeParams, $window, Notification) {
 
     ytYoutubeService.getDetails($routeParams.type, $routeParams.id).then(function(data) {
+        if($routeParams.time) {
+            data.video.startAt = $routeParams.time;
+        }
         $scope.video = data.video;
         $scope.playlist = data.playlist;
     }, function(error) {
