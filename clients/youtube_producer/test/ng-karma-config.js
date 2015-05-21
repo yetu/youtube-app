@@ -45,6 +45,8 @@ module.exports = function (config) {
             '/some.img': 'test/fixtures/fake.img',
             '/other.img': 'test/fixtures/fake.img',
             '/assets/youtube_producer/img/play-icon.svg': 'test/fixtures/fake.img',
+            '/assets/youtube_producer/js/app_sendToTv/assets/stop_streaming.svg': 'test/fixtures/fake.img',
+            '/assets/youtube_producer/js/yt_viewer/assets/arrow.svg': 'test/fixtures/fake.img'
         },
 
         // Files to browserify

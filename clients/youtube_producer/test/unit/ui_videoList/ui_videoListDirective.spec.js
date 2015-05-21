@@ -11,24 +11,6 @@ describe('Directive: ui-video-list', function () {
         $rootScope = _$rootScope_;
     }));
 
-    it('should compile to ul with default class and type', function() {
-        var element = $compile('<ui-video-list></ui-video-list>')($rootScope);
-        $rootScope.$digest();
-        expect(element.find('ul').eq(0).attr('class')).toBe('ui-video-list  clearfix');
-    });
-
-    it('should compile to ul with specified class', function() {
-        var element = $compile('<ui-video-list class="some-class"></ui-video-list>')($rootScope);
-        $rootScope.$digest();
-        expect(element.find('ul').eq(0).attr('class')).toBe('some-class  clearfix');
-    });
-
-    it('should compile to ul with specified class and type', function() {
-        var element = $compile('<ui-video-list class="some-class" display="list"></ui-video-list>')($rootScope);
-        $rootScope.$digest();
-        expect(element.find('ul').eq(0).attr('class')).toBe('some-class list clearfix');
-    });
-
     it('should compile element properly', function() {
         var element = $compile('<ui-video-list ng-model="videos" play-link="#/view/expand/:type/:id"></ui-video-list>')($rootScope);
         $rootScope.videos = [{id: 'id123', title: 'Some title', type: 'video', img: 'some.img', description: 'Some description'},
