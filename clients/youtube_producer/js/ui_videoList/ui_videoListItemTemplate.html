@@ -10,13 +10,13 @@
     <div ng-if="item.type == 'playlist'" class="items"><span>{{ ::item.totalItems }}</span></div>
 </div>
 <div class="metadata">
-    <p class="title">{{::item.title}}</p>
+    <p class="title">{{::(item.title | limitTo: 60)}}<span ng-if="item.title > 60">...</span></p>
     <p class="subtitle" ng-if="item.channel">
         <span>by {{::item.channel}}</span><br />
         <span>{{ ::item.created | timeAgo }}</span>
     </p>
     <p class="description" data-type="description" cw-reveal-label ng-if="item.description">
-        {{::item.description}}
+        {{::(item.description | limitTo: 120)}}
     </p>
     <p class="description" ng-if="!item.description">No description available.</p>
 </div>

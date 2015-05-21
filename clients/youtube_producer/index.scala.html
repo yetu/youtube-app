@@ -26,6 +26,12 @@
         <link rel="stylesheet" href="assets/youtube_producer/styles/app.css"/>
         <script>
         var config = @Html(config.toString);
+        config.regionCode = 'GB';
+        config.relevanceLanguage = 'en';
+        config.dashboardCategories = [
+            {id: 10, name: 'Music'},
+            {id: 20, name: 'Gaming'}
+        ];
         </script>
         <!--<link rel="stylesheet" href="css/app.css"/>-->
     </head>

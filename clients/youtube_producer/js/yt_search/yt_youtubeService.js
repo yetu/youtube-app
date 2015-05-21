@@ -2,11 +2,10 @@
 module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageService) {
     'use strict';
     var settings = ytYoutubeServiceConfig,
-        searchValue,
         _initialized = false,
         categories = {};
 
-    var processResultList = function(type, data){
+    var processResultList = function(type, data, query){
         var list = [],
             playlists = [],
             playlists_map = [],
@@ -76,8 +75,8 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageServi
                 params: {
                     id: videos.join(','),
                     key: settings.developerToken,
-                    // duration, categoyId and views for detailed views, duration only for search
-                    part: 'search' === type ? 'contentDetails' : 'snippet,contentDetails,statistics',
+                    // duration, categoyId and views for detailed views, duration only for search/categories
+                    part: 'search' === type || 'popular' === type ? 'contentDetails' : 'snippet,contentDetails,statistics',
                     maxResults: videos.length
                 }
             }).success(function(data){
@@ -106,7 +105,7 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageServi
         switch(type) {
             case 'search': {
                 meta.type = type;
-                meta.title = 'Results for "' + searchValue + '"';
+                meta.title = 'Results for "' + query + '"';
                 meta.items = list;
                 return meta;
             }
@@ -125,13 +124,19 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageServi
                 meta.items = list;
                 return meta;
             }
+            case 'popular': {
+                meta.type = type;
+                meta.title = getCategory(query).title;
+                meta.items = list;
+                return meta;
+            }
         }
     };
 
     /**
      *
-     * @param {String} type Query type: 'search'|'related'
-     * @param {String} query Query - searched phrase for search type, video id for related
+     * @param {String} type Query type: 'search'|'related'|'popular'
+     * @param {String} query Query - searched phrase for search type, video id for related, category id for popular
      * @param {Number} number Optional number of results
      * @returns {Promise} Then data -
      */
@@ -139,30 +144,40 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageServi
         var deferred = $q.defer(),
             params = {
                 maxResults: number || settings.search.maxResults,
-                relevanceLanguage: settings.relevanceLanguage,
                 regionCode: settings.regionCode,
                 part: settings.search.part,
                 key: settings.developerToken
-            };
+            },
+            url;
 
         switch(type) {
             case 'search': {
-                searchValue = query;
+                url = settings.search.url;
                 params.q = query;
                 params.type = settings.search.type;
+                params.relevanceLanguage = settings.relevanceLanguage;
                 break;
             }
             case 'related': {
+                url = settings.search.url;
+                params.relevanceLanguage = settings.relevanceLanguage;
                 params.relatedToVideoId = query;
                 params.type = 'video';
                 break;
             }
+            case 'popular': {
+                url = settings.video.url;
+                params.videoCategoryId = query;
+                params.chart = 'mostPopular';
+                params.type = settings.search.type;
+                break;
+            }
         }
 
-        $http.get(settings.search.url, {
+        $http.get(url, {
             params: params
         }).success(function(data){
-            deferred.resolve(processResultList(type, data));
+            deferred.resolve(processResultList(type, data, query));
         }).error(function(data){
             console.error("error happening on .getResult:", data);
             deferred.reject();

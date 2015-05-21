@@ -38,7 +38,8 @@ youtubeApp.config(function ($routeProvider, $translateProvider, $httpProvider, i
 	$routeProvider
 		.when('/dashboard/:action?/:param?', {
             controller: 'DashboardCtrl',
-			template: require('./dashboardTemplate.html')
+			template: require('./dashboardTemplate.html'),
+            resolve: resolve
 		})
         .when('/view/:mode/:type/:id/:device?', {
             controller: 'ViewerCtrl',
