@@ -83,6 +83,12 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
                 }
             };
 
+            $rootScope.$on('appSendToTv:send', function(event, data){
+                if(data.sended === 'YES') {
+                    player.pauseVideo();
+                }
+            });
+
             _unbinder.push(scope.$watchCollection('player.API', function(n) {
                 if(n.loaded && scope.video && !n.initialized) {
                     initPlayer();

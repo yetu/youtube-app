@@ -1,3 +1,4 @@
+/*jshint -W083 */
 /* global module */
 /*
  * Dashbord controller

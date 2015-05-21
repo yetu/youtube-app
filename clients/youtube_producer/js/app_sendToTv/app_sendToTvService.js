@@ -1,27 +1,30 @@
-module.exports = (function ($http, $location, $filter, serverPathsConfig) {
-  'use strict';
-  var that = this;
-  var sendPayload = function(payload){
-  var videoTitle = payload.headline || '';
+module.exports = (function ($rootScope, $http, $location, $filter, serverPathsConfig) {
+    'use strict';
 
-    $http.post(serverPathsConfig.youtubeUrl, payload).success(function(payload){
-      that.playlistSendResult = {
-        name: decodeURI(videoTitle),
-        sended: "YES"
-      };
-    }).error(function(data, status){
-      if(status === 401){
-        that.playlistSendResult = {
-          name: decodeURI(videoTitle),
-          sended: 401
-        };
-      }else {
-        that.playlistSendResult = {
-          name: decodeURI(videoTitle),
-          sended: "ERROR"
-        };
-      }
-    });
+    var sendResult;
+    var sendPayload = function(payload) {
+        var videoTitle = payload.headline || '';
+
+        $http.post(serverPathsConfig.youtubeUrl, payload).success(function(payload){
+            sendResult = {
+                name: decodeURI(videoTitle),
+                sended: "YES"
+            };
+            $rootScope.$broadcast("appSendToTv:send", sendResult);
+        }).error(function(data, status){
+            if(status === 401){
+                sendResult = {
+                    name: decodeURI(videoTitle),
+                    sended: 401
+                };
+            } else {
+                sendResult = {
+                    name: decodeURI(videoTitle),
+                    sended: "ERROR"
+                };
+            }
+            $rootScope.$emit("appSendToTv:send", sendResult);
+        });
   };
 
   var sendToTv = function (data) {
@@ -60,5 +63,4 @@ module.exports = (function ($http, $location, $filter, serverPathsConfig) {
   return {
     sendToTv: sendToTv
   };
-
 });

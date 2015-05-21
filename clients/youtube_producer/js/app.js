@@ -6,6 +6,7 @@ var youtubeApp = angular.module('youtubeApp',
 		'pascalprecht.translate',
 		'reactTo',
         'LocalStorageModule',
+        'ui-notification',
         // app modules
         require('./app_search').name,
         require('./app_mode').name,
