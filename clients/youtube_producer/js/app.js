@@ -59,9 +59,16 @@ youtubeApp.config(function ($routeProvider, $translateProvider, $httpProvider, i
     $translateProvider.preferredLanguage('en');
 });
 
-youtubeApp.run(function($location, $translate){
+youtubeApp.run(function($location, $translate, appMode, $rootScope, $window){
     var params = $location.search();
     if(params.lang){
         $translate.use(params.lang);
+    }
+    $rootScope.$on('$routeChangeSuccess', function(){
+        appMode.detectViewType();
+    });
+    if(appMode.get() !== 'tv') {
+        $window.yetu = null;
+        $rootScope.authEnabled = true;
     }
 });

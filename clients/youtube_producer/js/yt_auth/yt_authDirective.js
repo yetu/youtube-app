@@ -6,8 +6,6 @@ module.exports = function ($window, $http, $interval, $log) {
         link: function (scope, element, attr) {
             //TODO: use more angular.js methods instead of mix of native and angular stuff
 
-            var openidIframe = document.createElement('iframe');
-
             openidIframe.src = config.authServer + '/assets/login_status.html';
             openidIframe.id = 'openid-provider';
             openidIframe.style.visibility = 'hidden';
@@ -42,7 +40,7 @@ module.exports = function ($window, $http, $interval, $log) {
                 }
             }
 
-            angular.element($window).on('message', receiveMessageP);
+            init();
         }
     };
 };

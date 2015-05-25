@@ -1,4 +1,4 @@
 <ui-video-list-item class="ui-video-list-item" ng-repeat="item in videoList"></ui-video-list-item>
 <div ng-if="videoList.length == 0">
-    {{ 'No results found' | translate }}
+    {{ ::('No results found' | translate) }}
 </div>

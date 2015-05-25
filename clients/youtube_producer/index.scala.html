@@ -43,7 +43,7 @@
         <![endif]-->
         
         <div class="container" ng-view></div>
-        <yt-auth class="ng-hide"></yt-auth>
+        <yt-auth ng-if="authEnabled" class="ng-hide"></yt-auth>
 
         <script src="assets/bower_components/angular/angular.js"></script>
         <script src="assets/bower_components/angular-resource/angular-resource.js"></script>

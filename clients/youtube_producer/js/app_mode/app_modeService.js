@@ -1,7 +1,7 @@
 /**
  * Service detecting application mode
  */
-module.exports = (function ($routeParams, $rootScope) {
+module.exports = (function ($routeParams, $rootScope, $location, $timeout) {
 	'use strict';
 
     var _mode = null;
@@ -45,20 +45,24 @@ module.exports = (function ($routeParams, $rootScope) {
         return $routeParams.mode;
     };
 
+    var detectViewType = function() {
+        $rootScope.appModeClass = getClass();
+    };
+
     /**
      * @returns {String} Application mode depending on system ('tv'|'pc')
      */
     var _detect = function() {
         // temporary use link option
-        _mode = $routeParams.device ? $routeParams.device.replace(/&.+/gi, '') : 'pc';
-
-        // set global application class directly
-        $rootScope.appModeClass = getClass();
+        var params = $location.search();
+        _mode = params.device && params.device.match(/^(tv|pc)$/) ? params.device : 'pc';
+        // console.debug('Detected mode:', _mode);
     };
 
     _detect();
 
     return {
+        detectViewType: detectViewType,
         set: set,
         get: get,
         isTV: isTV,
