@@ -127,6 +127,7 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageServi
             case 'popular': {
                 meta.type = type;
                 meta.title = getCategory(query).title;
+                meta.categoryId = query;
                 meta.items = list;
                 return meta;
             }
@@ -170,6 +171,7 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageServi
                 params.videoCategoryId = query;
                 params.chart = 'mostPopular';
                 params.type = settings.search.type;
+                params.maxResults = settings.popular.maxResults;
                 break;
             }
         }

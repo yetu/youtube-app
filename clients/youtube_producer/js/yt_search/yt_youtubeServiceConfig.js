@@ -31,7 +31,8 @@ module.exports = ({
     popular: {
         id: 'videoCategoryId',
         url: 'https://www.googleapis.com/youtube/v3/videos',
-        part: 'snippet'
+        part: 'snippet',
+        maxResults: config.maxPopularResults || 4
     },
     regionCode: config.regionCode || 'GB',
     relevanceLanguage: config.relevanceLanguage || 'en',
