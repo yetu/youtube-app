@@ -65,7 +65,7 @@ youtubeApp.run(function($location, $translate, appMode, $rootScope, $window){
         $translate.use(params.lang);
     }
     $rootScope.$on('$routeChangeSuccess', function(){
-        appMode.detectViewType();
+        $rootScope.appModeClass = appMode.getClass();
     });
     if(appMode.get() !== 'tv') {
         $window.yetu = null;
