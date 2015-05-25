@@ -11,6 +11,7 @@ describe('dashboardController function', function() {
         respond = {
             search: {
                 title: 'parent title',
+                categoryId: 11, // TODO: separate 2 different answers
                 items: [{
                     type: 'video',
                     id: 1234,
@@ -32,7 +33,7 @@ describe('dashboardController function', function() {
         deferred.resolve(respond.search);
         // TODO: remove default spy from here - no failure path nor other results are able to define
         spyOn(ytYoutubeService, "getResult").and.returnValue(deferred.promise);
-        $window.config.dashboardCategories = [{id: 11, title: 'Category 1'}, {id: 22, title: 'Category 2'}];
+        $window.config.dashboardCategories = [{id: 11, name: 'Category 1'}, {id: 22, name: 'Category 2'}];
     }));
 
     it('should be initialized with two defined categories', function() {
@@ -42,6 +43,7 @@ describe('dashboardController function', function() {
         expect(ytYoutubeService.getResult.calls.count()).toBe(2);
         expect(scope.mainResultList.length).toBe(2);
         expect(scope.mainResultList[0]).toEqual(respond.search);
+        // TODO: check order of result sets and replacing titles to defined category names
     });
 
     it('should show search results when triggered by the search app directive', function() {
