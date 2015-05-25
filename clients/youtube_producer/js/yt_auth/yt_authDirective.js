@@ -1,27 +1,28 @@
 /* global angular, module, config */
-module.exports = function ($window, $http, $interval, $log) {
+module.exports = function ($window, $http, $interval, $log, $timeout, $rootScope) {
     'use strict';
     return {
         restrict: 'E',
         link: function (scope, element, attr) {
             //TODO: use more angular.js methods instead of mix of native and angular stuff
+            var openidIframe, timerID;
 
-            openidIframe.src = config.authServer + '/assets/login_status.html';
-            openidIframe.id = 'openid-provider';
-            openidIframe.style.visibility = 'hidden';
-            openidIframe.style.display = 'none';
-
-            document.body.appendChild(openidIframe);
-
-            openidIframe.onload = check_session;
-
-            var timerID = setInterval(check_session, config.sessionPollingInterval * 1000);
+            function init() {
+                openidIframe = document.createElement('iframe');
+                openidIframe.src = config.authServer + '/assets/login_status.html';
+                openidIframe.id = 'openid-provider';
+                openidIframe.style.visibility = 'hidden';
+                openidIframe.style.display = 'none';
+                document.body.appendChild(openidIframe);
+                openidIframe.onload = check_session;
+                timerID = setInterval(check_session, config.sessionPollingInterval * 1000);
+                angular.element($window).on('message', receiveMessageP);
+            }
 
             function check_session() {
                 var win = openidIframe.contentWindow;
                 win.postMessage('youtubeApp ' + config.userUUID, config.authServer);
             }
-
 
             function receiveMessageP(event) {
                 if (event.originalEvent) {
