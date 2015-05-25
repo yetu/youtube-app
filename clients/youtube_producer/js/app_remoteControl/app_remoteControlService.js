@@ -33,12 +33,12 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
     };
     
     var setController = function(name, callback) {
-        console.debug('appRemoteControlService.setController', name);
+        // console.debug('appRemoteControlService.setController', name);
         if(appRemoteControlConfig[name]) {
             config = appRemoteControlConfig[name];
-            console.debug('config', config);
+            // console.debug('config', config);
             active = config.order[0];
-            console.debug('active', active);
+            // console.debug('active', active);
         } else {
             throw {message: 'Config of remote control doesnt exist for ' + name};
         }
@@ -46,7 +46,7 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
     };
 
     var register = function(name, callback) {
-        console.debug('appRemoteControlService.register', name);
+        // console.debug('appRemoteControlService.register', name);
         registered[name] = callback;
         if(active === name) {
             // activate configured element after registration
