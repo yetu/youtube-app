@@ -12,7 +12,8 @@
         color: #333;
     }
 
-    button.search {
+    button.search,
+    button.reset {
         width: 35px;
         height: 50px;
         background: none;
@@ -20,12 +21,20 @@
         outline: 0;
         float: right;
         margin-top: -50px;
-        margin-right: 10px;
+        margin-right: 60px;
 
         &:hover {
             cursor: pointer;
             path {
               fill: #fff;
+            }
+        }
+    }
+
+    button.reset {
+        &:hover {
+            line {
+              stroke: #fff;
             }
         }
     }
