@@ -45,10 +45,6 @@ module.exports = (function ($routeParams, $rootScope, $location, $timeout) {
         return $routeParams.mode;
     };
 
-    var detectViewType = function() {
-        $rootScope.appModeClass = getClass();
-    };
-
     /**
      * @returns {String} Application mode depending on system ('tv'|'pc')
      */
@@ -63,7 +59,6 @@ module.exports = (function ($routeParams, $rootScope, $location, $timeout) {
     _detect();
 
     return {
-        detectViewType: detectViewType,
         set: set,
         get: get,
         isTV: isTV,
