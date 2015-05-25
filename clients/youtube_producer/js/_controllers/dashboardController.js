@@ -28,8 +28,7 @@ module.exports = (function($scope, ytYoutubeService, $routeParams, $location, ap
                 if(cat_no === list.length) {
                     // TODO: decide if defined order of categories is more important than loading time
                     // in this case sort and assigng at once after load all
-                    $filter('orderBy')(list, 'order');
-                    $scope.mainResultList = list;
+                    $scope.mainResultList = $filter('orderBy')(list, 'order');
                 }
             });
         }
