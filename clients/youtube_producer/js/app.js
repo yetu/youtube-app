@@ -42,7 +42,7 @@ youtubeApp.config(function ($routeProvider, $translateProvider, $httpProvider, i
 			template: require('./dashboardTemplate.html'),
             resolve: resolve
 		})
-        .when('/view/:mode/:type/:id/:time?/:device?', {
+        .when('/view/:mode/:type/:id/:time?', {
             controller: 'ViewerCtrl',
 			template: require('./viewerTemplate.html'),
             resolve: resolve

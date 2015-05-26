@@ -23,13 +23,12 @@ module.exports = (function ($rootScope, $http, $location, $filter, serverPathsCo
 
     var payload = {
       action: {
-        url: url + "/#/view/fullscreen/" + data.type + "/" + data.id + "/" + actTime + "/tv",
+        url: url + "/#/view/fullscreen/" + data.type + "/" + data.id + "/" + actTime,
         // for localhost testing use the one below
-        // url: "https://youtubeapp-dev.yetu.me" + "/#/view/fullscreen/" + data.type + "/" + data.id + "/tv",
+        //url: "https://youtubeapp-dev.yetu.me" + "/#/view/fullscreen/" + data.type + "/" + data.id + "/" + actTime,
         type: "open",
         parameter: {
-          playlistId: "",
-          itemIndex: 0
+          device: "tv"
         },
         button: {
           icon: url + serverPathsConfig.imageUrl + "notification_play.svg",
