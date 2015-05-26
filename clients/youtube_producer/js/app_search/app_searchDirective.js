@@ -35,7 +35,7 @@ module.exports = function () {
                 }
 			};
 			scope.searchOnKeyUp = function (event) {
-				if (triggerEnter === true && event.keyCode === 13 && event.target.value !== "") {
+				if (triggerEnter === true && event.keyCode === 13) {
 					scope.initSearch(event.target.value);
 				}
 			};
