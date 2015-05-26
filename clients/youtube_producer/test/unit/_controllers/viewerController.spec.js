@@ -1,11 +1,12 @@
 'use strict';
 
 describe('viewerController function', function() {
-    var scope,
+    var $rootScope,
+        scope,
         $controller,
         ytYoutubeService,
         $timeout,
-        $window,
+        $location,
         respond = {
             details: {
                 video: ['video 1'],
@@ -17,12 +18,13 @@ describe('viewerController function', function() {
         $provide.value('$window', {location: {href: 'dummy'}});
     }));
 
-    beforeEach(inject(function($rootScope, _$controller_, _ytYoutubeService_, _$window_, $q, _$timeout_) {
+    beforeEach(inject(function(_$rootScope_, _$controller_, _ytYoutubeService_, _$location_, $q, _$timeout_) {
+        $rootScope = _$rootScope_;
         scope = $rootScope.$new();
         $controller = _$controller_;
         ytYoutubeService = _ytYoutubeService_;
         $timeout = _$timeout_;
-        $window = _$window_;
+        $location = _$location_;
         var deferred = $q.defer();
         deferred.resolve(respond.details);
         spyOn(ytYoutubeService, "getDetails").and.returnValue(deferred.promise);
@@ -39,11 +41,12 @@ describe('viewerController function', function() {
     });
 
     it('should redirect to dashboard with search results when triggered by the search app directive', function() {
+        spyOn($location, 'path');
         $controller('ViewerCtrl', {$scope: scope, ytYoutubeService: ytYoutubeService});
-        scope.$broadcast('app:search-value', 'yetu');
+        $rootScope.$broadcast('app:search-value', 'yetu');
         $timeout.flush();
         $timeout.verifyNoPendingTasks();
-        scope.$digest();
-        expect($window.location.href).toEqual("#/dashboard/search/yetu");
+        $rootScope.$digest();
+        expect($location.path).toHaveBeenCalledWith('/dashboard/search/yetu');
     });
 });
