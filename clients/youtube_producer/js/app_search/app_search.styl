@@ -1,5 +1,6 @@
 .app-search{
     padding: 30px 0px;
+    position: relative;
 
     .query {
         font-family: source_sans_prolight;
@@ -12,29 +13,20 @@
         color: #333;
     }
 
-    button.search,
-    button.reset {
+    button.search {
         width: 35px;
         height: 50px;
         background: none;
         border: 0;
         outline: 0;
-        float: right;
-        margin-top: -50px;
-        margin-right: 60px;
+        cursor: pointer;
+        position: absolute;
+        right: 0;
+        top: 35px;
 
         &:hover {
-            cursor: pointer;
             path {
               fill: #fff;
-            }
-        }
-    }
-
-    button.reset {
-        &:hover {
-            line {
-              stroke: #fff;
             }
         }
     }
