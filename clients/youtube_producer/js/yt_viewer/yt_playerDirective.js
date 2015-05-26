@@ -48,6 +48,9 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
                     events: {
                         onReady: function() {
                             scope.player.API.ready = true;
+                            if(scope.video.startAt) {
+                                player.seekTo(scope.video.startAt);
+                            }
                         }
                     }
                 });
@@ -82,6 +85,12 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
                     }
                 }
             };
+
+            $rootScope.$on('appSendToTv:send', function(event, data){
+                if(data.sended === 'YES') {
+                    player.pauseVideo();
+                }
+            });
 
             _unbinder.push(scope.$watchCollection('player.API', function(n) {
                 if(n.loaded && scope.video && !n.initialized) {

@@ -1,28 +1,28 @@
 <div class="playBtn">
-    <a ng-if="playLink" class="playimg" ng-href="#/view/expand/{{::item.type}}/{{::item.id}}"> <!-- TODO: replace href with {{ playLink | replaceParams }} -->
+    <a ng-if="::playLink" class="playimg" ng-href="#/view/expand/{{::item.type}}/{{::item.id}}"> <!-- TODO: replace href with {{ playLink | replaceParams }} -->
         <img class="showOnResultList" src="assets/youtube_producer/img/play-icon.svg" />
         <img class="showOnPlaylist" src="assets/youtube_producer/js/yt_viewer/assets/arrow.svg" />
     </a>
-    <a ng-if="playFn" class="playimg" ng-click="playFunction($index)">
+    <a ng-if="::playFn" class="playimg" ng-click="playFunction($index)">
         <img class="showOnResultList" src="assets/youtube_producer/img/play-icon.svg" />
         <img class="showOnPlaylist" src="assets/youtube_producer/js/yt_viewer/assets/arrow.svg" />
     </a>
 </div>
 <div class="img">
-    <img ng-if="item.img" ng-src="{{::item.img}}"/>
-    <div ng-if="item.type == 'video'" class="duration"><span>{{ item.duration | duration }}</span></div><!-- TODO: one-time binding with filter? -->
-    <div ng-if="item.type == 'playlist'" class="items"><span>{{ ::item.totalItems }}</span></div>
+    <img ng-if="::item.img" ng-src="{{::item.img}}"/>
+    <div ng-if="::(item.type == 'video')" class="duration"><span>{{ item.duration | duration }}</span></div><!-- TODO: one-time binding with filter? -->
+    <div ng-if="::(item.type == 'playlist')" class="items"><span>{{ ::item.totalItems }}</span></div>
 </div>
 <div class="metadata">
     <p class="title">{{::item.title | limitTo : 45 }}...</p>
-    <p class="subtitle" ng-if="item.channel">
+    <p class="subtitle" ng-if="::item.channel">
         <span class="channel">by {{::item.channel}}</span><br />
         <span class="created">{{ ::item.created | timeAgo }}</span>
     </p>
-    <p class="description" data-type="description" cw-reveal-label ng-if="item.description">
+    <p class="description" data-type="description" cw-reveal-label ng-if="::item.description">
         {{::item.description | limitTo : 45 }}...
     </p>
-    <p class="description" ng-if="!item.description">No description available.</p>
+    <p class="description" ng-if="::(!item.description)">No description available.</p>
 </div>
 <div class="buttons">
     <app-send-to-tv ng-model="::item"></app-send-to-tv>

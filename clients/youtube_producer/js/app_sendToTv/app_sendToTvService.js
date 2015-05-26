@@ -1,40 +1,34 @@
-module.exports = (function ($http, $location, $filter, serverPathsConfig) {
-  'use strict';
-  var that = this;
-  var sendPayload = function(payload){
-  var videoTitle = payload.headline || '';
+module.exports = (function ($rootScope, $http, $location, $filter, serverPathsConfig) {
+    'use strict';
 
-    $http.post(serverPathsConfig.youtubeUrl, payload).success(function(payload){
-      that.playlistSendResult = {
-        name: decodeURI(videoTitle),
-        sended: "YES"
-      };
-    }).error(function(data, status){
-      if(status === 401){
-        that.playlistSendResult = {
-          name: decodeURI(videoTitle),
-          sended: 401
-        };
-      }else {
-        that.playlistSendResult = {
-          name: decodeURI(videoTitle),
-          sended: "ERROR"
-        };
-      }
-    });
+    var sendPayload = function(payload) {
+
+        var sendResult = {
+                name: decodeURI(payload.headline || ''),
+                sended: "YES"
+            };
+
+        $http.post(serverPathsConfig.youtubeUrl, payload).success(function(){
+            $rootScope.$broadcast("appSendToTv:send", sendResult);
+        }).error(function(data, status){
+            // replace default success with error
+            sendResult.sended = status === 401 ? 401 : "ERROR";
+            $rootScope.$emit("appSendToTv:send", sendResult);
+        });
   };
 
   var sendToTv = function (data) {
-    var url = $location.protocol() + '://' + $location.host() + ":" + $location.port();
+    var url = $location.protocol() + '://' + $location.host() + ":" + $location.port(),
+        actTime = data.actTime - 5 < 0 ? 0 : data.actTime - 5;
+
     var payload = {
       action: {
-        url: url + "/#/view/fullscreen/" + data.type + "/" + data.id + "/tv",
+        url: url + "/#/view/fullscreen/" + data.type + "/" + data.id + "/" + actTime,
         // for localhost testing use the one below
-        // url: "https://youtubeapp-dev.yetu.me" + "/#/view/fullscreen/" + data.type + "/" + data.id + "/tv",
+        //url: "https://youtubeapp-dev.yetu.me" + "/#/view/fullscreen/" + data.type + "/" + data.id + "/" + actTime,
         type: "open",
         parameter: {
-          playlistId: "",
-          itemIndex: 0
+          device: "tv"
         },
         button: {
           icon: url + serverPathsConfig.imageUrl + "notification_play.svg",
@@ -60,5 +54,4 @@ module.exports = (function ($http, $location, $filter, serverPathsConfig) {
   return {
     sendToTv: sendToTv
   };
-
 });

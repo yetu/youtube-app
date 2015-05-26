@@ -6,6 +6,7 @@ var youtubeApp = angular.module('youtubeApp',
 		'pascalprecht.translate',
 		'reactTo',
         'LocalStorageModule',
+        'ui-notification',
         // app modules
         require('./app_search').name,
         require('./app_mode').name,
@@ -41,7 +42,7 @@ youtubeApp.config(function ($routeProvider, $translateProvider, $httpProvider, i
 			template: require('./dashboardTemplate.html'),
             resolve: resolve
 		})
-        .when('/view/:mode/:type/:id/:device?', {
+        .when('/view/:mode/:type/:id/:time?', {
             controller: 'ViewerCtrl',
 			template: require('./viewerTemplate.html'),
             resolve: resolve
@@ -58,9 +59,16 @@ youtubeApp.config(function ($routeProvider, $translateProvider, $httpProvider, i
     $translateProvider.preferredLanguage('en');
 });
 
-youtubeApp.run(function($location, $translate){
+youtubeApp.run(function($location, $translate, appMode, $rootScope, $window){
     var params = $location.search();
     if(params.lang){
         $translate.use(params.lang);
+    }
+    $rootScope.$on('$routeChangeSuccess', function(){
+        $rootScope.appModeClass = appMode.getClass();
+    });
+    if(appMode.get() !== 'tv') {
+        $window.yetu = null;
+        $rootScope.authEnabled = true;
     }
 });

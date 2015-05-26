@@ -186,12 +186,18 @@
     display: none;
 }
 
-.tvmode {
+.tvmode.fullscreen {
+
+    .container {
+        padding: 0 !important;
+    }
 
     .yt-viewer, .video, .yt-player {
-        height: 100%;
-        width: 100% !important;
+        height: 1080px !important;
+        width: 1920px !important;
         position: relative;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
     .yt-viewer {

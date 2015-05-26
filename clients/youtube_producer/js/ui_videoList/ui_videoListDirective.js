@@ -12,7 +12,6 @@ module.exports = function () {
 		restrict: 'E',
 		template: require('./ui_videoListTemplate.html'),
         scope: {
-            class: '@class',
             videoList: '=ngModel',
             playLink: '@playLink',
             playFn: '@playFn', // TODO: some function binding?

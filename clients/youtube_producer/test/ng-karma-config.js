@@ -25,6 +25,7 @@ module.exports = function (config) {
             '../../public/bower_components/reactTo/reactTo.js',
             '../../public/bower_components/angular-timeago/dist/angular-timeago.min.js',
             '../../public/bower_components/angular-local-storage/dist/angular-local-storage.min.js',
+            '../../public/bower_components/angular-ui-notification/dist/angular-ui-notification.min.js',
             //include all test helpers from /test folder
             {pattern: 'test/**/!(spec.js)+(.js)'},
             // include templates fo ng-html2js
@@ -45,6 +46,8 @@ module.exports = function (config) {
             '/some.img': 'test/fixtures/fake.img',
             '/other.img': 'test/fixtures/fake.img',
             '/assets/youtube_producer/img/play-icon.svg': 'test/fixtures/fake.img',
+            '/assets/youtube_producer/js/app_sendToTv/assets/stop_streaming.svg': 'test/fixtures/fake.img',
+            '/assets/youtube_producer/js/yt_viewer/assets/arrow.svg': 'test/fixtures/fake.img'
         },
 
         // Files to browserify

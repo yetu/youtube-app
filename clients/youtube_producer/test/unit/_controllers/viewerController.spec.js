@@ -7,12 +7,10 @@ describe('viewerController function', function() {
         $timeout,
         $window,
         respond = {
-            details: [
-                {
-                    video: 'video 1',
-                    playlist: 1234
-                }
-            ]
+            details: {
+                video: ['video 1'],
+                playlist: ['playlist']
+            }
         };
 
     beforeEach(module('youtubeApp', function($provide) {
@@ -30,14 +28,14 @@ describe('viewerController function', function() {
         spyOn(ytYoutubeService, "getDetails").and.returnValue(deferred.promise);
     }));
 
-    xit('should show the details', function() {
+    it('should show the details', function() {
         $controller('ViewerCtrl', {$scope: scope, ytYoutubeService: ytYoutubeService, $routeParams: {type: 'playlist', id: 1}});
         scope.$digest();
         $timeout.flush();
         $timeout.verifyNoPendingTasks();
         expect(ytYoutubeService.getDetails).toHaveBeenCalled();
-        expect(scope.video).toBe('video 1');
-        expect(scope.playlist).toBe(1234);
+        expect(scope.video).toEqual(['video 1']);
+        expect(scope.playlist).toEqual(['playlist']);
     });
 
     it('should redirect to dashboard with search results when triggered by the search app directive', function() {
@@ -48,5 +46,4 @@ describe('viewerController function', function() {
         scope.$digest();
         expect($window.location.href).toEqual("#/dashboard/search/yetu");
     });
-
 });
