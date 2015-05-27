@@ -2,7 +2,7 @@
 /*
  * Viewer controller
  */
-module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $routeParams, $window, Notification) {
+module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $routeParams, $location, Notification) {
 
     ytYoutubeService.getDetails($routeParams.type, $routeParams.id).then(function(data) {
         if($routeParams.time) {
@@ -14,9 +14,9 @@ module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $route
         // TODO: error handling
     });
 
-    $scope.$on('app:search-value', function(event, query){
-        var action = '#/dashboard/search/' + query;
-        $window.location.href = action;
+    $rootScope.$on('app:search-value', function(event, query){
+        var action = '/dashboard/search/' + query;
+        $location.path(action);
     });
 
     $rootScope.$on('appSendToTv:send', function(event, data){

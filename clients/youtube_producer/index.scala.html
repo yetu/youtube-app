@@ -44,7 +44,10 @@
             your browser</a> to improve your experience.</p>
         <![endif]-->
         
-        <div class="container" ng-view></div>
+        <div class="container">
+            <app-search class="app-search" placeholder="Search YouTube" value="{{ searchValue }}" trigger-search="button,enter"></app-search>
+            <div ng-view></div>
+        </div>
         <yt-auth ng-if="authEnabled" class="ng-hide"></yt-auth>
 
         <script src="assets/bower_components/angular/angular.js"></script>

@@ -52,7 +52,6 @@ module.exports = (function ($routeParams, $rootScope, $location, $timeout) {
         // temporary use link option
         var params = $location.search();
         _mode = params.device && params.device.match(/^(tv|pc)$/) ? params.device : 'pc';
-        console.debug('Detected mode:', _mode);
     };
 
     _detect();

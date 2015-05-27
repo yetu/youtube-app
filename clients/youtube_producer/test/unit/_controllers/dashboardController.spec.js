@@ -3,10 +3,12 @@
 'use strict';
 
 describe('dashboardController function', function() {
-    var scope,
+    var $rootScope,
+        scope,
         $controller,
         ytYoutubeService,
         $timeout,
+        $location,
         $window,
         respond = {
             search: {
@@ -23,11 +25,13 @@ describe('dashboardController function', function() {
 
     beforeEach(module('youtubeApp'));
 
-    beforeEach(inject(function($rootScope, _$controller_, _ytYoutubeService_, $q, _$timeout_, _$window_) {
+    beforeEach(inject(function(_$rootScope_, _$controller_, _ytYoutubeService_, $q, _$timeout_, _$location_, _$window_) {
+        $rootScope = _$rootScope_;
         scope = $rootScope.$new();
         $controller = _$controller_;
         ytYoutubeService = _ytYoutubeService_;
         $timeout = _$timeout_;
+        $location = _$location_;
         $window = _$window_;
         var deferred = $q.defer();
         deferred.resolve(respond.search);
@@ -38,7 +42,7 @@ describe('dashboardController function', function() {
 
     it('should be initialized with two defined categories', function() {
         $controller('DashboardCtrl', {$scope: scope});
-        scope.$digest();
+        $rootScope.$digest();
         expect(ytYoutubeService.getResult).toHaveBeenCalled();
         expect(ytYoutubeService.getResult.calls.count()).toBe(2);
         expect(scope.mainResultList.length).toBe(2);
@@ -46,16 +50,12 @@ describe('dashboardController function', function() {
         // TODO: check order of result sets and replacing titles to defined category names
     });
 
-    it('should show search results when triggered by the search app directive', function() {
+    it('should change location path when triggered by the search app directive', function() {
+        spyOn($location, 'path');
         $controller('DashboardCtrl', {$scope: scope, ytYoutubeService: ytYoutubeService});
-        scope.$broadcast('app:search-value', 'yetu');
-        scope.$digest();
-        $timeout.flush();
-        $timeout.verifyNoPendingTasks();
-        expect(ytYoutubeService.getResult).toHaveBeenCalled();
-        expect(ytYoutubeService.getResult.calls.count()).toBe(3); // including initial categories
-        expect(scope.mainResultList.length).toBe(1);
-        expect(scope.mainResultList[0].items[0].id).toBe(1234);
+        $rootScope.$broadcast('app:search-value', 'yetu');
+        $rootScope.$digest();
+        expect($location.path).toHaveBeenCalledWith('/dashboard/search/yetu');
     });
 
     it('should show search results when appropriate routing parameters are present', function() {

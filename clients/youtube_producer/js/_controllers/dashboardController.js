@@ -4,9 +4,10 @@
 /*
  * Dashbord controller
  */
-module.exports = (function($scope, ytYoutubeService, $routeParams, $location, appMode, $rootScope, $filter) {
+module.exports = (function($scope, ytYoutubeService, $routeParams, $location, $rootScope, $filter) {
     
     if($routeParams.action === 'search' && $routeParams.param) {
+        $rootScope.searchValue = $routeParams.param;
         ytYoutubeService.getResult('search', $routeParams.param).then(function(data) {
             $scope.mainResultList = [data];
             $scope.searchValue = $routeParams.param; // temporary as search inside
@@ -35,19 +36,11 @@ module.exports = (function($scope, ytYoutubeService, $routeParams, $location, ap
         // TODO: seems always the same videos - should be rerquested more and shuffle?
     }
 
-    $scope.$on('app:search-value', function(event, query){
-        // temporary start search here but not again for search in url
-        if($routeParams.action === 'search' && $routeParams.param === query) {
-            return;
-        }
-        ytYoutubeService.getResult('search', query).then(function(data) {
-            $scope.mainResultList = [data];
-        });
-        /* TODO: make path replace without reload
-        var action = '#/dashboard/search/' + query;
-        if(decodeURIComponent(window.location.hash) !== action) {
-            window.location = action; // replace with $location
-        }
-        */
+    $rootScope.$on('app:search-value', function(event, query){
+        $location.path('/dashboard/search/' + query);
+    });
+
+    $rootScope.$on('app:search-reset', function(){
+        $location.path('/dashboard');
     });
 });

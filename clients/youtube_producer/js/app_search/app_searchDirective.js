@@ -11,30 +11,37 @@
  * @attr on-reset string|fn Reset search event name (default 'app:search-reset') or callback function
  */
 module.exports = function () {
-	return {
-		restrict: 'E',
-		template: require('./app_searchTemplate.html'),
+    return {
+        restrict: 'E',
+        template: require('./app_searchTemplate.html'),
         scope: {
             searchValue: '@value',
             placeholder: '@placeholder'
         },
-		link: function(scope, element, attr){
+        link: function(scope, element, attr){
             var _unbinder = [],
                 triggerButton = attr.triggerSearch && attr.triggerSearch.indexOf('button') > -1,
                 triggerEnter = attr.triggerSearch && attr.triggerSearch.indexOf('enter') > -1,
-                triggerAuto = attr.triggerSearch && attr.triggerSearch.indexOf('auto') > -1;
-			
-			scope.searchButtonClick = function() {
+                triggerAuto = attr.triggerSearch && attr.triggerSearch.indexOf('auto') > -1,
+                input = element.find('input')[0],
+                $input = angular.element(input);
+
+            scope.resetButtonClick = function() {
+                input.value = '';
+                scope.initSearch('');
+            };
+
+            scope.searchButtonClick = function() {
                 if (triggerButton === true) {
-                    scope.initSearch(element.find('input')[0].value);
+                    scope.initSearch(input.value);
                 }
-			};
-			scope.searchOnKeyUp = function (event) {
-				if (triggerEnter === true && event.keyCode === 13 && event.target.value !== "") {
-					scope.initSearch(event.target.value);
-				}
-			};
-			scope.initSearch = function(value) {
+            };
+            scope.searchOnKeyUp = function (event) {
+                if (triggerEnter === true && event.keyCode === 13) {
+                    scope.initSearch(event.target.value);
+                }
+            };
+            scope.initSearch = function(value) {
                 if (scope.emitted === value && attr.allowRepeat !== "true") {
                     return;
                 }
@@ -44,7 +51,18 @@ module.exports = function () {
                     scope.$emit(attr.eventReset || 'app:search-reset');
                 }
                 scope.emitted = value;
-			};
+            };
+
+            $input.on('click', function() {
+                if(!input.isFocused) {
+                    input.select();
+                    input.isFocused = true;
+                }
+            });
+
+            $input.on('blur', function(event) {
+                input.isFocused = false;
+            });
 
             if(triggerAuto) {
                 _unbinder.push(scope.$watch('searchValue', function (value) {
@@ -59,7 +77,7 @@ module.exports = function () {
                   unbind();
                 });
             });
-		}
-	};
+        }
+    };
 };
 
