@@ -87,7 +87,7 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
             };
 
             $rootScope.$on('appSendToTv:send', function(event, data){
-                if(data.sended === 'YES') {
+                if(data.sent === true) {
                     player.pauseVideo();
                 }
             });
