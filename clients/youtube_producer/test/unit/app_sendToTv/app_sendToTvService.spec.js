@@ -1,55 +1,74 @@
 'use strict';
 
 describe('Service: appSendToTvService', function () {
-  var $rootScope, $httpBackend, $location, $filter, serverPathsConfig, service;
+    var $rootScope, $httpBackend, $location, $filter, serverPathsConfig, service;
 
-  beforeEach(module('youtubeApp'));
+    beforeEach(module('youtubeApp'));
 
-  beforeEach(function () {
-
-    inject(function (appSendToTvService, _$rootScope_, _$httpBackend_, _$location_, _$filter_) {
-      $httpBackend = _$httpBackend_;
-      $rootScope = _$rootScope_;
-      $location = _$location_;
-      $filter = _$filter_;
-      service = appSendToTvService;
+    beforeEach(function () {
+        inject(function (_$rootScope_, _$httpBackend_, _$location_, _$filter_, appSendToTvService) {
+            $rootScope = _$rootScope_;
+            $httpBackend = _$httpBackend_;
+            $location = _$location_;
+            $filter = _$filter_;
+            service = appSendToTvService;
+        });
     });
 
-  });
+    it('should emit appSendToTv:send when called and sent successfull', function () {
+        var data = {
+            title: 'testTitle',
+            actTime: 123,
+            type: 'video',
+            id: '123'
+        };
+        
+        spyOn($rootScope, '$broadcast').and.callThrough();
+        $httpBackend.expectPOST('/playlist').respond(200, {});
 
-  it('should return proper payload when data provided', function () {
+        service.sendToTv(data);
+        
+        $httpBackend.flush();
+        $rootScope.$digest();
+        
+        expect($rootScope.$broadcast.calls.mostRecent().args).toEqual(['appSendToTv:send', {name: data.title, sent: true}]);
+    });
 
-    spyOn(service, 'sendToTv');
+    it('should emit appSendToTv:send when called and sent failed with unauthorized', function () {
+        var data = {
+            title: 'testTitle',
+            actTime: 123,
+            type: 'video',
+            id: '123'
+        };
 
-    var data = {
-      'actTime': 123,
-      'type': 'video',
-      'id': '123',
-    }
+        spyOn($rootScope, '$broadcast').and.callThrough();
+        $httpBackend.expectPOST('/playlist').respond(401, {});
 
-    var retPayload = service.sendToTv(data);
-    expect(service.sendToTv).toHaveBeenCalled();
-  });
+        service.sendToTv(data);
 
-  it('should emit appSendToTv:send when called', function () {
-    var data = {
-      'title':'testTitle',
-      'actTime': 123,
-      'type': 'video',
-      'id': '123',
-    }
+        $httpBackend.flush();
+        $rootScope.$digest();
 
-    $httpBackend.expectPOST('/playlist').respond(200, {});
+        expect($rootScope.$broadcast.calls.mostRecent().args).toEqual(['appSendToTv:send', {name: data.title, sent: 401}]);
+    });
 
-    spyOn( $rootScope, '$broadcast').and.callThrough();
-    spyOn( $rootScope, '$emit').and.callThrough();
+    it('should emit appSendToTv:send when called and sent failed with other error', function () {
+        var data = {
+            title: 'testTitle',
+            actTime: 123,
+            type: 'video',
+            id: '123'
+        };
 
-    var retPayload = service.sendToTv(data);
+        spyOn($rootScope, '$broadcast').and.callThrough();
+        $httpBackend.expectPOST('/playlist').respond(500, {});
 
-    //expect($rootScope.$emit).toHaveBeenCalledWith('');
-    //expect($rootScope.$broadcast).toHaveBeenCalledWith('');
+        service.sendToTv(data);
 
-    $httpBackend.flush();
+        $httpBackend.flush();
+        $rootScope.$digest();
 
-  });
+        expect($rootScope.$broadcast.calls.mostRecent().args).toEqual(['appSendToTv:send', {name: data.title, sent: false}]);
+    });
 });
