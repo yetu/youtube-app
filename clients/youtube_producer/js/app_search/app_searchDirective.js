@@ -24,11 +24,6 @@ module.exports = function () {
                 triggerEnter = attr.triggerSearch && attr.triggerSearch.indexOf('enter') > -1,
                 triggerAuto = attr.triggerSearch && attr.triggerSearch.indexOf('auto') > -1;
 			
-            scope.resetButtonClick = function() {
-                element.find('input')[0].value = '';
-                scope.initSearch('');
-			};
-
 			scope.searchButtonClick = function() {
                 if (triggerButton === true) {
                     scope.initSearch(element.find('input')[0].value);
