@@ -1,61 +1,62 @@
 module.exports = (function ($rootScope, $http, $location, $filter, serverPathsConfig) {
-  'use strict';
+    'use strict';
 
-  var buildPayload = function (data) {
-    var url = $location.protocol() + '://' + $location.host() + ":" + $location.port(),
-      actTime = data.actTime - 5 < 0 ? 0 : data.actTime - 5,
-      payload = {
-        action: {
-          url: url + "/#/view/fullscreen/" + data.type + "/" + data.id + "/" + actTime,
-          // for localhost testing use the one below
-          //url: "https://youtubeapp-dev.yetu.me" + "/#/view/fullscreen/" + data.type + "/" + data.id + "/" + actTime,
-          type: "open",
-          parameter: {
-            device: "tv"
-          },
-          button: {
-            icon: url + serverPathsConfig.imageUrl + "notification_play.svg",
-            label: "Play" //TODO: add i18n.COMMIT_BUTTON_LABEL
-          }
-        },
-        headline: encodeURI(data.title),
-        stream: {
-          owner: data.channel,
-          title: encodeURI(data.title),
-          image: data.img,
-          duration: $filter('duration')(data.duration),
-          publishDate: $filter('timeAgo')(data.created),
-          viewCount: data.views,
-          resolution: data.resolution
-        }
-      };
+    var buildPayload = function (data) {
+        var url = $location.protocol() + '://' + $location.host() + ":" + $location.port(),
+            actTime = data.actTime - 5 < 0 ? 0 : data.actTime - 5,
+            payload = {
+                action: {
+                    url: url + "/#/view/fullscreen/" + data.type + "/" + data.id + "/" + actTime,
+                    // for localhost testing use the one below
+                    //url: "https://youtubeapp-dev.yetu.me" + "/#/view/fullscreen/" + data.type + "/" + data.id + "/" + actTime,
+                    type: "open",
+                    parameter: {
+                        device: "tv"
+                    },
+                    button: {
+                        icon: url + serverPathsConfig.imageUrl + "notification_play.svg",
+                        label: "Play" //TODO: add i18n.COMMIT_BUTTON_LABEL
+                    }
+                },
+                headline: encodeURI(data.title),
+                stream: {
+                    owner: data.channel,
+                    title: encodeURI(data.title),
+                    image: data.img,
+                    duration: $filter('duration')(data.duration),
+                    publishDate: $filter('timeAgo')(data.created),
+                    viewCount: data.views,
+                    resolution: data.resolution
+                }
+            };
 
-    return payload;
+        return payload;
 
-  };
-
-  var sendPayload = function (payload) {
-
-    var sendResult = {
-      name: decodeURI(payload.headline || ''),
-      sended: "YES"
     };
 
-    $http.post(serverPathsConfig.youtubeUrl, payload).success(function () {
-      $rootScope.$broadcast("appSendToTv:send", sendResult);
+    var sendPayload = function (payload) {
 
-    }).error(function (data, status) {
-      // replace default success with error
-      sendResult.sended = status === 401 ? 401 : "ERROR";
-      $rootScope.$emit("appSendToTv:send", sendResult);
-    });
-  };
+        var sendResult = {
+            name: decodeURI(payload.headline || ''),
+            sent: true
+        };
 
-  var sendToTv = function (data) {
-    sendPayload(buildPayload(data));
-  };
+        $http.post(serverPathsConfig.youtubeUrl, payload)
+            .success(function () {
+                $rootScope.$broadcast('appSendToTv:send', sendResult);
+            })
+            .error(function (data, status) {
+                // replace default success with error
+                sendResult.sent = status === 401 ? 401 : false;
+                $rootScope.$broadcast('appSendToTv:send', sendResult);
+            });
+    };
 
-  return {
-    sendToTv: sendToTv
-  };
+    var sendToTv = function (data) {
+        sendPayload(buildPayload(data));
+    };
+
+    return {
+        sendToTv: sendToTv
+    };
 });
