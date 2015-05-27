@@ -29,43 +29,50 @@ module.exports = ({
     imageUrl: '/assets/youtube_producer/img/'
 });
 },{}],5:[function(require,module,exports){
-/* global module */
+/*jshint -W083 */
+/* global module, config */
+
 /*
  * Dashbord controller
  */
-module.exports = (function($scope, ytYoutubeService, $routeParams, $location, appMode, $rootScope) {
+module.exports = (function($scope, ytYoutubeService, $routeParams, $location, $rootScope, $filter) {
     
     if($routeParams.action === 'search' && $routeParams.param) {
+        $rootScope.searchValue = $routeParams.param;
         ytYoutubeService.getResult('search', $routeParams.param).then(function(data) {
             $scope.mainResultList = [data];
             $scope.searchValue = $routeParams.param; // temporary as search inside
         });
     } else {
+        var cid, list = [], order = [],
+            cat_no = config.dashboardCategories.length;
         // default categories view
         $scope.mainResultList = [];
         // TODO: handle no categories defined
-        for(var i = 0; i < config.dashboardCategories.length; i++) {
-            ytYoutubeService.getResult('popular', config.dashboardCategories[i].id, 4).then(function(data) {
-                $scope.mainResultList.push(data);
+        for(var i = 0; i < cat_no; i++) {
+            cid = config.dashboardCategories[i].id;
+            order.push(cid);
+            ytYoutubeService.getResult('popular', cid).then(function(data) {
+                data.order = order.indexOf(data.categoryId);
+                // overwrite youtube category name with configured one
+                data.title = config.dashboardCategories[data.order].name;
+                list.push(data);
+                if(cat_no === list.length) {
+                    // TODO: decide if defined order of categories is more important than loading time
+                    // in this case sort and assigng at once after load all
+                    $scope.mainResultList = $filter('orderBy')(list, 'order');
+                }
             });
         }
         // TODO: seems always the same videos - should be rerquested more and shuffle?
     }
 
-    $scope.$on('app:search-value', function(event, query){
-        // temporary start search here but not again for search in url
-        if($routeParams.action === 'search' && $routeParams.param === query) {
-            return;
-        }
-        ytYoutubeService.getResult('search', query).then(function(data) {
-            $scope.mainResultList = [data];
-        });
-        /* TODO: make path replace without reload
-        var action = '#/dashboard/search/' + query;
-        if(decodeURIComponent(window.location.hash) !== action) {
-            window.location = action; // replace with $location
-        }
-        */
+    $rootScope.$on('app:search-value', function(event, query){
+        $location.path('/dashboard/search/' + query);
+    });
+
+    $rootScope.$on('app:search-reset', function(){
+        $location.path('/dashboard');
     });
 });
 },{}],6:[function(require,module,exports){
@@ -78,18 +85,36 @@ module.exports = angular.module('_controllers', [])
 /*
  * Viewer controller
  */
-module.exports = (function($scope, ytYoutubeService, appMode, $routeParams, $window) {
+module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $routeParams, $location, Notification) {
 
     ytYoutubeService.getDetails($routeParams.type, $routeParams.id).then(function(data) {
+        if($routeParams.time) {
+            data.video.startAt = $routeParams.time;
+        }
         $scope.video = data.video;
         $scope.playlist = data.playlist;
     }, function(error) {
         // TODO: error handling
     });
 
-    $scope.$on('app:search-value', function(event, query){
-        var action = '#/dashboard/search/' + query;
-        $window.location.href = action;
+    $rootScope.$on('app:search-value', function(event, query){
+        var action = '/dashboard/search/' + query;
+        $location.path(action);
+    });
+
+    $rootScope.$on('appSendToTv:send', function(event, data){
+        if(data.sended === 'YES') {
+            Notification.success({
+                message: '"' + data.name + '" ' + $filter('translate')('has been sent to TV'),
+                title: $filter('translate')('Play on TV')
+            });
+        } else {
+            Notification.error({
+                message: '"' + data.name + '" ' + $filter('translate')('has not been sent to TV'),
+                title: $filter('translate')('Play on TV')
+            });
+        }
+        
     });
 });
 
@@ -137,6 +162,7 @@ var youtubeApp = angular.module('youtubeApp',
 		'pascalprecht.translate',
 		'reactTo',
         'LocalStorageModule',
+        'ui-notification',
         // app modules
         require('./app_search').name,
         require('./app_mode').name,
@@ -172,7 +198,7 @@ youtubeApp.config(function ($routeProvider, $translateProvider, $httpProvider, i
 			template: require('./dashboardTemplate.html'),
             resolve: resolve
 		})
-        .when('/view/:mode/:type/:id/:device?', {
+        .when('/view/:mode/:type/:id/:time?', {
             controller: 'ViewerCtrl',
 			template: require('./viewerTemplate.html'),
             resolve: resolve
@@ -189,10 +215,17 @@ youtubeApp.config(function ($routeProvider, $translateProvider, $httpProvider, i
     $translateProvider.preferredLanguage('en');
 });
 
-youtubeApp.run(function($location, $translate){
+youtubeApp.run(function($location, $translate, appMode, $rootScope, $window){
     var params = $location.search();
     if(params.lang){
         $translate.use(params.lang);
+    }
+    $rootScope.$on('$routeChangeSuccess', function(){
+        $rootScope.appModeClass = appMode.getClass();
+    });
+    if(appMode.get() !== 'tv') {
+        $window.yetu = null;
+        $rootScope.authEnabled = true;
     }
 });
 
@@ -200,7 +233,7 @@ youtubeApp.run(function($location, $translate){
 /**
  * Service detecting application mode
  */
-module.exports = (function ($routeParams, $rootScope) {
+module.exports = (function ($routeParams, $rootScope, $location, $timeout) {
 	'use strict';
 
     var _mode = null;
@@ -249,10 +282,8 @@ module.exports = (function ($routeParams, $rootScope) {
      */
     var _detect = function() {
         // temporary use link option
-        _mode = $routeParams.device ? $routeParams.device.replace(/&.+/gi, '') : 'pc';
-
-        // set global application class directly
-        $rootScope.appModeClass = getClass();
+        var params = $location.search();
+        _mode = params.device && params.device.match(/^(tv|pc)$/) ? params.device : 'pc';
     };
 
     _detect();
@@ -285,30 +316,37 @@ module.exports = angular.module('app_mode', [])
  * @attr on-reset string|fn Reset search event name (default 'app:search-reset') or callback function
  */
 module.exports = function () {
-	return {
-		restrict: 'E',
-		template: require('./app_searchTemplate.html'),
+    return {
+        restrict: 'E',
+        template: require('./app_searchTemplate.html'),
         scope: {
             searchValue: '@value',
             placeholder: '@placeholder'
         },
-		link: function(scope, element, attr){
+        link: function(scope, element, attr){
             var _unbinder = [],
                 triggerButton = attr.triggerSearch && attr.triggerSearch.indexOf('button') > -1,
                 triggerEnter = attr.triggerSearch && attr.triggerSearch.indexOf('enter') > -1,
-                triggerAuto = attr.triggerSearch && attr.triggerSearch.indexOf('auto') > -1;
-			
-			scope.searchButtonClick = function() {
+                triggerAuto = attr.triggerSearch && attr.triggerSearch.indexOf('auto') > -1,
+                input = element.find('input')[0],
+                $input = angular.element(input);
+
+            scope.resetButtonClick = function() {
+                input.value = '';
+                scope.initSearch('');
+            };
+
+            scope.searchButtonClick = function() {
                 if (triggerButton === true) {
-                    scope.initSearch(element.find('input')[0].value);
+                    scope.initSearch(input.value);
                 }
-			};
-			scope.searchOnKeyUp = function (event) {
-				if (triggerEnter === true && event.keyCode === 13 && event.target.value !== "") {
-					scope.initSearch(event.target.value);
-				}
-			};
-			scope.initSearch = function(value) {
+            };
+            scope.searchOnKeyUp = function (event) {
+                if (triggerEnter === true && event.keyCode === 13) {
+                    scope.initSearch(event.target.value);
+                }
+            };
+            scope.initSearch = function(value) {
                 if (scope.emitted === value && attr.allowRepeat !== "true") {
                     return;
                 }
@@ -318,7 +356,18 @@ module.exports = function () {
                     scope.$emit(attr.eventReset || 'app:search-reset');
                 }
                 scope.emitted = value;
-			};
+            };
+
+            $input.on('click', function() {
+                if(!input.isFocused) {
+                    input.select();
+                    input.isFocused = true;
+                }
+            });
+
+            $input.on('blur', function(event) {
+                input.isFocused = false;
+            });
 
             if(triggerAuto) {
                 _unbinder.push(scope.$watch('searchValue', function (value) {
@@ -333,8 +382,8 @@ module.exports = function () {
                   unbind();
                 });
             });
-		}
-	};
+        }
+    };
 };
 
 
@@ -346,60 +395,54 @@ module.exports = angular.module('app_search', ['pascalprecht.translate'])
 	.directive('appSearch', require('./app_searchDirective'));
 
 },{"./app_searchDirective":14}],17:[function(require,module,exports){
-module.exports = function (appSendToTvService) {
-	return {
-		restrict: 'E',
-		template: require('./app_sendToTvTemplate.html'),
+module.exports = function(appSendToTvService) {
+    return {
+        restrict: 'E',
+        template: require('./app_sendToTvTemplate.html'),
         scope: {
             class: '@class',
             data: '=ngModel'
         },
-		link: function(scope){
-            scope.onSendButtonClick = function(){
-              appSendToTvService.sendToTv(scope.data);
-			};
-		}
-	};
+        link: function(scope) {
+            scope.onSendButtonClick = function() {
+                appSendToTvService.sendToTv(scope.data);
+            };
+        }
+    };
 };
 
 },{"./app_sendToTvTemplate.html":19}],18:[function(require,module,exports){
-module.exports = (function ($http, $location, $filter, serverPathsConfig) {
-  'use strict';
-  var that = this;
-  var sendPayload = function(payload){
-  var videoTitle = payload.headline || '';
+module.exports = (function ($rootScope, $http, $location, $filter, serverPathsConfig) {
+    'use strict';
 
-    $http.post(serverPathsConfig.youtubeUrl, payload).success(function(payload){
-      that.playlistSendResult = {
-        name: decodeURI(videoTitle),
-        sended: "YES"
-      };
-    }).error(function(data, status){
-      if(status === 401){
-        that.playlistSendResult = {
-          name: decodeURI(videoTitle),
-          sended: 401
-        };
-      }else {
-        that.playlistSendResult = {
-          name: decodeURI(videoTitle),
-          sended: "ERROR"
-        };
-      }
-    });
+    var sendPayload = function(payload) {
+
+        var sendResult = {
+                name: decodeURI(payload.headline || ''),
+                sended: "YES"
+            };
+
+        $http.post(serverPathsConfig.youtubeUrl, payload).success(function(){
+            $rootScope.$broadcast("appSendToTv:send", sendResult);
+        }).error(function(data, status){
+            // replace default success with error
+            sendResult.sended = status === 401 ? 401 : "ERROR";
+            $rootScope.$emit("appSendToTv:send", sendResult);
+        });
   };
 
   var sendToTv = function (data) {
-    var url = $location.protocol() + '://' + $location.host() + ":" + $location.port();
+    var url = $location.protocol() + '://' + $location.host() + ":" + $location.port(),
+        actTime = data.actTime - 5 < 0 ? 0 : data.actTime - 5;
+
     var payload = {
       action: {
-        url: url + "/#/view/fullscreen/" + data.type + "/" + data.id + "/tv",
+        url: url + "/#/view/fullscreen/" + data.type + "/" + data.id + "/" + actTime,
         // for localhost testing use the one below
-        // url: "https://youtubeapp-dev.yetu.me" + "/#/view/fullscreen/" + data.type + "/" + data.id + "/tv",
+        //url: "https://youtubeapp-dev.yetu.me" + "/#/view/fullscreen/" + data.type + "/" + data.id + "/" + actTime,
         type: "open",
         parameter: {
-          playlistId: "",
-          itemIndex: 0
+          device: "tv"
         },
         button: {
           icon: url + serverPathsConfig.imageUrl + "notification_play.svg",
@@ -425,7 +468,6 @@ module.exports = (function ($http, $location, $filter, serverPathsConfig) {
   return {
     sendToTv: sendToTv
   };
-
 });
 
 },{}],19:[function(require,module,exports){
@@ -439,7 +481,7 @@ module.exports = angular.module('app_sendToTv', ['ngResource'])
 
 
 },{"./app_sendToTvDirective":17,"./app_sendToTvService":18}],21:[function(require,module,exports){
-module.exports = "<app-search class=\"app-search\" placeholder=\"Search YouTube\" value=\"{{ searchValue }}\" trigger-search=\"button,enter,auto\" auto-delay=\"500\"></app-search>\r\n<!-- TODO: distinguish type on application mode tv/pc -> regular/inline -->\r\n<yt-result-set ng-model=\"mainResultList\" play-link=\"#/view/:type/:id\" display=\"\" control=\"\"></yt-result-set>\r\n";
+module.exports = "<!-- TODO: distinguish type on application mode tv/pc -> regular/inline -->\r\n<yt-result-set ng-model=\"mainResultList\" play-link=\"#/view/:type/:id\" display=\"\" control=\"\"></yt-result-set>\r\n";
 
 },{}],22:[function(require,module,exports){
 module.exports = angular.module('ui_videoList', ['ngResource', 'pascalprecht.translate'])
@@ -462,7 +504,6 @@ module.exports = function () {
 		restrict: 'E',
 		template: require('./ui_videoListTemplate.html'),
         scope: {
-            class: '@class',
             videoList: '=ngModel',
             playLink: '@playLink',
             playFn: '@playFn', // TODO: some function binding?
@@ -494,13 +535,13 @@ module.exports = function () {
 };
 
 },{"./ui_videoListItemTemplate.html":25}],25:[function(require,module,exports){
-module.exports = "<div class=\"playBtn\">\r\n    <a ng-if=\"playLink\" class=\"playimg\" ng-href=\"#/view/expand/{{::item.type}}/{{::item.id}}\"> <!-- TODO: replace href with {{ playLink | replaceParams }} -->\r\n        <img class=\"showOnResultList\" src=\"assets/youtube_producer/img/play-icon.svg\" />\r\n        <img class=\"showOnPlaylist\" src=\"assets/youtube_producer/js/yt_viewer/assets/arrow.svg\" />\r\n    </a>\r\n    <a ng-if=\"playFn\" class=\"playimg\" ng-click=\"playFunction($index)\">\r\n        <img class=\"showOnResultList\" src=\"assets/youtube_producer/img/play-icon.svg\" />\r\n        <img class=\"showOnPlaylist\" src=\"assets/youtube_producer/js/yt_viewer/assets/arrow.svg\" />\r\n    </a>\r\n</div>\r\n<div class=\"img\">\r\n    <img ng-if=\"item.img\" ng-src=\"{{::item.img}}\"/>\r\n    <div ng-if=\"item.type == 'video'\" class=\"duration\"><span>{{ item.duration | duration }}</span></div><!-- TODO: one-time binding with filter? -->\r\n    <div ng-if=\"item.type == 'playlist'\" class=\"items\"><span>{{ ::item.totalItems }}</span></div>\r\n</div>\r\n<div class=\"metadata\">\r\n    <p class=\"title\">{{::item.title | limitTo : 45 }}...</p>\r\n    <p class=\"subtitle\" ng-if=\"item.channel\">\r\n        <span class=\"channel\">by {{::item.channel}}</span><br />\r\n        <span class=\"created\">{{ ::item.created | timeAgo }}</span>\r\n    </p>\r\n    <p class=\"description\" data-type=\"description\" cw-reveal-label ng-if=\"item.description\">\r\n        {{::item.description | limitTo : 45 }}...\r\n    </p>\r\n    <p class=\"description\" ng-if=\"!item.description\">No description available.</p>\r\n</div>\r\n<div class=\"buttons\">\r\n    <app-send-to-tv ng-model=\"::item\"></app-send-to-tv>\r\n</div>\r\n";
+module.exports = "<div class=\"playBtn\">\r\n    <a ng-if=\"::playLink\" class=\"playimg\" ng-href=\"#/view/expand/{{::item.type}}/{{::item.id}}\"> <!-- TODO: replace href with {{ playLink | replaceParams }} -->\r\n        <!--<img class=\"showOnResultList\" src=\"assets/youtube_producer/img/play-icon.svg\" />-->\r\n        <img class=\"showOnPlaylist\" src=\"assets/youtube_producer/js/ui_videoList/assets/arrow.svg\" />\r\n    </a>\r\n    <a ng-if=\"::playFn\" class=\"playimg\" ng-click=\"playFunction($index)\">\r\n        <!--<img class=\"showOnResultList\" src=\"assets/youtube_producer/img/play-icon.svg\" />-->\r\n        <img class=\"showOnPlaylist\" src=\"assets/youtube_producer/js/ui_videoList/assets/arrow.svg\" />\r\n    </a>\r\n</div>\r\n<div class=\"img\">\r\n    <img ng-if=\"::item.img\" ng-src=\"{{::item.img}}\"/>\r\n    <div ng-if=\"::(item.type == 'video')\" class=\"duration\"><span>{{ item.duration | duration }}</span></div><!-- TODO: one-time binding with filter? -->\r\n    <div ng-if=\"::(item.type == 'playlist')\" class=\"items\"><span>{{ ::item.totalItems }}</span></div>\r\n</div>\r\n<div class=\"metadata\">\r\n    <p class=\"title\">{{::item.title | limitTo : 45 }}...</p>\r\n    <p class=\"subtitle\" ng-if=\"::item.channel\">\r\n        <span class=\"channel\">by {{::item.channel}}</span><br />\r\n        <span class=\"created\">{{ ::item.created | timeAgo }}</span>\r\n    </p>\r\n    <p class=\"description\" data-type=\"description\" cw-reveal-label ng-if=\"::item.description\">\r\n        {{::item.description | limitTo : 45 }}...\r\n    </p>\r\n    <p class=\"description\" ng-if=\"::(!item.description)\">No description available.</p>\r\n</div>\r\n<div class=\"buttons\">\r\n    <app-send-to-tv ng-model=\"::item\"></app-send-to-tv>\r\n</div>\r\n";
 
 },{}],26:[function(require,module,exports){
-module.exports = "<ui-video-list-item class=\"ui-video-list-item\" ng-repeat=\"item in videoList\"></ui-video-list-item>\r\n<div ng-if=\"videoList.length == 0\">\r\n    {{ 'No results found' | translate }}\r\n</div>\r\n";
+module.exports = "<ui-video-list-item class=\"ui-video-list-item\" ng-repeat=\"item in videoList\"></ui-video-list-item>\r\n<div ng-if=\"videoList.length == 0\">\r\n    {{ ::('No results found' | translate) }}\r\n</div>\r\n";
 
 },{}],27:[function(require,module,exports){
-module.exports = "<app-search class=\"app-search\" placeholder=\"Search YouTube\" value=\"{{ searchValue }}\" trigger-search=\"button,enter,auto\" auto-delay=\"500\"></app-search>\r\n<yt-viewer video-model=\"video\" playlist-model=\"playlist\"></yt-viewer>\r\n";
+module.exports = "<yt-viewer video-model=\"video\" playlist-model=\"playlist\"></yt-viewer>\r\n";
 
 },{}],28:[function(require,module,exports){
 module.exports = angular.module('yt_auth', ['ngResource'])
@@ -508,31 +549,30 @@ module.exports = angular.module('yt_auth', ['ngResource'])
 
 },{"./yt_authDirective":29}],29:[function(require,module,exports){
 /* global angular, module, config */
-module.exports = function ($window, $http, $interval, $log) {
+module.exports = function ($window, $http, $interval, $log, $timeout, $rootScope) {
     'use strict';
     return {
         restrict: 'E',
         link: function (scope, element, attr) {
             //TODO: use more angular.js methods instead of mix of native and angular stuff
+            var openidIframe, timerID;
 
-            var openidIframe = document.createElement('iframe');
-
-            openidIframe.src = config.authServer + '/assets/login_status.html';
-            openidIframe.id = 'openid-provider';
-            openidIframe.style.visibility = 'hidden';
-            openidIframe.style.display = 'none';
-
-            document.body.appendChild(openidIframe);
-
-            openidIframe.onload = check_session;
-
-            var timerID = setInterval(check_session, config.sessionPollingInterval * 1000);
+            function init() {
+                openidIframe = document.createElement('iframe');
+                openidIframe.src = config.authServer + '/assets/login_status.html';
+                openidIframe.id = 'openid-provider';
+                openidIframe.style.visibility = 'hidden';
+                openidIframe.style.display = 'none';
+                document.body.appendChild(openidIframe);
+                openidIframe.onload = check_session;
+                timerID = setInterval(check_session, config.sessionPollingInterval * 1000);
+                angular.element($window).on('message', receiveMessageP);
+            }
 
             function check_session() {
                 var win = openidIframe.contentWindow;
                 win.postMessage('youtubeApp ' + config.userUUID, config.authServer);
             }
-
 
             function receiveMessageP(event) {
                 if (event.originalEvent) {
@@ -551,7 +591,7 @@ module.exports = function ($window, $http, $interval, $log) {
                 }
             }
 
-            angular.element($window).on('message', receiveMessageP);
+            init();
         }
     };
 };
@@ -775,6 +815,7 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageServi
             case 'popular': {
                 meta.type = type;
                 meta.title = getCategory(query).title;
+                meta.categoryId = query;
                 meta.items = list;
                 return meta;
             }
@@ -818,6 +859,7 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageServi
                 params.videoCategoryId = query;
                 params.chart = 'mostPopular';
                 params.type = settings.search.type;
+                params.maxResults = settings.popular.maxResults;
                 break;
             }
         }
@@ -967,7 +1009,8 @@ module.exports = ({
     popular: {
         id: 'videoCategoryId',
         url: 'https://www.googleapis.com/youtube/v3/videos',
-        part: 'snippet'
+        part: 'snippet',
+        maxResults: config.maxPopularResults || 4
     },
     regionCode: config.regionCode || 'GB',
     relevanceLanguage: config.relevanceLanguage || 'en',
@@ -1047,6 +1090,9 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
                     events: {
                         onReady: function() {
                             scope.player.API.ready = true;
+                            if(scope.video.startAt) {
+                                player.seekTo(scope.video.startAt);
+                            }
                         }
                     }
                 });
@@ -1081,6 +1127,12 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
                     }
                 }
             };
+
+            $rootScope.$on('appSendToTv:send', function(event, data){
+                if(data.sended === 'YES') {
+                    player.pauseVideo();
+                }
+            });
 
             _unbinder.push(scope.$watchCollection('player.API', function(n) {
                 if(n.loaded && scope.video && !n.initialized) {
@@ -1139,7 +1191,7 @@ module.exports = function () {
 	};
 };
 },{"./yt_videoDescriptionTemplate.html":45}],45:[function(require,module,exports){
-module.exports = "<div class=\"yt-video-description\">\r\n    <div class=\"text\">\r\n        <span ng-show=\"!expanded\">{{ video.description | limitTo : 300 }}</span><!-- TODO: trust as html and | nl2br filter? -->\r\n        <span ng-show=\"!expanded\" ng-if=\"video.description.length > 300\" ng-click=\"expanded = true\">...</span>\r\n        <span ng-show=\"expanded\">{{ video.description }}</span>\r\n    </div>\r\n    <div class=\"metadata\">\r\n        <div class=\"row\">{{ ::('From' | translate) }}: {{ video.channel }}</div>\r\n        <div>{{ ::('Added' | translate) }}: {{ video.created | date }}</div>\r\n        <div class=\"row\">{{ ::('Category' | translate) }}: {{ video.category }}</div>\r\n        <div>{{ ::('Views' | translate) }}: {{ video.views }}</div>\r\n    </div>\r\n</div>";
+module.exports = "<div class=\"yt-video-description\">\r\n    <div class=\"text\">\r\n        <span ng-show=\"!expanded\">{{ ::(video.description | limitTo : 300) }}</span><!-- TODO: trust as html and | nl2br filter? -->\r\n        <span ng-show=\"!expanded\" ng-if=\"::(video.description.length > 300)\" ng-click=\"expanded = true\">...</span>\r\n        <span ng-show=\"expanded\">{{ ::video.description }}</span>\r\n    </div>\r\n    <div class=\"metadata\">\r\n        <div class=\"row\">{{ ::('From' | translate) }}: {{ video.channel }}</div>\r\n        <div>{{ ::('Added' | translate) }}: {{ video.created | date }}</div>\r\n        <div class=\"row\">{{ ::('Category' | translate) }}: {{ video.category }}</div>\r\n        <div>{{ ::('Views' | translate) }}: {{ video.views }}</div>\r\n    </div>\r\n</div>";
 
 },{}],46:[function(require,module,exports){
 
