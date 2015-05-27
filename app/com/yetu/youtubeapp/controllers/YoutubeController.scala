@@ -43,7 +43,7 @@ class YoutubeController @Inject()(implicit val env: Environment[User, SessionAut
   
   def level2tv = Action { implicit request =>
     val config = SimpleFrontendConfig(youtubeDeveloperToken = FrontendConfiguration.devToken)
-    Ok(views.html.youtubeViewerLevel2TV(Json.toJson(config)))
+    Ok(views.html.index(Json.toJson(config)))
   }
   
   def sendNotification(request: SecuredRequest[JsValue], eventName:String) = {
