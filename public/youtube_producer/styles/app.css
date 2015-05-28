@@ -106,7 +106,7 @@ h2 {
   top: 35px;
 }
 .app-search button.search:hover path {
-  fill: #fff;
+  fill: #000;
 }
 .ui-video-list {
   display: block;
