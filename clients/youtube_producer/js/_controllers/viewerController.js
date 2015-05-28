@@ -20,17 +20,11 @@ module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $route
     });
 
     $rootScope.$on('appSendToTv:send', function(event, data){
-        if(data.sent === true) {
-            Notification.success({
-                message: '"' + data.name + '" ' + $filter('translate')('has been sent to TV'),
-                title: $filter('translate')('Play on TV')
-            });
-        } else {
+        if(data.sent !== true) {
             Notification.error({
                 message: '"' + data.name + '" ' + $filter('translate')('has not been sent to TV'),
                 title: $filter('translate')('Play on TV')
             });
         }
-        
     });
 });
