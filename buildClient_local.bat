@@ -2,15 +2,17 @@
 
 cd clients
 
-echo 'npm install'
-npm install
+rem echo
+rem echo 'npm install'
+rem call npm install
 
 rem COMMENT IN WHICH CLIENT YOU WANT TO WATCH LOCALLY
 
+echo.
 echo 'build youtube_producer client'
 call npm run build-youtube-producer
 
-echo 
+echo. 
 echo 'test youtube_producer client'
 call npm run test-youtube-producer-server
 

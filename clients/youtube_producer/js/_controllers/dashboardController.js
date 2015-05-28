@@ -5,7 +5,7 @@
  * Dashbord controller
  */
 module.exports = (function($scope, ytYoutubeService, $routeParams, $location, $rootScope, $filter) {
-    
+
     if($routeParams.action === 'search' && $routeParams.param) {
         $rootScope.searchValue = $routeParams.param;
         ytYoutubeService.getResult('search', $routeParams.param).then(function(data) {
@@ -13,20 +13,20 @@ module.exports = (function($scope, ytYoutubeService, $routeParams, $location, $r
             $scope.searchValue = $routeParams.param; // temporary as search inside
         });
     } else {
-        var cid, list = [], order = [],
-            cat_no = config.dashboardCategories.length;
+        var categoryId, list = [], order = [],
+            numberOfCategories = config.dashboardCategories.length;
         // default categories view
         $scope.mainResultList = [];
         // TODO: handle no categories defined
-        for(var i = 0; i < cat_no; i++) {
-            cid = config.dashboardCategories[i].id;
-            order.push(cid);
-            ytYoutubeService.getResult('popular', cid).then(function(data) {
+        for(var i = 0; i < numberOfCategories; i++) {
+            categoryId = config.dashboardCategories[i].id;
+            order.push(categoryId);
+            ytYoutubeService.getResult('popular', categoryId).then(function(data) {
                 data.order = order.indexOf(data.categoryId);
                 // overwrite youtube category name with configured one
                 data.title = config.dashboardCategories[data.order].name;
                 list.push(data);
-                if(cat_no === list.length) {
+                if(numberOfCategories === list.length) {
                     // TODO: decide if defined order of categories is more important than loading time
                     // in this case sort and assigng at once after load all
                     $scope.mainResultList = $filter('orderBy')(list, 'order');

@@ -1,0 +1,38 @@
+[
+    {
+        "title": "Youtube Category 1",
+        "categoryId": 11,
+        "items": [
+            {
+                "type": "video",
+                "id": 111,
+                "title": "Video Title 1",
+                "description": "Description of video 1"
+            },
+            {
+                "type": "video",
+                "id": 112,
+                "title": "Video Title 2",
+                "description": "Description of video 2"
+            }
+        ]
+    },
+    {
+        "title": "Youtube Category 2",
+        "categoryId": 22,
+        "items": [
+            {
+                "type": "video",
+                "id": 221,
+                "title": "Video Title 3",
+                "description": "Description of video 3"
+            },
+            {
+                "type": "video",
+                "id": 222,
+                "title": "Video Title 4",
+                "description": "Description of video 4"
+            }
+        ]
+    }
+]
