@@ -3,7 +3,7 @@ module.exports = (function ($rootScope, $http, $location, $filter, serverPathsCo
 
     var buildPayload = function (data) {
         var url = $location.protocol() + '://' + $location.host() + ":" + $location.port(),
-            actTime = data.actTime - 5 < 0 ? 0 : data.actTime - 5,
+            actTime = !data.actTime || data.actTime - 5 < 0 ? 0 : data.actTime - 5,
             // for localhost testing set target url explicitly
             // url = 'https://youtubeapp-dev.yetu.me',
             payload = {
@@ -28,7 +28,6 @@ module.exports = (function ($rootScope, $http, $location, $filter, serverPathsCo
             };
 
         return payload;
-
     };
 
     var sendPayload = function (payload) {
