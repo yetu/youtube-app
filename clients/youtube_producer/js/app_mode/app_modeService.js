@@ -49,9 +49,11 @@ module.exports = (function ($routeParams, $rootScope, $location, $timeout) {
      * @returns {String} Application mode depending on system ('tv'|'pc')
      */
     var _detect = function() {
-        // temporary use link option
-        var params = $location.search();
-        _mode = params.device && params.device.match(/^(tv|pc)$/) ? params.device : 'pc';
+        if($location.absUrl().match(/\/level2tv[\/#]/)) {
+            _mode = 'tv';
+        } else {
+            _mode = 'pc';
+        }
     };
 
     _detect();
