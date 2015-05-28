@@ -1,7 +1,8 @@
 /* global angular, module, config */
 module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageService) {
     'use strict';
-    var settings = ytYoutubeServiceConfig,
+    var queries = {},
+        settings = ytYoutubeServiceConfig,
         _initialized = false,
         categories = {};
 
@@ -179,6 +180,12 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageServi
         $http.get(url, {
             params: params
         }).success(function(data){
+            queries[data.etag] = {
+                type: type,
+                query: query,
+                url: url,
+                params: params
+            };
             deferred.resolve(processResultList(type, data, query));
         }).error(function(data){
             console.error("error happening on .getResult:", data);
@@ -246,6 +253,29 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageServi
         }
     };
 
+    var getNext = function(etag, token) {
+        var deferred = $q.defer(),
+            params;
+
+        if(!queries[etag]) {
+            throw { name: 'yt_youtubeService', message: 'No given etag found: ' + etag };
+        }
+        
+        params = queries[etag].params;
+        params.pageToken = token;
+        
+        $http.get(queries[etag].url, {
+            params: params
+        }).success(function(data){
+            deferred.resolve(processResultList(queries[etag].type, data, queries[etag].query));
+        }).error(function(data){
+            console.error("error happening on .getNext:", data);
+            deferred.reject();
+        });
+
+        return deferred.promise;
+    };
+
     var initialize = function() {
         var promise, data;
         
@@ -283,10 +313,10 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageServi
         initialize: initialize,
         getResult: getResult,
         getDetails: getDetails,
-        getCategory: getCategory
+        getCategory: getCategory,
+        getNext: getNext
         // TODO:
-        // getNext: getNext,
-        // getPrev: getPrev
+        // getPrev: getPrev?
         // setMaxResults
         // setRegionCode
         // setRelevanceLanguage
