@@ -214,13 +214,18 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageServi
                     break;
                 }
                 case 'video': {
-                    getResult('related', id, 20).then(function(data) {
-                        result = {
-                            playlist: data,
-                            video: items
-                        };
-                        deferred.resolve(result);
-                    });
+                    // in case of backend youtube error for related videos there will be empty list returned
+                    result = {
+                        playlist: { type: 'related', title: 'Related videos', items: [{ title: 'Unavailable'}]},
+                        video: items
+                    };
+                    getResult('related', id, settings.video.maxResults)
+                        .then(function(data) {
+                            result.playlist = data;
+                        })
+                        .finally(function() {
+                            deferred.resolve(result);
+                        });
                     break;
                 }
             }
