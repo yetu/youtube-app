@@ -6,21 +6,25 @@
     list-style: none;
     list-style-position: outside;
     padding: 0;
-    
 }
 
 .ui-video-list-item {
+    display: block;
+    width: 240px;
+    height: 260px;
+    margin: 0 auto 30px;
     position: relative;
     background-color: bg-video-list-item;
-    float: left;
+    float: none;
     overflow: hidden;
     padding-bottom: 10px;
     
     .img {
-        position: relative;
-        margin: 10px 10px 0px;
         display: block;
-
+        width: auto;
+        height: 124px;
+        position: relative;
+        margin: 10px;
         img {
             max-width: 100%;
             width: 100%;
@@ -28,10 +32,15 @@
         }
         
         svg {
+            width: 30px;
+            height: auto;
             position: absolute;
+            top: 37px;
+            left: 90px;
             opacity: 0.8;
             padding: 10px;
         }
+        
         &:hover {
             cursor: pointer;
             svg {
@@ -39,8 +48,7 @@
             }
         }
 
-        .duration,
-        .items {
+        .duration {
             position: absolute;
             right: 0;
             bottom: 0;

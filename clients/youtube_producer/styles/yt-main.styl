@@ -1,6 +1,8 @@
 
 bg-container = #dadada;
 
+bg-query-input = #f4f4f4;
+
 bg-video-list-item = #f6f6f6;
 
 bg-playlist-item = #dadada;
@@ -13,13 +15,23 @@ bg-yt-viewer-pl-visible = #c6c6c6;
 
 bg-button = #009900;
 
+bg-button-hover = #ffffff;
+
+color-text-query-input = #999999;
+
 color-title = #009900;
+
+color-title-light = #666666;
 
 color-text = #333333;
 
-color-button-text = #ffffff;
+color-text-button = #ffffff;
+
+color-text-button-hover = #009900;
 
 color-created = #666666;
+
+color-search-button-hover = #000000;
 
 clearfix() 
     zoom: 1;
@@ -51,11 +63,12 @@ body {
 }
 
 .container {
-    min-height: 100vh;
+    position: relative;
+    height: auto;
+    min-height: 90vh;
     background: bg-container;
-    color: #333;
+    color: color-text;
     margin: 0 auto;
-    padding: 0 30px;
     clearfix();
 }
 
