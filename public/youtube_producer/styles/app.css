@@ -161,33 +161,21 @@ h2 {
   height: auto;
   z-index: 100;
 }
-.ui-video-list-item .playBtn .playimg img {
+.ui-video-list-item .playBtn .playimg svg {
   opacity: 0.8;
-  -webkit-transform: scaleX(-1);
-  -ms-transform: scaleX(-1);
-  transform: scaleX(-1);
-  -webkit-transform: rotate(0);
-  -ms-transform: rotate(0);
-  transform: rotate(0);
-/*                  -ms-filter: "flipH";
-                filter: flipH;
-             &.showOnPlaylist {
-                    display: none;
-                    
-                    width :40px;
-                    height: 40px;
-                }*/
+  padding: 10px;
 }
 .ui-video-list-item .playBtn .playimg:hover {
   cursor: pointer;
 }
-.ui-video-list-item .playBtn .playimg:hover img {
+.ui-video-list-item .playBtn .playimg:hover svg {
   opacity: 1;
 }
 .ui-video-list-item .metadata {
   height: 150px;
   padding: 0 10px;
   overflow: hidden;
+  font-size: 13px;
 }
 .ui-video-list-item .metadata .title {
   color: #090;

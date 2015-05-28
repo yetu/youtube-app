@@ -77,14 +77,6 @@ var yt_viewer = {
     watch: 'js/yt_viewer/assets/*'
 };
 
-var ui_videoList = {
-    build: {
-        src: 'js/ui_videoList/assets/*',
-        dest: distAssets('/')
-    },
-    watch: 'js/ui_videoList/assets/*'
-};
-
 var templates = {
     build: {
         src: 'js/*.html',
@@ -102,7 +94,6 @@ module.exports = {
         img: img,
         sendToTv: sendToTv,
         yt_viewer: yt_viewer,
-        ui_videoList: ui_videoList,
         templates: templates,
         fonts: fonts,
         tests: {
