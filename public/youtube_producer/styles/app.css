@@ -443,9 +443,9 @@ button.app-send-to-tv {
 }
 button.app-send-to-tv:hover {
   cursor: pointer;
-  background: #333;
+  background: #fff;
 }
-button.app-send-to-tv img {
+button.app-send-to-tv svg {
   position: relative;
   top: 4px;
   width: auto;

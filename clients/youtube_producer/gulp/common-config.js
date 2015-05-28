@@ -61,22 +61,6 @@ var img = {
     watch: 'img/*'
 };
 
-var sendToTv = {
-    build: {
-        src: 'js/app_sendToTv/assets/*',
-        dest: distAssets('/')
-    },
-    watch: 'js/app_sendToTv/assets/*'
-};
-
-var yt_viewer = {
-    build: {
-        src: 'js/yt_viewer/assets/*',
-        dest: distAssets('/')
-    },
-    watch: 'js/yt_viewer/assets/*'
-};
-
 var templates = {
     build: {
         src: 'js/*.html',
@@ -92,8 +76,6 @@ module.exports = {
         scripts: scripts,
         views: views,
         img: img,
-        sendToTv: sendToTv,
-        yt_viewer: yt_viewer,
         templates: templates,
         fonts: fonts,
         tests: {
