@@ -15,9 +15,10 @@ describe('Directive: ui-video-list', function () {
         var element = $compile('<ui-video-list ng-model="videos" play-link="#/view/expand/:type/:id"></ui-video-list>')($rootScope);
         $rootScope.videos = [{id: 'id123', title: 'Some title', type: 'video', img: 'some.img', description: 'Some description'},
                              {id: 'id333', title: 'Some other title', type: 'playlist', img: 'other.img', description: 'Some other description'}];
+        
         $rootScope.$digest();
         expect(element.find('a').eq(0).attr('href')).toBe('#/view/expand/video/id123');
-        expect(element.find('a').eq(1).attr('href')).toBe('#/view/expand/playlist/id333');
+        expect(element.find('a').eq(2).attr('href')).toBe('#/view/expand/playlist/id333');
         expect(element.find('app-send-to-tv').length).toEqual(2);
     });
 
