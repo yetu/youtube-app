@@ -41,7 +41,7 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
                     //height: '1080',
                     //width: '1920',
                     playerVars: {
-                        autoplay: 0,
+                        autoplay: 1,
                         controls: appMode.isPC() ? 1 : 0,
                         showinfo: 0
                     },
