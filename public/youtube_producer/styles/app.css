@@ -267,7 +267,7 @@ h2 {
 }
 .yt-viewer .buttons button:hover {
   cursor: pointer;
-  background: #333;
+  background: #fff;
 }
 .yt-viewer .buttons .toggle-playlist {
   float: right;
@@ -441,10 +441,6 @@ button.app-send-to-tv {
   outline: 0;
   color: #fff;
 }
-button.app-send-to-tv:hover {
-  cursor: pointer;
-  background: #fff;
-}
 button.app-send-to-tv svg {
   position: relative;
   top: 4px;
@@ -459,6 +455,10 @@ button.app-send-to-tv .label_stopStreaming {
 }
 button.app-send-to-tv .label_stopStreaming {
   display: none;
+}
+button.app-send-to-tv:hover {
+  cursor: pointer;
+  background: #fff;
 }
 @media (min-width: 320px) {
   .container,

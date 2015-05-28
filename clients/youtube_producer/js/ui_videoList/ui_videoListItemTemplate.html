@@ -1,11 +1,35 @@
 <div class="img">
     <a ng-if="::playLink" class="playimg" ng-href="#/view/expand/{{::item.type}}/{{::item.id}}"> <!-- TODO: replace href with {{ playLink | replaceParams }} -->
         <img ng-if="::item.img" ng-src="{{::item.img}}"/>
-        <img class="showOnPlaylist" src="assets/youtube_producer/js/ui_videoList/assets/arrow.svg" />        
+        <svg version="1.1" id="arrow" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 12 13" enable-background="new 0 0 12 13" xml:space="preserve">
+            <defs>
+                <filter id="dropshadow" x="-25%" y="-25%" height="150%" width="150%">
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="1"/> 
+                    <feOffset dx="0.25" dy="0.25" result="offsetblur"/> 
+                    <feMerge> 
+                        <feMergeNode/>
+                        <feMergeNode in="SourceGraphic"/> 
+                    </feMerge>
+                </filter>
+            </defs>
+            <polygon filter="url(#dropshadow)" fill="#FFFFFF" points="1,0.5 11,6.5 1,12.5"/>
+        </svg>      
     </a>
     <a ng-if="::playFn" class="playimg" ng-click="playFunction($index)">
         <img ng-if="::item.img" ng-src="{{::item.img}}"/>
-        <img class="showOnPlaylist" src="assets/youtube_producer/js/ui_videoList/assets/arrow.svg" />        
+        <svg version="1.1" id="arrow" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 12 13" enable-background="new 0 0 12 13" xml:space="preserve">
+            <defs>
+                <filter id="dropshadow" x="-25%" y="-25%" height="150%" width="150%">
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="1"/> 
+                    <feOffset dx="0.25" dy="0.25" result="offsetblur"/> 
+                    <feMerge> 
+                        <feMergeNode/>
+                        <feMergeNode in="SourceGraphic"/> 
+                    </feMerge>
+                </filter>
+            </defs>
+            <polygon filter="url(#dropshadow)" fill="#FFFFFF" points="1,0.5 11,6.5 1,12.5"/>
+        </svg>      
     </a>
     <div ng-if="::(item.type == 'video')" class="duration"><span>{{ item.duration | duration }}</span></div><!-- TODO: one-time binding with filter? -->
     <div ng-if="::(item.type == 'playlist')" class="items"><span>{{ ::item.totalItems }}</span></div>
