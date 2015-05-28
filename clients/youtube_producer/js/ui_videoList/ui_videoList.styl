@@ -26,6 +26,18 @@
             width: 100%;
             height: auto;
         }
+        
+        svg {
+            position: absolute;
+            opacity: 0.8;
+            padding: 10px;
+        }
+        &:hover {
+            cursor: pointer;
+            svg {
+                opacity: 1.0;
+            }
+        }
 
         .duration,
         .items {
@@ -47,26 +59,6 @@
 
         .items span::before {
             content: "PL: "
-        }
-    }
-    
-    
-    .playBtn {
-        position: absolute;
-        width: auto;
-        height: auto;
-        z-index: 100;
-        .playimg {
-            svg {
-                opacity: 0.8;
-                padding: 10px;
-            }
-            &:hover {
-                cursor: pointer;
-                svg {
-                    opacity: 1.0;
-                }
-            }
         }
     }
 
