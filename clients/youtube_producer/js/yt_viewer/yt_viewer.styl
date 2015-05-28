@@ -79,8 +79,30 @@
     }
 }
 
-.yt-player {
+yt-player {
     width:100%;
+    position: relative;
+
+    .yt-player, .overlay {
+        width:100%;
+    }
+
+    .overlay {
+        position: absolute;
+        background-color: black;
+        opacity: 0.8;
+        top: -672px;
+        height: 687px;
+        font-size: 30px;
+        color: white;
+        display: table;
+
+        div {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+        }
+    }
 }
 
 .yt-video-description {

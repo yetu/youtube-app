@@ -3,6 +3,7 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
     return {
         restrict: 'E',
         template: require('./yt_playerTemplate.html'),
+        transclude: true,
         controller: function($scope) {
         },
         link: function(scope, element, attrs) {
@@ -40,7 +41,7 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
                     //height: '1080',
                     //width: '1920',
                     playerVars: {
-                        autoplay: 1,
+                        autoplay: 0,
                         controls: appMode.isPC() ? 1 : 0,
                         showinfo: 0
                     },
@@ -87,9 +88,11 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
             };
 
             $rootScope.$on('appSendToTv:send', function(event, data){
-                if(data.sent === true) {
-                    player.pauseVideo();
-                }
+                player.pauseVideo();
+            });
+
+            $rootScope.$on('appSendToTv:resume', function(event, data){
+                player.playVideo();
             });
 
             _unbinder.push(scope.$watchCollection('player.API', function(n) {

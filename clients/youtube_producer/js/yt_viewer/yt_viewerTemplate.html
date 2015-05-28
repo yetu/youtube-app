@@ -1,10 +1,14 @@
 <div class="{{ class || 'yt-viewer' }}" ng-class="{ 'playlist-visible': playlistVisible }">
     <h2 class="title">{{ video.title}} </h2>
     <div class="video">
-        <yt-player></yt-player>
+        <yt-player>
+            <div ng-if="playingOnTv" class="overlay">
+                <div>{{ ::('Playing on TV' | translate) }}</div>
+            </div>
+        </yt-player>
         <div class="yt-controls">Controls</div><!-- TODO: separate directive -->
         <div class="buttons">
-            <app-send-to-tv ng-model="video"></app-send-to-tv>
+            <app-send-to-tv ng-model="video" playing-on-tv="playingOnTv"></app-send-to-tv>
             <button class="toggle-playlist" ng-click="playlistVisible = !playlistVisible">
                 <span class="label_hidePlaylist" ng-show="playlistVisible">
                     <span class="btnLabel">{{ ::('Hide video list' | translate) }}</span>
