@@ -1,8 +1,10 @@
 /*
  * <ui-video-list ng-model="" display="floating" control="pc" play-link="" service=""></ui-video-list>
  *
- * @attr ng-model array Scope model to be used as data feed - with elements containing: { type, id, item, img, created, description, ...},
- *                      where type: playlist|video
+ * @attr ng-model array Scope model to be used as data feed - model containing: { etag, next, items }
+ *                      where etag and next are part of data provided by service and used for getNext method,
+ *                            items is array of { type, id, item, img, created, description, ...},
+ *                                  where type: playlist|video
  * @attr display string Display type - 'horizontal', 'list' or 'floating' (default) for styling and controls behaviour
  * @attr control string Control style - 'tv' or 'pc' (default) - used for control and reacting on events @todo
  * @attr play-link string Link pattern to open video - will replace :attribute if found in element item properties (e.g. '#/show/:type/:id')
