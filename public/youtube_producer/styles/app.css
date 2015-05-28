@@ -23,7 +23,6 @@ body {
 }
 html.tvmode,
 body.tvmode {
-  border: solid #008000 1px;
   width: 100%;
   min-height: 100%;
   height: 100%;
@@ -50,15 +49,6 @@ body {
 h2 {
   font-size: 25px;
   line-height: 200%;
-  margin: 0;
-}
-.pcmode .tp-header,
-.fullscreen .tp-header {
-  display: none;
-}
-.tvmode .container {
-  width: 100%;
-  height: 100%;
   margin: 0;
 }
 .clearfix {
@@ -92,6 +82,7 @@ h2 {
 }
 .app-search {
   padding: 30px 0px;
+  position: relative;
 }
 .app-search .query {
   font-family: source_sans_prolight;
@@ -109,12 +100,10 @@ h2 {
   background: none;
   border: 0;
   outline: 0;
-  float: right;
-  margin-top: -50px;
-  margin-right: 10px;
-}
-.app-search button.search:hover {
   cursor: pointer;
+  position: absolute;
+  right: 0;
+  top: 35px;
 }
 .app-search button.search:hover path {
   fill: #fff;
@@ -168,10 +157,8 @@ h2 {
 }
 .ui-video-list-item .playBtn {
   position: absolute;
-  top: 25px;
-  left: 10px;
-  width: 50px;
-  height: 50px;
+  width: auto;
+  height: auto;
   z-index: 100;
 }
 .ui-video-list-item .playBtn .playimg img {
@@ -179,17 +166,17 @@ h2 {
   -webkit-transform: scaleX(-1);
   -ms-transform: scaleX(-1);
   transform: scaleX(-1);
-  -ms-filter: "flipH";
-  -webkit-filter: flipH;
-  filter: flipH;
-}
-.ui-video-list-item .playBtn .playimg img.showOnPlaylist {
-  display: none;
   -webkit-transform: rotate(0);
   -ms-transform: rotate(0);
   transform: rotate(0);
-  width: 40px;
-  height: 40px;
+/*                  -ms-filter: "flipH";
+                filter: flipH;
+             &.showOnPlaylist {
+                    display: none;
+                    
+                    width :40px;
+                    height: 40px;
+                }*/
 }
 .ui-video-list-item .playBtn .playimg:hover {
   cursor: pointer;
@@ -423,21 +410,26 @@ h2 {
 .yt-controls {
   display: none;
 }
-.tvmode .yt-viewer,
-.tvmode .video,
-.tvmode .yt-player {
-  height: 100%;
-  width: 100% !important;
-  position: relative;
+.tvmode.fullscreen .container {
+  padding: 0 !important;
 }
-.tvmode .yt-viewer h2,
-.tvmode .yt-viewer .buttons {
+.tvmode.fullscreen .yt-viewer,
+.tvmode.fullscreen .video,
+.tvmode.fullscreen .yt-player {
+  height: 1080px !important;
+  width: 1920px !important;
+  position: relative;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.tvmode.fullscreen .yt-viewer h2,
+.tvmode.fullscreen .yt-viewer .buttons {
   display: none;
 }
-.tvmode .yt-player {
+.tvmode.fullscreen .yt-player {
   position: absolute;
 }
-.tvmode .yt-controls {
+.tvmode.fullscreen .yt-controls {
   position: absolute;
   bottom: 10px;
   height: 200px;
@@ -445,9 +437,9 @@ h2 {
   border: solid #ffc0cb 2px;
   display: block;
 }
-.tvmode app-search,
-.tvmode .yt-video-description,
-.tvmode .playlist {
+.tvmode.fullscreen app-search,
+.tvmode.fullscreen .yt-video-description,
+.tvmode.fullscreen .playlist {
   display: none;
 }
 button.app-send-to-tv {
@@ -567,6 +559,12 @@ button.app-send-to-tv .label_stopStreaming {
     height: 260px;
     margin-left: 30px;
   }
+  .ui-video-list-item .playBtn {
+    width: 30px;
+    height: auto;
+    top: 57px;
+    left: 104px;
+  }
   .ui-video-list-item .img {
     height: 124px;
     margin-bottom: 10px;
@@ -602,6 +600,10 @@ button.app-send-to-tv .label_stopStreaming {
     left: 30px;
     top: 0;
   }
+  .yt-viewer .playlist .playBtn img {
+    width: 40px;
+    height: auto;
+  }
 }
 @media (min-width: 992px) {
   .container {
@@ -614,10 +616,6 @@ button.app-send-to-tv .label_stopStreaming {
   }
   .app-search button.search {
     margin-right: 15px;
-  }
-  .ui-video-list-item {
-    width: 240px;
-    margin-left: 30px;
   }
   .ui-video-list-item:nth-child(odd) {
     margin-left: 30px;
@@ -687,10 +685,6 @@ button.app-send-to-tv .label_stopStreaming {
   .app-search button.search {
     margin-right: 30px;
   }
-  .ui-video-list-item {
-    width: 240px;
-    margin-left: 30px;
-  }
   .ui-video-list-item:nth-child(3n+1) {
     margin-left: 30px;
   }
@@ -734,6 +728,14 @@ button.app-send-to-tv .label_stopStreaming {
     width: 290px;
     height: 320px;
   }
+  .ui-video-list-item .playBtn {
+    width: 50px;
+    top: 61px;
+    left: 120px;
+  }
+  .ui-video-list-item .img {
+    height: 152px;
+  }
   .yt-viewer .video {
     width: 1130px;
   }
@@ -767,6 +769,14 @@ button.app-send-to-tv .label_stopStreaming {
   .ui-video-list-item {
     width: 340px;
     height: 370px;
+  }
+  .ui-video-list-item .playBtn {
+    width: 60px;
+    top: 70px;
+    left: 140px;
+  }
+  .ui-video-list-item .img {
+    height: 180px;
   }
   .yt-viewer .video {
     width: 1330px;

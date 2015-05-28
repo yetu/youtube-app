@@ -26,11 +26,6 @@ module.exports = function () {
                 input = element.find('input')[0],
                 $input = angular.element(input);
 
-            scope.resetButtonClick = function() {
-                input.value = '';
-                scope.initSearch('');
-            };
-
             scope.searchButtonClick = function() {
                 if (triggerButton === true) {
                     scope.initSearch(input.value);
