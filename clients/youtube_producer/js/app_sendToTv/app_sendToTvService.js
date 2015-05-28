@@ -4,15 +4,12 @@ module.exports = (function ($rootScope, $http, $location, $filter, serverPathsCo
     var buildPayload = function (data) {
         var url = $location.protocol() + '://' + $location.host() + ":" + $location.port(),
             actTime = data.actTime - 5 < 0 ? 0 : data.actTime - 5,
+            // for localhost testing set target url explicitly
+            // url = 'https://youtubeapp-dev.yetu.me',
             payload = {
                 action: {
-                    url: url + "/#/view/fullscreen/" + data.type + "/" + data.id + "/" + actTime,
-                    // for localhost testing use the one below
-                    //url: "https://youtubeapp-dev.yetu.me" + "/#/view/fullscreen/" + data.type + "/" + data.id + "/" + actTime,
+                    url: url + serverPathsConfig.level2Url + "#/view/fullscreen/" + data.type + "/" + data.id + "/" + actTime,
                     type: "open",
-                    parameter: {
-                        device: "tv"
-                    },
                     button: {
                         icon: url + serverPathsConfig.imageUrl + "notification_play.svg",
                         label: "Play" //TODO: add i18n.COMMIT_BUTTON_LABEL
