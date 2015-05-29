@@ -20,6 +20,25 @@
     
     .video {
         float: left;
+        position: relative;
+        .overlay {
+            position: absolute;
+            background-color: bg-player-overlay;
+            top: -672px;
+            height: 687px;
+            font-size: 30px;
+            display: table;
+
+            div {
+                display: table-cell;
+                vertical-align: middle;
+                font-family: 'source_sans_prolight';
+                text-transform: uppercase;
+                font-size: 1.7375em;
+                text-align: center;
+                color: color-text-button;
+            }
+        }
     }
 
     .buttons {
@@ -85,23 +104,6 @@ yt-player {
 
     .yt-player, .overlay {
         width:100%;
-    }
-
-    .overlay {
-        position: absolute;
-        background-color: black;
-        opacity: 0.8;
-        top: -672px;
-        height: 687px;
-        font-size: 30px;
-        color: white;
-        display: table;
-
-        div {
-            display: table-cell;
-            vertical-align: middle;
-            text-align: center;
-        }
     }
 }
 

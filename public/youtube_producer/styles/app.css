@@ -256,6 +256,24 @@ h2 {
 }
 .yt-viewer .video {
   float: left;
+  position: relative;
+}
+.yt-viewer .video .overlay {
+  position: absolute;
+  background-color: rgba(51,51,51,0.7);
+  top: -672px;
+  height: 687px;
+  font-size: 30px;
+  display: table;
+}
+.yt-viewer .video .overlay div {
+  display: table-cell;
+  vertical-align: middle;
+  font-family: 'source_sans_prolight';
+  text-transform: uppercase;
+  font-size: 1.7375em;
+  text-align: center;
+  color: #fff;
 }
 .yt-viewer .buttons {
   position: relative;
@@ -322,21 +340,6 @@ yt-player {
 yt-player .yt-player,
 yt-player .overlay {
   width: 100%;
-}
-yt-player .overlay {
-  position: absolute;
-  background-color: #000;
-  opacity: 0.8;
-  top: -672px;
-  height: 687px;
-  font-size: 30px;
-  color: #fff;
-  display: table;
-}
-yt-player .overlay div {
-  display: table-cell;
-  vertical-align: middle;
-  text-align: center;
 }
 .yt-video-description {
   margin-top: 20px;
@@ -544,8 +547,12 @@ button.app-send-to-tv:hover {
     width: 280px;
     margin: 10px 10px 0;
   }
-  .yt-viewer .video .yt-player {
+  .yt-viewer .video .yt-player,
+  .yt-viewer .video .overlay {
     height: 185px;
+  }
+  .yt-viewer .video .overlay {
+    top: -170px;
   }
   .yt-viewer .buttons .toggle-playlist {
     display: none;
@@ -574,8 +581,12 @@ button.app-send-to-tv:hover {
   .yt-viewer .video {
     width: 440px;
   }
-  .yt-viewer .video .yt-player {
+  .yt-viewer .video .yt-player,
+  .yt-viewer .video .overlay {
     height: 248px;
+  }
+  .yt-viewer .video .overlay {
+    top: -233px;
   }
   .yt-viewer .playlist {
     width: 440px;
@@ -603,8 +614,12 @@ button.app-send-to-tv:hover {
     width: 560px;
     margin: 20px 20px 0;
   }
-  .yt-viewer .video .yt-player {
+  .yt-viewer .video .yt-player,
+  .yt-viewer .video .overlay {
     height: 327px;
+  }
+  .yt-viewer .video .overlay {
+    top: -312px;
   }
   .yt-viewer .playlist {
     margin: 20px;
@@ -648,6 +663,12 @@ button.app-send-to-tv:hover {
     -webkit-transition: height 0.5s ease-in-out;
     transition: height 0.5s ease-in-out;
   }
+  .yt-viewer .video .overlay {
+    height: 394px;
+    top: -379px;
+    -webkit-transition: all 0.5s ease-in-out;
+    transition: all 0.5s ease-in-out;
+  }
   .yt-viewer .video .yt-video-description {
     width: 680px;
     padding: 10px;
@@ -677,6 +698,12 @@ button.app-send-to-tv:hover {
     height: 225px;
     -webkit-transition: height 0.5s ease-in-out;
     transition: height 0.5s ease-in-out;
+  }
+  .yt-viewer.playlist-visible .video .overlay {
+    height: 225px;
+    top: -210px;
+    -webkit-transition: all 0.5s ease-in-out;
+    transition: all 0.5s ease-in-out;
   }
   .yt-viewer.playlist-visible .video .yt-video-description {
     width: 380px;
@@ -721,8 +748,12 @@ button.app-send-to-tv:hover {
     width: 900px;
     margin: 30px 30px 0;
   }
-  .yt-viewer .video .yt-player {
+  .yt-viewer .video .yt-player,
+  .yt-viewer .video .overlay {
     height: 507px;
+  }
+  .yt-viewer .video .overlay {
+    top: -492px;
   }
   .yt-viewer .video .yt-video-description {
     width: 880px;
@@ -734,8 +765,12 @@ button.app-send-to-tv:hover {
   .yt-viewer.playlist-visible .video {
     width: 500px;
   }
-  .yt-viewer.playlist-visible .video .yt-player {
+  .yt-viewer.playlist-visible .video .yt-player,
+  .yt-viewer.playlist-visible .video .overlay {
     height: 282px;
+  }
+  .yt-viewer.playlist-visible .video .overlay {
+    top: -267px;
   }
   .yt-viewer.playlist-visible .video .yt-video-description {
     width: 480px;
@@ -775,8 +810,12 @@ button.app-send-to-tv:hover {
     width: 1020px;
     margin: 60px 60px 0;
   }
-  .yt-viewer .video .yt-player {
+  .yt-viewer .video .yt-player,
+  .yt-viewer .video .overlay {
     height: 580px;
+  }
+  .yt-viewer .video .overlay {
+    top: -565px;
   }
   .yt-viewer .video .yt-video-description {
     width: 1000px;
@@ -791,8 +830,12 @@ button.app-send-to-tv:hover {
   .yt-viewer.playlist-visible .video {
     width: 550px;
   }
-  .yt-viewer.playlist-visible .video .yt-player {
+  .yt-viewer.playlist-visible .video .yt-player,
+  .yt-viewer.playlist-visible .video .overlay {
     height: 310px;
+  }
+  .yt-viewer.playlist-visible .video .overlay {
+    top: -295px;
   }
   .yt-viewer.playlist-visible .video .yt-video-description {
     width: 530px;
@@ -827,8 +870,12 @@ button.app-send-to-tv:hover {
   .yt-viewer .video {
     width: 1220px;
   }
-  .yt-viewer .video .yt-player {
+  .yt-viewer .video .yt-player,
+  .yt-viewer .video .overlay {
     height: 687px;
+  }
+  .yt-viewer .video .overlay {
+    top: -672px;
   }
   .yt-viewer .video .yt-video-description {
     width: 1200px;
@@ -840,8 +887,12 @@ button.app-send-to-tv:hover {
   .yt-viewer.playlist-visible .video {
     width: 650px;
   }
-  .yt-viewer.playlist-visible .video .yt-player {
+  .yt-viewer.playlist-visible .video .yt-player,
+  .yt-viewer.playlist-visible .video .overlay {
     height: 366px;
+  }
+  .yt-viewer.playlist-visible .video .overlay {
+    top: -351px;
   }
   .yt-viewer.playlist-visible .video .yt-video-description {
     width: 630px;
