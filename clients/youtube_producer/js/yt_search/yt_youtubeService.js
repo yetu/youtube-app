@@ -214,7 +214,7 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageServi
                     break;
                 }
                 case 'video': {
-                    getResult('related', id, 20).then(function(data) {
+                    getResult('related', id, settings.video.maxResults).then(function(data) {
                         result = {
                             playlist: data,
                             video: items
