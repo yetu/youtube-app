@@ -75,8 +75,8 @@ describe('Service: yt_youtubeService', function () {
                 related: __fixtures__['yt_search/youtube.videoList.related.response']
             },
             expected = {
-                video: 'https://www.googleapis.com/youtube/v3/videos?id=first-video-id&maxResults=20&part=snippet,contentDetails,statistics',
-                search: 'https://www.googleapis.com/youtube/v3/search?maxResults=20&part=snippet&regionCode=GB&relatedToVideoId=first-video-id&relevanceLanguage=en&type=video',
+                video: 'https://www.googleapis.com/youtube/v3/videos?id=first-video-id&maxResults=16&part=snippet,contentDetails,statistics',
+                search: 'https://www.googleapis.com/youtube/v3/search?maxResults=16&part=snippet&regionCode=GB&relatedToVideoId=first-video-id&relevanceLanguage=en&type=video',
                 related: 'https://www.googleapis.com/youtube/v3/videos?id=rel-video-1,rel-video-2&maxResults=2&part=snippet,contentDetails,statistics',
                 videoData: {
                     type: 'video', id: 'first-video-id', title: '4 hours Peaceful & Relaxing', img: 'https://i.ytimg.com/vi/first-video-id/mqdefault.jpg',
