@@ -822,9 +822,6 @@ button.app-send-to-tv:hover {
     margin-left: 30px;
   }
   .ui-video-list-item:nth-child(4n+1) {
-    margin-left: 30px;
-  }
-  .ui-video-list-item:nth-child(5n+1) {
     margin-left: 130px;
   }
   .yt-viewer .video {
