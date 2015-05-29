@@ -147,15 +147,30 @@ yt-player {
         background-color: bg-playlist-item;
         border-top: 1px solid #eee;
         border-bottom: 1px solid #ccc;
+
         &:first-child {
             border-top: 0;
         }
+
+        ui-video-list-play-arrow {
+            display: none;
+        }
+
         .img {
             margin: 0;
             width: 150px;
             height: 50px;
             float: left;
             padding: 5px 0;
+
+            .index {
+                position: absolute;
+                font-size: 30px;
+                text-align: center;
+                padding-top: 5px;
+                width: 55px;
+                color: color-text;
+            }
             
             img {
                 float: right;
@@ -179,6 +194,17 @@ yt-player {
                 bottom: 5px;
             }
         }
+
+        &.playing {
+            .index {
+                display: none;
+            }
+
+            ui-video-list-play-arrow {
+                display: block;
+            }
+        }
+
         .metadata {
             margin: 5px 10px;
             height: auto;

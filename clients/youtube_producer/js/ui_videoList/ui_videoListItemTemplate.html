@@ -4,6 +4,7 @@
         <img ng-if="::item.img" ng-src="{{::item.img}}"/>
     </a>
     <a ng-if="::playFn" class="playimg" ng-click="playFunction($index)">
+        <div class="index">{{ ::($index + 1) }}</div>
         <ui-video-list-play-arrow></ui-video-list-play-arrow>
         <img ng-if="::item.img" ng-src="{{::item.img}}"/>
     </a>

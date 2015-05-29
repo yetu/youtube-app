@@ -10,6 +10,7 @@ module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $route
         }
         $scope.video = data.video;
         $scope.playlist = data.playlist;
+        $scope.playlist.currentPlaying = 0;
     }, function(error) {
         // TODO: error handling
     });
