@@ -153,6 +153,8 @@ yt-player {
         &:first-child {
             border-top: 0;
         }
+        
+        
 
         ui-video-list-play-arrow {
             display: none;
@@ -167,11 +169,11 @@ yt-player {
 
             .index {
                 position: absolute;
-                font-size: 30px;
+                font-size: 1.75em;
                 text-align: center;
                 padding-top: 5px;
                 width: 55px;
-                color: color-text;
+                color: color-playlist-item-index;
             }
             
             img {
@@ -197,16 +199,6 @@ yt-player {
             }
         }
 
-        &.playing {
-            .index {
-                display: none;
-            }
-
-            ui-video-list-play-arrow {
-                display: block;
-            }
-        }
-
         .metadata {
             margin: 5px 10px;
             height: auto;
@@ -228,6 +220,24 @@ yt-player {
             }
             .description, .created {
                 display: none;
+            }
+        }
+        
+        &.playing {
+            background-color: bg-playlist-item-playing;
+            
+            .index {
+                display: none;
+            }
+
+            ui-video-list-play-arrow {
+                display: block;
+            }
+            
+            .metadata {
+                .title, .channel {
+                    color: color-playlist-item-playing;
+                }
             }
         }
     }
