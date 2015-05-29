@@ -110,7 +110,7 @@ h2 {
   cursor: pointer;
 }
 .app-search button.search:hover path {
-  fill: color-button-search-hover;
+  fill: #000;
 }
 .ui-video-list {
   display: block;
