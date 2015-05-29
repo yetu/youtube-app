@@ -29,15 +29,15 @@ module.exports = function () {
                 console.debug("myService: ", myService);
             }
 
-            /*
+
             $scope.loadMore = function(){
-                console.debug("myService loadMore: ", myService);
-            };*/
-
-            //service(etag,next)
-
-            //videoList.items += service(etag,next).items;
-            //videoList.next = service(etag,next).next;
+                myService.getNext($scope.videoList.etag, $scope.videoList.next).then(
+                    function(moreVideos){
+                        $scope.videoList.items = moreVideos.items;
+                        $scope.videoList.next = moreVideos.next;
+                    }
+                );
+            };
 
         },
         link: function (scope, element) {
@@ -47,10 +47,6 @@ module.exports = function () {
             if (!scope.displayType) {
                 scope.displayType = 'floating';
             }
-
-            scope.loadMore = function(){
-                console.debug("myService loadMore: ", myService);
-            };
 
             scope.playFunction = function (index) {
                 if (typeof(scope.$parent[scope.playFn]) === 'function') {
