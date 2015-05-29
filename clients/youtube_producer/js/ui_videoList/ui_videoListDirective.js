@@ -33,7 +33,8 @@ module.exports = function () {
             $scope.loadMore = function(){
                 myService.getNext($scope.videoList.etag, $scope.videoList.next).then(
                     function(moreVideos){
-                        $scope.videoList.items = moreVideos.items;
+                        var temparray = $scope.videoList.items;
+                        $scope.videoList.items = temparray.concat(moreVideos.items);
                         $scope.videoList.next = moreVideos.next;
                     }
                 );
