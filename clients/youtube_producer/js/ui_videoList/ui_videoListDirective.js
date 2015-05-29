@@ -21,15 +21,15 @@ module.exports = function () {
             displayType: '@display',
             controlType: '@control'
         },
-        controller: function ($scope, $element, $attrs, $injector) {
+        controller: function ($scope, $element, $attrs, $injector, $location) {
             var myService;
 
             if ($attrs.service) {
                 myService = $injector.get($attrs.service);
-                console.debug("myService: ", myService);
             }
 
-
+            //TODO: currently displayType is not used for indicating which type of list is being shown. Workaround, basing on $location service.
+            $scope.showLoadMoreButton = ($location.$$path === '/dashboard/') || ($location.$$path === '/dashboard')? true: false;
             $scope.loadMore = function(){
                 myService.getNext($scope.videoList.etag, $scope.videoList.next).then(
                     function(moreVideos){
