@@ -159,7 +159,8 @@ h2 {
 .ui-video-list-item .img:hover svg {
   opacity: 1;
 }
-.ui-video-list-item .img .duration {
+.ui-video-list-item .img .duration,
+.ui-video-list-item .img .items {
   position: absolute;
   right: 0;
   bottom: 0;
@@ -169,7 +170,8 @@ h2 {
   color: #fff;
   font-size: 13px;
 }
-.ui-video-list-item .img .duration span {
+.ui-video-list-item .img .duration span,
+.ui-video-list-item .img .items span {
   display: block;
   width: 100%;
   text-align: center;
@@ -313,8 +315,28 @@ h2 {
 .yt-viewer.playlist-visible {
   background-color: #c6c6c6;
 }
-.yt-player {
+yt-player {
   width: 100%;
+  position: relative;
+}
+yt-player .yt-player,
+yt-player .overlay {
+  width: 100%;
+}
+yt-player .overlay {
+  position: absolute;
+  background-color: #000;
+  opacity: 0.8;
+  top: -672px;
+  height: 687px;
+  font-size: 30px;
+  color: #fff;
+  display: table;
+}
+yt-player .overlay div {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
 }
 .yt-video-description {
   margin-top: 20px;
@@ -374,12 +396,23 @@ h2 {
 .yt-viewer .playlist .ui-video-list-item:first-child {
   border-top: 0;
 }
+.yt-viewer .playlist .ui-video-list-item ui-video-list-play-arrow {
+  display: none;
+}
 .yt-viewer .playlist .ui-video-list-item .img {
   margin: 0;
   width: 150px;
   height: 50px;
   float: left;
   padding: 5px 0;
+}
+.yt-viewer .playlist .ui-video-list-item .img .index {
+  position: absolute;
+  font-size: 30px;
+  text-align: center;
+  padding-top: 5px;
+  width: 55px;
+  color: #333;
 }
 .yt-viewer .playlist .ui-video-list-item .img img {
   float: right;
@@ -402,6 +435,12 @@ h2 {
 .yt-viewer .playlist .ui-video-list-item .img .duration {
   right: 0;
   bottom: 5px;
+}
+.yt-viewer .playlist .ui-video-list-item.playing .index {
+  display: none;
+}
+.yt-viewer .playlist .ui-video-list-item.playing ui-video-list-play-arrow {
+  display: block;
 }
 .yt-viewer .playlist .ui-video-list-item .metadata {
   margin: 5px 10px;
@@ -484,9 +523,6 @@ button.app-send-to-tv .label_sendToTv,
 button.app-send-to-tv .label_stopStreaming {
   position: relative;
   top: -1px;
-}
-button.app-send-to-tv .label_stopStreaming {
-  display: none;
 }
 button.app-send-to-tv:hover {
   cursor: pointer;
@@ -774,7 +810,7 @@ button.app-send-to-tv:hover {
     width: 1310px;
   }
   .list-title {
-    margin-left: 10px;
+    margin-left: 130px;
   }
   .ui-video-list-item {
     margin-left: 10px;
@@ -789,7 +825,7 @@ button.app-send-to-tv:hover {
     margin-left: 30px;
   }
   .ui-video-list-item:nth-child(5n+1) {
-    margin-left: 10px;
+    margin-left: 130px;
   }
   .yt-viewer .video {
     width: 1220px;
