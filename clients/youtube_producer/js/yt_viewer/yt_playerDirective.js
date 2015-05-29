@@ -87,28 +87,28 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
                 }
             };
 
-            $rootScope.$on('appSendToTv:send', function(event, data){
+            _unbinder.push($rootScope.$on('appSendToTv:send', function(event, data){
                 player.pauseVideo();
-            });
+            }));
 
-            $rootScope.$on('appSendToTv:resume', function(event, data){
+            _unbinder.push($rootScope.$on('appSendToTv:resume', function(event, data){
                 player.playVideo();
-            });
+            }));
 
-            _unbinder.push(scope.$watchCollection('player.API', function(n) {
+            scope.$watchCollection('player.API', function(n) {
                 if(n.loaded && scope.video && !n.initialized) {
                     initPlayer();
                 }
-            }));
+            });
 
-            _unbinder.push(scope.$watch('video', function(n, o) {
+            scope.$watch('video', function(n, o) {
                 if(n && (scope.player.API.loaded || YT && YT.loaded) && !scope.player.API.initialized) {
                     initPlayer();
                 }
                 if(n && o && n.id !== o.id) {
                     loadVideo();
                 }
-            }));
+            });
 
             scope.$on('$destroy', function() {
                 player = null;
