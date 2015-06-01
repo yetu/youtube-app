@@ -20,7 +20,10 @@ module.exports = function () {
         },
 		controller: function($scope){
 		},
-		link: function(scope, element){
+		link: function(scope, element, attr){
+            // add display type as a class also
+            element.addClass(scope.displayType);
+
             scope.playFunction = function(index) {
                 if( typeof(scope.$parent[scope.playFn]) === 'function') {
                     scope.$parent[scope.playFn](index);

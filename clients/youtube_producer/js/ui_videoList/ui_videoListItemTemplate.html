@@ -3,7 +3,7 @@
         <ui-video-list-play-arrow></ui-video-list-play-arrow>
         <img ng-if="::item.img" ng-src="{{::item.img}}"/>
     </a>
-    <a ng-if="::playFn" class="playimg" ng-click="playFunction($index)">
+    <a ng-if="::playFn" class="playimg">
         <div class="index">{{ ::($index + 1) }}</div>
         <ui-video-list-play-arrow></ui-video-list-play-arrow>
         <img ng-if="::item.img" ng-src="{{::item.img}}"/>
@@ -15,7 +15,7 @@
     <a class="title" ng-if="::playLink" class="playimg" ng-href="#/view/expand/{{::item.type}}/{{::item.id}}"> <!-- TODO: replace href with {{ playLink | replaceParams }} -->
         {{::item.title | limitTo : 45 }}...
     </a>
-    <a class="title" ng-if="::playFn" class="playimg" ng-click="playFunction($index)">
+    <a class="title" ng-if="::playFn" class="playimg">
         {{::item.title | limitTo : 45 }}...
     </a>
     <p class="subtitle" ng-if="::item.channel">
