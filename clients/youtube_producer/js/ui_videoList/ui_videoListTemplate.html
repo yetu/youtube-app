@@ -1,4 +1,4 @@
-<ui-video-list-item class="ui-video-list-item" ng-repeat="item in videoList" ng-click="displayType === 'list' && playFn ? playFunction($index) : null"></ui-video-list-item>
+<ui-video-list-item class="ui-video-list-item" ng-repeat="item in videoList" ng-click="playFn ? playFunction($index) : null"></ui-video-list-item>
 <div ng-if="videoList.length == 0">
     {{ ::('No results found' | translate) }}
 </div>

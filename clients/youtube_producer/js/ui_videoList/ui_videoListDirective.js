@@ -6,6 +6,8 @@
  * @attr display string Display type - 'horizontal', 'list' or 'floating' (default) for styling and controls behaviour
  * @attr control string Control style - 'tv' or 'pc' (default) - used for control and reacting on events @todo
  * @attr play-link string Link pattern to open video - will replace :attribute if found in element item properties (e.g. '#/show/:type/:id')
+ * @attr play-fn string Function name to open video - should be defined in scope and accept list index param ($index of ng-repeat is used).
+ *                      Note: if play-fn is defined the whole item element is bind to click handler
  */
 module.exports = function () {
 	return {
