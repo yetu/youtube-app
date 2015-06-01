@@ -1,10 +1,7 @@
-<div infinite-scroll="loadMore()" infinite-scroll-disabled="showLoadMoreButton">
+<ui-video-list-item class="ui-video-list-item" ng-repeat="item in videoList.items"></ui-video-list-item>
+<button class="load-more" ng-if="::(loadMore == 'button' && videoList.items.length > 0)" ng-click="loadNext()">{{ ::('Load more...' | translate) }}</button>
+<div class="spinner" ng-class="{ loading: loadingMore }">Loading...</div>
 
-    <ui-video-list-item class="ui-video-list-item" ng-repeat="item in videoList.items"></ui-video-list-item>
-    <div ng-if="videoList.items.length == 0">
-        {{ ::('No results found' | translate) }}
-    </div>
-
-<!--<button ng-if="displayType == 'floating'" ng-show="displayType == 'floating'" ng-click="loadMore()">load more</button>-->
-<button ng-show="showLoadMoreButton" ng-if="showLoadMoreButton" ng-click="loadMore()">Load more...</button>
+<div ng-if="videoList.items.length == 0">
+    {{ ::('No results found' | translate) }}
 </div>
