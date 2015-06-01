@@ -1,6 +1,7 @@
 .yt-viewer {
     margin: 0 auto 30px;
     background-color: bg-yt-viewer;
+    transition: background-color 0.5s ease-in-out;
     min-height: 75vh;
     overflow: hidden;
     box-shadow: 7px 7px 10px 0 rgba(0,0,0,0.3);
@@ -95,6 +96,7 @@
 
     &.playlist-visible {
         background-color: bg-yt-viewer-pl-visible;
+        transition: background-color 0.5s ease-in-out;
     }
 }
 
@@ -129,7 +131,7 @@ yt-player {
 }
 
 .yt-viewer .playlist {
-    height: 75vh;
+    height: auto;
     margin-bottom: 30px;
     .ui-video-list {
         height: 100%;
@@ -147,14 +149,13 @@ yt-player {
         height: 60px;
         padding: 0;
         background-color: bg-playlist-item;
+        transition: background-color 0.5s ease-in-out;
         border-top: 1px solid #eee;
         border-bottom: 1px solid #ccc;
 
         &:first-child {
             border-top: 0;
         }
-        
-        
 
         ui-video-list-play-arrow {
             display: none;
@@ -223,8 +224,10 @@ yt-player {
             }
         }
         
-        &.playing {
+        &.playing, &:hover {
             background-color: bg-playlist-item-playing;
+            transition: background-color 0.5s ease-in-out;
+            cursor: pointer;
             
             .index {
                 display: none;

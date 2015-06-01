@@ -106,8 +106,8 @@ module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $route
     $rootScope.$on('appSendToTv:send', function(event, data){
         if(data.sent !== true) {
             Notification.error({
-                message: '"' + data.name + '" ' + $filter('translate')('has not been sent to TV'),
-                title: $filter('translate')('Play on TV')
+                message: $filter('translate')('The video could not be played on TV. Please retry later.'),
+                title: $filter('translate')('Play video on TV')
             });
         }
     });
@@ -399,11 +399,20 @@ module.exports = function($rootScope, appSendToTvService) {
         link: function(scope) {
             scope.onSendButtonClick = function() {
                 if(!scope.playingOnTv) {
-                    appSendToTvService.sendToTv(scope.data);
+                    if(!scope.pendingSend) {
+                        scope.pendingSend = true;
+                        appSendToTvService.sendToTv(scope.data)
+                            .then(function() {
+                                scope.playingOnTv = true;
+                            })
+                            .finally(function() {
+                                scope.pendingSend = false;
+                            });
+                    }
                 } else {
+                    scope.playingOnTv = false;
                     $rootScope.$broadcast('appSendToTv:resume');
                 }
-                scope.playingOnTv = !scope.playingOnTv;
             };
         }
     };
@@ -449,7 +458,7 @@ module.exports = (function ($rootScope, $http, $location, $filter, serverPathsCo
             sent: true
         };
 
-        $http.post(serverPathsConfig.youtubeUrl, payload)
+        return $http.post(serverPathsConfig.youtubeUrl, payload)
             .success(function () {
                 $rootScope.$broadcast('appSendToTv:send', sendResult);
             })
@@ -461,7 +470,7 @@ module.exports = (function ($rootScope, $http, $location, $filter, serverPathsCo
     };
 
     var sendToTv = function (data) {
-        sendPayload(buildPayload(data));
+        return sendPayload(buildPayload(data));
     };
 
     return {
@@ -470,7 +479,7 @@ module.exports = (function ($rootScope, $http, $location, $filter, serverPathsCo
 });
 
 },{}],19:[function(require,module,exports){
-module.exports = "<button class=\"{{ class || 'app-send-to-tv'}}\" ng-click=\"onSendButtonClick($event)\">\r\n    <span class=\"label_sendToTv\" ng-hide=\"playingOnTv\">\r\n        <svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 30 20\" enable-background=\"new 0 0 30 20\" xml:space=\"preserve\">\r\n            <g>\r\n                <g>\r\n                    <g>\r\n                        <path fill=\"#FFFFFF\" d=\"M28.4,0.9h-21v4h1v-3h19v14h-19v-2.8h-1v3.8h8.3c-0.8,0.5-1.4,1.3-1.5,2.2l7.6,0c-0.2-0.9-0.7-1.7-1.5-2.2h8.3V0.9z\"/>\r\n                    </g>\r\n                </g>\r\n                <polygon fill=\"#FFFFFF\" points=\"1.6,2.7 1.6,15 12.3,8.9\"/>\r\n            </g>\r\n        </svg>\r\n        <span class=\"btnLabel\">{{ ::('Play on TV' | translate) }}</span>\r\n    </span>\r\n    <span class=\"label_stopStreaming\" ng-show=\"playingOnTv\">\r\n        <svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 28.8 19.6\" enable-background=\"new 0 0 28.8 19.6\" xml:space=\"preserve\">\r\n            <g>\r\n                <g>\r\n                    <g>\r\n                        <path fill=\"#FFFFFF\" d=\"M27.1,1.4H6v4h1v-3h19v14H7v-2.8H6v3.8h8.3c-0.8,0.5-1.4,1.3-1.5,2.2l7.6,0c-0.2-0.9-0.7-1.7-1.5-2.2h8.3V1.4z\"/>\r\n                        <polygon fill=\"#FFFFFF\" points=\"0.3,3.3 0.3,15.6 11,9.4\"/>\r\n                    </g>\r\n                </g>\r\n            </g>\r\n            <g>\r\n                <g>\r\n                    <rect fill=\"#FFFFFF\" x=\"1.7\" y=\"9\" transform=\"matrix(0.7965 -0.6046 0.6046 0.7965 -2.3774 11.9133)\" width=\"29.6\" height=\"1\"/>\r\n                </g>\r\n            </g>\r\n        </svg>\r\n        <span class=\"btnLabel\">{{ ::('Resume playing' | translate) }}</span>\r\n    </span>\r\n</button>\r\n";
+module.exports = "<button class=\"{{ class || 'app-send-to-tv'}}\" ng-click=\"onSendButtonClick($event)\">\r\n    <span class=\"label_sendToTv\" ng-hide=\"playingOnTv\">\r\n        <svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 30 20\" enable-background=\"new 0 0 30 20\" xml:space=\"preserve\">\r\n            <g>\r\n                <g>\r\n                    <g>\r\n                        <path fill=\"#FFFFFF\" d=\"M28.4,0.9h-21v4h1v-3h19v14h-19v-2.8h-1v3.8h8.3c-0.8,0.5-1.4,1.3-1.5,2.2l7.6,0c-0.2-0.9-0.7-1.7-1.5-2.2h8.3V0.9z\"/>\r\n                    </g>\r\n                </g>\r\n                <polygon fill=\"#FFFFFF\" points=\"1.6,2.7 1.6,15 12.3,8.9\"/>\r\n            </g>\r\n        </svg>\r\n        <span class=\"btnLabel\">{{ ::('Play video on TV' | translate) }}</span>\r\n    </span>\r\n    <span class=\"label_stopStreaming\" ng-show=\"playingOnTv\">\r\n        <svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 28.8 19.6\" enable-background=\"new 0 0 28.8 19.6\" xml:space=\"preserve\">\r\n            <g>\r\n                <g>\r\n                    <g>\r\n                        <path fill=\"#FFFFFF\" d=\"M27.1,1.4H6v4h1v-3h19v14H7v-2.8H6v3.8h8.3c-0.8,0.5-1.4,1.3-1.5,2.2l7.6,0c-0.2-0.9-0.7-1.7-1.5-2.2h8.3V1.4z\"/>\r\n                        <polygon fill=\"#FFFFFF\" points=\"0.3,3.3 0.3,15.6 11,9.4\"/>\r\n                    </g>\r\n                </g>\r\n            </g>\r\n            <g>\r\n                <g>\r\n                    <rect fill=\"#FFFFFF\" x=\"1.7\" y=\"9\" transform=\"matrix(0.7965 -0.6046 0.6046 0.7965 -2.3774 11.9133)\" width=\"29.6\" height=\"1\"/>\r\n                </g>\r\n            </g>\r\n        </svg>\r\n        <span class=\"btnLabel\">{{ ::('Resume playing' | translate) }}</span>\r\n    </span>\r\n</button>\r\n";
 
 },{}],20:[function(require,module,exports){
 module.exports = angular.module('app_sendToTv', ['ngResource'])
@@ -498,6 +507,8 @@ module.exports = angular.module('ui_videoList', ['ngResource', 'pascalprecht.tra
  * @attr display string Display type - 'horizontal', 'list' or 'floating' (default) for styling and controls behaviour
  * @attr control string Control style - 'tv' or 'pc' (default) - used for control and reacting on events @todo
  * @attr play-link string Link pattern to open video - will replace :attribute if found in element item properties (e.g. '#/show/:type/:id')
+ * @attr play-fn string Function name to open video - should be defined in scope and accept list index param ($index of ng-repeat is used).
+ *                      Note: if play-fn is defined the whole item element is bind to click handler
  */
 module.exports = function () {
 	return {
@@ -512,7 +523,10 @@ module.exports = function () {
         },
 		controller: function($scope){
 		},
-		link: function(scope, element){
+		link: function(scope, element, attr){
+            // add display type as a class also
+            element.addClass(scope.displayType);
+
             scope.playFunction = function(index) {
                 if( typeof(scope.$parent[scope.playFn]) === 'function') {
                     scope.$parent[scope.playFn](index);
@@ -524,18 +538,19 @@ module.exports = function () {
 	};
 };
 },{"./ui_videoListTemplate.html":28}],24:[function(require,module,exports){
+/* global angular, module */
 
 module.exports = function () {
 	return {
 		restrict: 'E',
 		template: require('./ui_videoListItemTemplate.html'),
 		link: function(scope, element){
-		}
+        }
 	};
 };
 
 },{"./ui_videoListItemTemplate.html":25}],25:[function(require,module,exports){
-module.exports = "<div class=\"img\">\r\n    <a ng-if=\"::playLink\" class=\"playimg\" ng-href=\"#/view/expand/{{::item.type}}/{{::item.id}}\"> <!-- TODO: replace href with {{ playLink | replaceParams }} -->\r\n        <ui-video-list-play-arrow></ui-video-list-play-arrow>\r\n        <img ng-if=\"::item.img\" ng-src=\"{{::item.img}}\"/>\r\n    </a>\r\n    <a ng-if=\"::playFn\" class=\"playimg\" ng-click=\"playFunction($index)\">\r\n        <div class=\"index\">{{ ::($index + 1) }}</div>\r\n        <ui-video-list-play-arrow></ui-video-list-play-arrow>\r\n        <img ng-if=\"::item.img\" ng-src=\"{{::item.img}}\"/>\r\n    </a>\r\n    <div ng-if=\"::(item.type == 'video')\" class=\"duration\"><span>{{ item.duration | duration }}</span></div><!-- TODO: one-time binding with filter? -->\r\n    <div ng-if=\"::(item.type == 'playlist')\" class=\"items\"><span>{{ ::item.totalItems }}</span></div>\r\n</div>\r\n<div class=\"metadata\">\r\n    <a class=\"title\" ng-if=\"::playLink\" class=\"playimg\" ng-href=\"#/view/expand/{{::item.type}}/{{::item.id}}\"> <!-- TODO: replace href with {{ playLink | replaceParams }} -->\r\n        {{::item.title | limitTo : 45 }}...\r\n    </a>\r\n    <a class=\"title\" ng-if=\"::playFn\" class=\"playimg\" ng-click=\"playFunction($index)\">\r\n        {{::item.title | limitTo : 45 }}...\r\n    </a>\r\n    <p class=\"subtitle\" ng-if=\"::item.channel\">\r\n        <span class=\"channel\">by {{::item.channel}}</span><br />\r\n        <span class=\"created\">{{ ::item.created | timeAgo }}</span>\r\n    </p>\r\n    <p class=\"description\" data-type=\"description\" cw-reveal-label ng-if=\"::item.description\">\r\n        {{::item.description | limitTo : 45 }}...\r\n    </p>\r\n    <p class=\"description\" ng-if=\"::(!item.description)\">No description available.</p>\r\n</div>\r\n<div class=\"buttons\">\r\n    <app-send-to-tv ng-model=\"::item\"></app-send-to-tv>\r\n</div>\r\n";
+module.exports = "<div class=\"img\">\r\n    <a ng-if=\"::playLink\" class=\"playimg\" ng-href=\"#/view/expand/{{::item.type}}/{{::item.id}}\"> <!-- TODO: replace href with {{ playLink | replaceParams }} -->\r\n        <ui-video-list-play-arrow></ui-video-list-play-arrow>\r\n        <img ng-if=\"::item.img\" ng-src=\"{{::item.img}}\"/>\r\n    </a>\r\n    <a ng-if=\"::playFn\" class=\"playimg\">\r\n        <div class=\"index\">{{ ::($index + 1) }}</div>\r\n        <ui-video-list-play-arrow></ui-video-list-play-arrow>\r\n        <img ng-if=\"::item.img\" ng-src=\"{{::item.img}}\"/>\r\n    </a>\r\n    <div ng-if=\"::(item.type == 'video')\" class=\"duration\"><span>{{ item.duration | duration }}</span></div><!-- TODO: one-time binding with filter? -->\r\n    <div ng-if=\"::(item.type == 'playlist')\" class=\"items\"><span>{{ ::item.totalItems }}</span></div>\r\n</div>\r\n<div class=\"metadata\">\r\n    <a class=\"title\" ng-if=\"::playLink\" class=\"playimg\" ng-href=\"#/view/expand/{{::item.type}}/{{::item.id}}\"> <!-- TODO: replace href with {{ playLink | replaceParams }} -->\r\n        {{::item.title | limitTo : 45 }}...\r\n    </a>\r\n    <a class=\"title\" ng-if=\"::playFn\" class=\"playimg\">\r\n        {{::item.title | limitTo : 45 }}...\r\n    </a>\r\n    <p class=\"subtitle\" ng-if=\"::item.channel\">\r\n        <span class=\"channel\">by {{::item.channel}}</span><br />\r\n        <span class=\"created\">{{ ::item.created | timeAgo }}</span>\r\n    </p>\r\n    <p class=\"description\" data-type=\"description\" cw-reveal-label ng-if=\"::item.description\">\r\n        {{::item.description | limitTo : 45 }}...\r\n    </p>\r\n    <p class=\"description\" ng-if=\"::(!item.description)\">No description available.</p>\r\n</div>\r\n<div class=\"buttons\">\r\n    <app-send-to-tv ng-model=\"::item\"></app-send-to-tv>\r\n</div>\r\n";
 
 },{}],26:[function(require,module,exports){
 module.exports = function () {
@@ -551,7 +566,7 @@ module.exports = function () {
 module.exports = "<svg version=\"1.1\" id=\"arrow\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 12 13\" enable-background=\"new 0 0 12 13\" xml:space=\"preserve\">\r\n    <defs>\r\n        <filter id=\"dropshadow\" x=\"-25%\" y=\"-25%\" height=\"150%\" width=\"150%\">\r\n            <feGaussianBlur in=\"SourceAlpha\" stdDeviation=\"1\"/>\r\n            <feOffset dx=\"0.25\" dy=\"0.25\" result=\"offsetblur\"/>\r\n            <feMerge>\r\n                <feMergeNode/>\r\n                <feMergeNode in=\"SourceGraphic\"/>\r\n            </feMerge>\r\n        </filter>\r\n    </defs>\r\n    <polygon filter=\"url(#dropshadow)\" fill=\"#FFFFFF\" points=\"1,0.5 11,6.5 1,12.5\"/>\r\n</svg>";
 
 },{}],28:[function(require,module,exports){
-module.exports = "<ui-video-list-item class=\"ui-video-list-item\" ng-repeat=\"item in videoList\"></ui-video-list-item>\r\n<div ng-if=\"videoList.length == 0\">\r\n    {{ ::('No results found' | translate) }}\r\n</div>\r\n";
+module.exports = "<ui-video-list-item class=\"ui-video-list-item\" ng-repeat=\"item in videoList\" ng-click=\"playFn ? playFunction($index) : null\"></ui-video-list-item>\r\n<div ng-if=\"videoList.length == 0\">\r\n    {{ ::('No results found' | translate) }}\r\n</div>\r\n";
 
 },{}],29:[function(require,module,exports){
 module.exports = "<yt-viewer video-model=\"video\" playlist-model=\"playlist\"></yt-viewer>\r\n";
@@ -1043,6 +1058,7 @@ module.exports = ({
     origin: 'https://www.youtube.com',
     api: '/iframe_api',
     video: {
+        tvQuality: 'hd720',
         highlightTimeout: 250,
         fastForward: 20,
         fastRewind: -20
@@ -1091,16 +1107,13 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
             }
 
             var initPlayer = function() {
-                scope.player.API.initialized = true;
-                player = new YT.Player('yt-player', {
-                    //height: '1080',
-                    //width: '1920',
+                var properties = {
+                    videoId: scope.video.id,
                     playerVars: {
                         autoplay: 1,
-                        controls: appMode.isPC() ? 1 : 0,
+                        controls: 1,
                         showinfo: 0
-                    },
-                    videoId: scope.video.id,
+                    },                    
                     events: {
                         onReady: function() {
                             scope.player.API.ready = true;
@@ -1109,10 +1122,23 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
                             }
                         }
                     }
-                });
+                };
+                
+                if(appMode.isTV()) {
+                    properties.playerVars.controls = 0;
+                    properties.height = '1080';
+                    properties.width = '1920';
+                }
+                
+                scope.player.API.initialized = true;
+                
+                player = new YT.Player('yt-player', properties);
             };
 
             var loadVideo = function() {
+                if(scope.playingOnTv) {
+                    scope.playingOnTv = false;
+                }
                 player.loadVideoById(scope.video.id);
             };
 
@@ -1137,13 +1163,20 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
                         if(data.info.playerState) {
                             scope.player.info.isPlaying = data.info.playerState === YT.PlayerState.PLAYING;
                         }
+                        if(data.info.playbackQuality && appMode.isTV()) {
+                            if(data.info.playbackQuality !== ytPlayerConfig.video.tvQuality) {
+                                player.setPlaybackQuality(ytPlayerConfig.video.tvQuality);
+                            }
+                        }
                         break;
                     }
                 }
             };
 
             _unbinder.push($rootScope.$on('appSendToTv:send', function(event, data){
-                player.pauseVideo();
+                if(data.sent === true) {
+                    player.pauseVideo();
+                }
             }));
 
             _unbinder.push($rootScope.$on('appSendToTv:resume', function(event, data){
