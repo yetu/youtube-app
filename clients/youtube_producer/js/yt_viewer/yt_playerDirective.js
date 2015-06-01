@@ -36,16 +36,13 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
             }
 
             var initPlayer = function() {
-                scope.player.API.initialized = true;
-                player = new YT.Player('yt-player', {
-                    //height: '1080',
-                    //width: '1920',
+                var properties = {
+                    videoId: scope.video.id,
                     playerVars: {
                         autoplay: 1,
-                        controls: appMode.isPC() ? 1 : 0,
+                        controls: 1,
                         showinfo: 0
-                    },
-                    videoId: scope.video.id,
+                    },                    
                     events: {
                         onReady: function() {
                             scope.player.API.ready = true;
@@ -54,7 +51,17 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
                             }
                         }
                     }
-                });
+                };
+                
+                if(appMode.isTV()) {
+                    properties.playerVars.controls = 0;
+                    properties.height = '1080';
+                    properties.width = '1920';
+                }
+                
+                scope.player.API.initialized = true;
+                
+                player = new YT.Player('yt-player', properties);
             };
 
             var loadVideo = function() {
@@ -84,6 +91,11 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
                         }
                         if(data.info.playerState) {
                             scope.player.info.isPlaying = data.info.playerState === YT.PlayerState.PLAYING;
+                        }
+                        if(data.info.playbackQuality && appMode.isTV()) {
+                            if(data.info.playbackQuality !== ytPlayerConfig.video.tvQuality) {
+                                player.setPlaybackQuality(ytPlayerConfig.video.tvQuality);
+                            }
                         }
                         break;
                     }

@@ -3,6 +3,7 @@ module.exports = ({
     origin: 'https://www.youtube.com',
     api: '/iframe_api',
     video: {
+        tvQuality: 'hd720',
         highlightTimeout: 250,
         fastForward: 20,
         fastRewind: -20
