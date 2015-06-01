@@ -58,6 +58,9 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
             };
 
             var loadVideo = function() {
+                if(scope.playingOnTv) {
+                    scope.playingOnTv = false;
+                }
                 player.loadVideoById(scope.video.id);
             };
 
