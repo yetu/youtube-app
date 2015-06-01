@@ -10,11 +10,20 @@ module.exports = function($rootScope, appSendToTvService) {
         link: function(scope) {
             scope.onSendButtonClick = function() {
                 if(!scope.playingOnTv) {
-                    appSendToTvService.sendToTv(scope.data);
+                    if(!scope.pendingSend) {
+                        scope.pendingSend = true;
+                        appSendToTvService.sendToTv(scope.data)
+                            .then(function() {
+                                scope.playingOnTv = true;
+                            })
+                            .finally(function() {
+                                scope.pendingSend = false;
+                            });
+                    }
                 } else {
+                    scope.playingOnTv = false;
                     $rootScope.$broadcast('appSendToTv:resume');
                 }
-                scope.playingOnTv = !scope.playingOnTv;
             };
         }
     };

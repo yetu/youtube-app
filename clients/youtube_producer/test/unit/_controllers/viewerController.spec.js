@@ -68,8 +68,8 @@ describe('viewerController function', function() {
         $rootScope.$broadcast('appSendToTv:send', { name: 'dataName', sent: false });
         $rootScope.$digest();
         expect(Notification.error).toHaveBeenCalledWith({
-                message: '"dataName" has not been sent to TV',
-                title: 'Play on TV'
+                message: 'The video could not be played on TV. Please retry later.',
+                title: 'Play video on TV'
             });
     });
 });

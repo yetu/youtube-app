@@ -37,7 +37,7 @@ module.exports = (function ($rootScope, $http, $location, $filter, serverPathsCo
             sent: true
         };
 
-        $http.post(serverPathsConfig.youtubeUrl, payload)
+        return $http.post(serverPathsConfig.youtubeUrl, payload)
             .success(function () {
                 $rootScope.$broadcast('appSendToTv:send', sendResult);
             })
@@ -49,7 +49,7 @@ module.exports = (function ($rootScope, $http, $location, $filter, serverPathsCo
     };
 
     var sendToTv = function (data) {
-        sendPayload(buildPayload(data));
+        return sendPayload(buildPayload(data));
     };
 
     return {
