@@ -14,7 +14,6 @@
     </div>
     <div class="playlist">
         <h3>{{ ::(playlist.title | translate) }}</h3>
-        <ui-video-list class="ui-video-list" ng-model="playlist" display="list" play-fn="playVideo"></ui-video-list>
+        <ui-video-list class="ui-video-list" ng-model="playlist" display="list" play-fn="playVideo" load-more="scroll" service="ytYoutubeService"></ui-video-list>
     </div>
 </div>
-<!-- TODO: remove ng-show/hide and base on css visibility? -->
