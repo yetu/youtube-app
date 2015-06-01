@@ -573,6 +573,7 @@ button.app-send-to-tv:hover {
     height: 185px;
   }
   .yt-viewer .video .overlay {
+    width: 280px;
     top: -170px;
   }
   .yt-viewer .buttons .toggle-playlist {
@@ -604,6 +605,7 @@ button.app-send-to-tv:hover {
     height: 248px;
   }
   .yt-viewer .video .overlay {
+    width: 440px;
     top: -233px;
   }
   .yt-viewer .playlist {
@@ -637,6 +639,7 @@ button.app-send-to-tv:hover {
     height: 327px;
   }
   .yt-viewer .video .overlay {
+    width: 560px;
     top: -312px;
   }
   .yt-viewer .playlist {
@@ -682,6 +685,7 @@ button.app-send-to-tv:hover {
     transition: height 0.5s ease-in-out;
   }
   .yt-viewer .video .overlay {
+    width: 700px;
     height: 394px;
     top: -379px;
     -webkit-transition: all 0.5s ease-in-out;
@@ -718,6 +722,7 @@ button.app-send-to-tv:hover {
     transition: height 0.5s ease-in-out;
   }
   .yt-viewer.playlist-visible .video .overlay {
+    width: 400px;
     height: 225px;
     top: -210px;
     -webkit-transition: all 0.5s ease-in-out;
@@ -771,6 +776,7 @@ button.app-send-to-tv:hover {
     height: 507px;
   }
   .yt-viewer .video .overlay {
+    width: 900px;
     top: -492px;
   }
   .yt-viewer .video .yt-video-description {
@@ -788,6 +794,7 @@ button.app-send-to-tv:hover {
     height: 282px;
   }
   .yt-viewer.playlist-visible .video .overlay {
+    width: 500px;
     top: -267px;
   }
   .yt-viewer.playlist-visible .video .yt-video-description {
@@ -833,6 +840,7 @@ button.app-send-to-tv:hover {
     height: 580px;
   }
   .yt-viewer .video .overlay {
+    width: 1020px;
     top: -565px;
   }
   .yt-viewer .video .yt-video-description {
@@ -853,6 +861,7 @@ button.app-send-to-tv:hover {
     height: 310px;
   }
   .yt-viewer.playlist-visible .video .overlay {
+    width: 550px;
     top: -295px;
   }
   .yt-viewer.playlist-visible .video .yt-video-description {
@@ -896,6 +905,7 @@ button.app-send-to-tv:hover {
     height: 687px;
   }
   .yt-viewer .video .overlay {
+    width: 1220px;
     top: -672px;
   }
   .yt-viewer .video .yt-video-description {
@@ -913,6 +923,7 @@ button.app-send-to-tv:hover {
     height: 366px;
   }
   .yt-viewer.playlist-visible .video .overlay {
+    width: 650px;
     top: -351px;
   }
   .yt-viewer.playlist-visible .video .yt-video-description {
@@ -957,7 +968,8 @@ button.app-send-to-tv:hover {
     height: 799px;
   }
   .yt-viewer .video .overlay {
-    top: -799px;
+    width: 1420px;
+    top: -784px;
   }
   .yt-viewer .video .yt-video-description {
     width: 1400px;
@@ -974,7 +986,8 @@ button.app-send-to-tv:hover {
     height: 445px;
   }
   .yt-viewer.playlist-visible .video .overlay {
-    top: -445px;
+    width: 790px;
+    top: -430px;
   }
   .yt-viewer.playlist-visible .video .yt-video-description {
     width: 770px;
