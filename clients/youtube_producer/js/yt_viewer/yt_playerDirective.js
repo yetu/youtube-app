@@ -105,6 +105,8 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
             };
 
             var remoteControl = function(command) {
+                var position;
+                
                 switch(command) {
                     case 'activate': {
                         element.attr('activated', true);
@@ -119,7 +121,7 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
                         break;
                     }
                     case 'left': {
-                        var position = scope.player.info.actTime + ytPlayerConfig.video.fastRewind;
+                        position = scope.player.info.actTime + ytPlayerConfig.video.fastRewind;
                         if(position < 0) {
                             position = 0;
                         }
@@ -127,7 +129,7 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
                         break;
                     }
                     case 'right': {
-                        var position = scope.player.info.actTime + ytPlayerConfig.video.fastForward;
+                        position = scope.player.info.actTime + ytPlayerConfig.video.fastForward;
                         if(position > scope.player.info.duration) {
                             position = scope.player.info.duration;
                         }
