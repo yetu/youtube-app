@@ -17,4 +17,11 @@ describe('Filter: duration', function () {
         expect(filter('PT3S')).toBe('00:03');
     });
 
+    it('should replace integer number of seconds with time in h:mm:ss', function() {
+        expect(filter(93)).toBe('01:33');
+        expect(filter(8832)).toBe('02:27:12');
+        expect(filter(26)).toBe('00:26');
+        expect(filter()).toBe('');
+    });
+
 });
