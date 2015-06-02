@@ -21,12 +21,10 @@ module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $route
     });
 
     appRemoteControlService.setController('viewer', function(action, name) {
-        //console.debug('appRemoteControlService.callback', action, name);
         if(action === 'back' && name === 'player' && $routeParams.mode === 'fullscreen') {
-            var url = ['#', 'view', 'normal', $routeParams.type, $routeParams.id, 'tv'].join('/');
-            //console.debug('route to url', url);
-            $window.location = url; // TODO: replace with $location
-            $window.location.reload();
+            var url = ['/view', 'normal', $routeParams.type, $routeParams.id].join('/');
+            $location.path(url);
+            //$window.location.reload();
         }
     });
 
