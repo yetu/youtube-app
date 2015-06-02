@@ -93,7 +93,7 @@ h2 {
   display: block;
   width: 95%;
   height: 50px;
-  padding-left: 5%;
+  padding-left: 10px;
   background-color: #f4f4f4;
   border: 0;
   outline: 0;
@@ -103,7 +103,7 @@ h2 {
   height: 50px;
   position: absolute;
   top: 35px;
-  right: 5%;
+  right: 10px;
   background: none;
   border: 0;
   outline: 0;
@@ -134,7 +134,7 @@ h2 {
   background-color: #f6f6f6;
   float: none;
   overflow: hidden;
-  padding-bottom: 10px;
+  padding: 0 0 10px 0;
 }
 .ui-video-list-item .img {
   display: block;
@@ -191,10 +191,13 @@ h2 {
   font-size: 13px;
 }
 .ui-video-list-item .metadata .title {
+  display: block;
   color: #090;
   padding: 0;
   margin: 0;
   font-size: 17px;
+  height: 40px;
+  overflow: hidden;
   line-height: 125%;
   font-weight: normal;
   font-family: source_sans_proregular;
@@ -208,10 +211,12 @@ h2 {
   color: color-author;
 }
 .ui-video-list-item .metadata .subtitle .created {
-  color: #666;
+  color: #999;
 }
 .ui-video-list-item .metadata .description {
   padding: 0;
+  height: 35px;
+  overflow: hidden;
   margin: 5px 0;
 }
 .ui-video-list-item .buttons {
@@ -235,8 +240,6 @@ h2 {
 .yt-viewer {
   margin: 0 auto 30px;
   background-color: #f6f6f6;
-  -webkit-transition: background-color 0.5s ease-in-out;
-  transition: background-color 0.5s ease-in-out;
   min-height: 75vh;
   overflow: hidden;
   -webkit-box-shadow: 7px 7px 10px 0 rgba(0,0,0,0.3);
@@ -297,11 +300,11 @@ h2 {
 }
 .yt-viewer .buttons button {
   font-family: source_sans_prolight;
-  height: 35px;
-  font-size: 20px;
+  height: 34px;
+  font-size: 18px;
   line-height: 100%;
   display: block;
-  padding: 5px;
+  padding: 4px 10px;
   background: #090;
   border: 0;
   outline: 0;
@@ -325,10 +328,10 @@ h2 {
   width: auto;
 }
 .yt-viewer .buttons .toggle-playlist svg {
-  height: 20px;
+  height: 12px;
   width: auto;
   position: relative;
-  top: 3px;
+  top: 0;
   margin: 0 0 0 5px;
 }
 .yt-viewer .buttons .toggle-playlist .label_showPlaylist svg {
@@ -336,11 +339,6 @@ h2 {
   -ms-transform: scaleX(-1);
   transform: scaleX(-1);
   margin: 0 5px 0 0;
-}
-.yt-viewer.playlist-visible {
-  background-color: #c6c6c6;
-  -webkit-transition: background-color 0.5s ease-in-out;
-  transition: background-color 0.5s ease-in-out;
 }
 yt-player {
   width: 100%;
@@ -394,8 +392,8 @@ yt-player .overlay {
   height: 60px;
   padding: 0;
   background-color: #dadada;
-  -webkit-transition: background-color 0.5s ease-in-out;
-  transition: background-color 0.5s ease-in-out;
+  -webkit-transition: background-color 0.25s ease-in-out;
+  transition: background-color 0.25s ease-in-out;
   border-top: 1px solid #eee;
   border-bottom: 1px solid #ccc;
 }
@@ -461,14 +459,16 @@ yt-player .overlay {
   line-height: 150%;
   height: 25px;
   margin-bottom: 5px;
-  overflow: hidden;
-  white-space: nowrap;
 }
 .yt-viewer .playlist .ui-video-list-item .metadata .channel {
   font-size: 0.8125em;
   width: 100%;
+  height: 15px;
+}
+.yt-viewer .playlist .ui-video-list-item .metadata .title,
+.yt-viewer .playlist .ui-video-list-item .metadata .channel {
   overflow: hidden;
-  height: 13px;
+  white-space: nowrap;
 }
 .yt-viewer .playlist .ui-video-list-item .metadata .description,
 .yt-viewer .playlist .ui-video-list-item .metadata .created {
@@ -477,8 +477,8 @@ yt-player .overlay {
 .yt-viewer .playlist .ui-video-list-item.playing,
 .yt-viewer .playlist .ui-video-list-item:hover {
   background-color: #666;
-  -webkit-transition: background-color 0.5s ease-in-out;
-  transition: background-color 0.5s ease-in-out;
+  -webkit-transition: background-color 0.25s ease-in-out;
+  transition: background-color 0.25s ease-in-out;
   cursor: pointer;
 }
 .yt-viewer .playlist .ui-video-list-item.playing .index,
@@ -560,6 +560,9 @@ button.app-send-to-tv:hover {
   .yt-viewer {
     width: 300px;
   }
+  .app-search .query {
+    width: 290px;
+  }
   .yt-viewer .yt-video-description {
     width: 270px;
     padding: 5px;
@@ -594,6 +597,9 @@ button.app-send-to-tv:hover {
   .yt-viewer {
     width: 460px;
   }
+  .app-search .query {
+    width: 450px;
+  }
   .yt-viewer .yt-video-description {
     width: 430px;
   }
@@ -616,6 +622,9 @@ button.app-send-to-tv:hover {
   .container,
   .yt-viewer {
     width: 600px;
+  }
+  .app-search .query {
+    width: 590px;
   }
   .list-title {
     margin-left: 40px;
@@ -654,10 +663,6 @@ button.app-send-to-tv:hover {
   }
   .app-search .query {
     width: 730px;
-    padding-left: 10px;
-  }
-  .app-search button.search {
-    right: 10px;
   }
   .list-title {
     margin: 0;
@@ -671,6 +676,10 @@ button.app-send-to-tv:hover {
   }
   .ui-video-list-item:nth-child(3n+1) {
     margin-left: 0;
+  }
+  .yt-viewer {
+    -webkit-transition: background-color 0.5s ease-in-out;
+    transition: background-color 0.5s ease-in-out;
   }
   .yt-viewer .video {
     width: 700px;
@@ -711,6 +720,11 @@ button.app-send-to-tv:hover {
   .yt-viewer .playlist h3 {
     display: none;
   }
+  .yt-viewer.playlist-visible {
+    background-color: #c6c6c6;
+    -webkit-transition: background-color 0.5s ease-in-out;
+    transition: background-color 0.5s ease-in-out;
+  }
   .yt-viewer.playlist-visible .video {
     width: 400px;
     -webkit-transition: width 0.5s ease-in-out;
@@ -745,11 +759,8 @@ button.app-send-to-tv:hover {
     width: 960px;
   }
   .app-search .query {
-    padding-left: 20px;
-    width: 940px;
-  }
-  .app-search button.search {
-    margin-right: 20px;
+    padding-left: 10px;
+    width: 950px;
   }
   .list-title {
     margin-left: 90px;
@@ -810,11 +821,8 @@ button.app-send-to-tv:hover {
     width: 1140px;
   }
   .app-search .query {
-    padding-left: 30px;
-    width: 1110px;
-  }
-  .app-search button.search {
-    margin-right: 30px;
+    padding-left: 10px;
+    width: 1130px;
   }
   .list-title {
     margin-left: 45px;
@@ -877,7 +885,7 @@ button.app-send-to-tv:hover {
     width: 1340px;
   }
   .app-search .query {
-    width: 1310px;
+    width: 1330px;
   }
   .list-title {
     margin-left: 10px;
@@ -936,7 +944,7 @@ button.app-send-to-tv:hover {
     width: 1540px;
   }
   .app-search .query {
-    width: 1510px;
+    width: 1530px;
   }
   .list-title {
     margin-left: 0;

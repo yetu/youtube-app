@@ -5,6 +5,12 @@
         width: 300px;
     }
     
+    .app-search{
+        .query {
+            width: 290px;
+        }
+    }
+    
     .yt-viewer {
         .yt-video-description {
             width: 270px;
@@ -46,6 +52,12 @@
         width: 460px;
     }
     
+    .app-search{
+        .query {
+            width: 450px;
+        }
+    }
+    
     .yt-viewer {
         .yt-video-description {
             width: 430px;
@@ -69,6 +81,12 @@
 @media (min-width: 640px) {
     .container, .yt-viewer {
         width: 600px;
+    }
+    
+    .app-search{
+        .query {
+            width: 590px;
+        }
     }
     
     .list-title {
@@ -113,10 +131,6 @@
     .app-search{
         .query {
             width: 730px;
-            padding-left: 10px;
-        }
-        button.search {
-            right: 10px;
         }
     }
     
@@ -136,6 +150,7 @@
     }
 
     .yt-viewer {
+        transition: background-color 0.5s ease-in-out;
         .video {
             width: 700px;
             margin: 20px;
@@ -177,6 +192,8 @@
         }
         
         &.playlist-visible {
+            background-color: bg-yt-viewer-pl-visible;
+            transition: background-color 0.5s ease-in-out;
             .video {
                 width: 400px;
                 transition: width 0.5s ease-in-out;
@@ -213,11 +230,8 @@
 
     .app-search {
         .query {
-            padding-left: 20px;
-            width: 940px;
-        }
-        button.search {
-            margin-right: 20px;
+            padding-left: 10px;
+            width: 950px;
         }
     }
     
@@ -290,11 +304,8 @@
 
     .app-search {
         .query {
-            padding-left: 30px;
-            width: 1110px;
-        }
-        button.search {
-            margin-right: 30px;
+            padding-left: 10px;
+            width: 1130px;
         }
     }
     
@@ -368,7 +379,7 @@
 
     .app-search {
         .query {
-            width: 1310px;
+            width: 1330px;
         }
     }
     
@@ -438,7 +449,7 @@
 
     .app-search {
         .query {
-            width: 1510px;
+            width: 1530px;
         }
     }
     

@@ -13,17 +13,17 @@
 </div>
 <div class="metadata">
     <a class="title" ng-if="::playLink" class="playimg" ng-href="#/view/expand/{{::item.type}}/{{::item.id}}"> <!-- TODO: replace href with {{ playLink | replaceParams }} -->
-        {{::item.title | limitTo : 45 }}...
+        {{::item.title | limitTo : 50 }}<span ng-show="item.title.length >= 50">...</span>
     </a>
     <a class="title" ng-if="::playFn" class="playimg">
-        {{::item.title | limitTo : 45 }}...
+        {{::item.title | limitTo : 50 }}<span ng-show="item.title.length >= 50">...</span>
     </a>
     <p class="subtitle" ng-if="::item.channel">
         <span class="channel">by {{::item.channel}}</span><br />
         <span class="created">{{ ::item.created | timeAgo }}</span>
     </p>
     <p class="description" data-type="description" cw-reveal-label ng-if="::item.description">
-        {{::item.description | limitTo : 45 }}...
+        {{::item.description | limitTo : 75 }}<span ng-show="item.description.length >= 75">...</span>
     </p>
     <p class="description" ng-if="::(!item.description)">No description available.</p>
 </div>
