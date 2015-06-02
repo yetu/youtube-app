@@ -54,13 +54,13 @@ module.exports = function ($window) {
         link: function (scope, element){
             var container = element[0];
 
-            // add display type as a class also
-            element.addClass(scope.displayType);
-            
             // default display type
             if (!scope.displayType) {
                 scope.displayType = 'floating';
             }
+
+            // add display type as a class also
+            element.addClass(scope.displayType);
 
             scope.playFunction = function (index) {
                 if (typeof(scope.$parent[scope.playFn]) === 'function') {
@@ -71,25 +71,26 @@ module.exports = function ($window) {
             };
 
             if(scope.loadMore === 'scroll') {
-
                 // TODO: check in unbind necessary on $destroy
                 element.bind('scroll', function () {
-                        distance = container.scrollHeight * 0.1; // 10% from the end
-                        toBottom = container.scrollHeight - container.clientHeight - container.scrollTop;
+                        var distance = container.scrollHeight * 0.1; // 10% from the end
+                        var toBottom = container.scrollHeight - container.clientHeight - container.scrollTop;
                     
                     if(toBottom < distance) {
                         scope.loadNext();
                     }
                 });
 
-                angular.element($window).bind("scroll", function() {
-
-                    if ( container.scrollHeight - container.clientHeight !== 0 || scope.videoList && scope.videoList.items.length === 0){
+                angular.element($window).bind('scroll', function() {
+                    if (container.scrollHeight - container.clientHeight !== 0 
+                        || scope.videoList && scope.videoList.items.length === 0
+                        || element.hasClass('ng-hide')){
+                        // in case of container has scroll or there is no items or is hidden - do nothing
                         return;
                     }
 
-                    distance = document.body.scrollHeight * 0.1; // 10% to end
-                    toBottom = document.body.scrollHeight - window.innerHeight - window.scrollY;
+                    var distance = document.body.scrollHeight * 0.1; // 10% to end
+                    var toBottom = document.body.scrollHeight - window.innerHeight - window.scrollY;
 
                     if(toBottom < distance) {
                         scope.loadNext();

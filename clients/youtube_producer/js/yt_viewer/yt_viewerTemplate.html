@@ -28,6 +28,6 @@
     </div>
     <div class="playlist">
         <h3>{{ ::(playlist.title | translate) }}</h3>
-        <ui-video-list class="ui-video-list" ng-model="playlist" display="list" play-fn="playVideo" load-more="scroll" service="ytYoutubeService"></ui-video-list>
+        <ui-video-list class="ui-video-list" ng-show="playlistVisible" ng-model="playlist" display="list" play-fn="playVideo" load-more="scroll" service="ytYoutubeService"></ui-video-list>
     </div>
 </div>
