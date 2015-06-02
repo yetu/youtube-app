@@ -11,7 +11,7 @@
  * @attr service string Name of service with "load more" functionality (getNext method) - used by load-more functionality
  * @attr load-more string 'button' - indicates if button "load more" should be appended; 'scroll' - indicates if "load more" should be called on scroll bottom
  */
-module.exports = function () {
+module.exports = function ($window) {
     return {
         restrict: 'E',
         template: require('./ui_videoListTemplate.html'),
@@ -31,7 +31,7 @@ module.exports = function () {
             }
 
             $scope.loadNext = function() {
-                if(!$scope.videoList.etag || !$scope.videoList.next || $scope.loadingMore) {
+                if(!$scope.videoList || !$scope.videoList.etag || !$scope.videoList.next || $scope.loadingMore) {
                     return;
                 }
 
@@ -50,6 +50,7 @@ module.exports = function () {
 
         },
         link: function (scope, element) {
+            var container = element[0];
             // default display type
             if (!scope.displayType) {
                 scope.displayType = 'floating';
@@ -64,17 +65,31 @@ module.exports = function () {
             };
 
             if(scope.loadMore === 'scroll') {
+
                 // TODO: check in unbind necessary on $destroy
                 element.bind('scroll', function () {
-                    var elem = element[0],
-                        distance = elem.scrollHeight * 0.1, // 10% to end
-                        toBottom = elem.scrollHeight - elem.clientHeight - elem.scrollTop;
+                        distance = container.scrollHeight * 0.1; // 10% from the end
+                        toBottom = container.scrollHeight - container.clientHeight - container.scrollTop;
                     
                     if(toBottom < distance) {
                         scope.loadNext();
                     }
                 });
             }
+
+            angular.element($window).bind("scroll", function() {
+
+                if ( container.scrollHeight - container.clientHeight !== 0 || scope.videoList && scope.videoList.items.length === 0){
+                    return;
+                }
+
+                distance = document.body.scrollHeight * 0.1; // 10% to end
+                toBottom = document.body.scrollHeight - window.innerHeight - window.scrollY;
+
+                if(toBottom < distance) {
+                    scope.loadNext();
+                }
+            });
         }
     };
 };
