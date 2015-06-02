@@ -58,7 +58,7 @@ describe('Directive: ui-video-list', function () {
         $rootScope.$digest();
         spyOn(console, 'error');
         expect(element.find('a').eq(0).attr('href')).not.toBeDefined();
-        element.find('a').eq(0).triggerHandler('click');
+        element.find('ui-video-list-item').eq(0).triggerHandler('click');
         expect(console.error).toHaveBeenCalled();
     });
 

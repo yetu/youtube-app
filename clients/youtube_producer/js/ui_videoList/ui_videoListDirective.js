@@ -51,7 +51,7 @@ module.exports = function ($window) {
             };
 
         },
-        link: function (scope, element, attr){            
+        link: function (scope, element){
             var container = element[0];
 
             // add display type as a class also
@@ -81,21 +81,21 @@ module.exports = function ($window) {
                         scope.loadNext();
                     }
                 });
+
+                angular.element($window).bind("scroll", function() {
+
+                    if ( container.scrollHeight - container.clientHeight !== 0 || scope.videoList && scope.videoList.items.length === 0){
+                        return;
+                    }
+
+                    distance = document.body.scrollHeight * 0.1; // 10% to end
+                    toBottom = document.body.scrollHeight - window.innerHeight - window.scrollY;
+
+                    if(toBottom < distance) {
+                        scope.loadNext();
+                    }
+                });
             }
-
-            angular.element($window).bind("scroll", function() {
-
-                if ( container.scrollHeight - container.clientHeight !== 0 || scope.videoList && scope.videoList.items.length === 0){
-                    return;
-                }
-
-                distance = document.body.scrollHeight * 0.1; // 10% to end
-                toBottom = document.body.scrollHeight - window.innerHeight - window.scrollY;
-
-                if(toBottom < distance) {
-                    scope.loadNext();
-                }
-            });
         }
     };
 };
