@@ -125,6 +125,44 @@ h2 {
   list-style-position: outside;
   padding: 0;
 }
+.ui-video-list .load-more {
+  background-color: #090;
+  font-family: source_sans_prolight;
+  text-align: center;
+  height: 34px;
+  font-size: 18px;
+  line-height: 100%;
+  display: block;
+  padding: 4px 10px;
+  margin: 0 auto 20px;
+  border: 0;
+  outline: 0;
+  color: #fff;
+  -webkit-box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.3);
+  box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.3);
+}
+.ui-video-list .load-more svg {
+  height: auto;
+  width: 12px;
+  position: relative;
+  top: 2px;
+  margin: 0 0 0 5px;
+  -webkit-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
+.ui-video-list .load-more svg polygon {
+  -webkit-filter: none;
+  filter: none;
+}
+.ui-video-list .load-more:hover {
+  color: #090;
+  background-color: #fff;
+  cursor: pointer;
+}
+.ui-video-list .load-more:hover svg polygon {
+  fill: #090;
+}
 .ui-video-list.popular .load-more {
   display: none;
 }

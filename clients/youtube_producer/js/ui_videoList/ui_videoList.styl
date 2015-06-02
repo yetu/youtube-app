@@ -11,13 +11,51 @@
     list-style: none;
     list-style-position: outside;
     padding: 0;
-
+    
+    .load-more {
+        background-color: bg-button;
+        font-family: source_sans_prolight;
+        text-align: center;
+        height: 34px;
+        font-size: 18px;
+        line-height: 100%;
+        display: block;
+        padding: 4px 10px;
+        margin: 0 auto 20px;
+        border: 0;
+        outline: 0;
+        color: color-text-button;
+        box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.3);
+        svg {
+            height: auto;
+            width: 12px;
+            position: relative;
+            top: 2px;
+            margin: 0 0 0 5px;
+            transform: rotate(90deg);
+            polygon {
+                filter: none;
+            }
+        }
+        
+        &:hover {
+            color: color-text-button-hover;
+            background-color: bg-button-hover;
+            cursor: pointer;
+            svg {
+                polygon {
+                    fill: color-text-button-hover;
+                }
+            }
+        }
+    }
+    
     &.popular {
         .load-more {
             display: none;
         }
     }
-
+    
     .spinner {
         text-align: center;
         display: none;
