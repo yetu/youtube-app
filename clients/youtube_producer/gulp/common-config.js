@@ -61,30 +61,6 @@ var img = {
     watch: 'img/*'
 };
 
-var sendToTv = {
-    build: {
-        src: 'js/app_sendToTv/assets/*',
-        dest: distAssets('/')
-    },
-    watch: 'js/app_sendToTv/assets/*'
-};
-
-var yt_viewer = {
-    build: {
-        src: 'js/yt_viewer/assets/*',
-        dest: distAssets('/')
-    },
-    watch: 'js/yt_viewer/assets/*'
-};
-
-var ui_videoList = {
-    build: {
-        src: 'js/ui_videoList/assets/*',
-        dest: distAssets('/')
-    },
-    watch: 'js/ui_videoList/assets/*'
-};
-
 var templates = {
     build: {
         src: 'js/*.html',
@@ -100,9 +76,6 @@ module.exports = {
         scripts: scripts,
         views: views,
         img: img,
-        sendToTv: sendToTv,
-        yt_viewer: yt_viewer,
-        ui_videoList: ui_videoList,
         templates: templates,
         fonts: fonts,
         tests: {

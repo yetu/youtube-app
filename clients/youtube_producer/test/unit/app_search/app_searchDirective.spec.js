@@ -90,27 +90,27 @@ describe('Directive: app_search', function () {
         expect(elementScope.emitted).toBe('');
     });
 
-    xit('should debounce input value', function() {
+    it('should debounce input value', function() {
         var element = $compile('<app-search trigger-search="auto"></app-search>')(scope);
         var elementScope = element.isolateScope();
-        spyOn(elementScope, '$emit');
         scope.$digest();
-        element.find('input').eq(0).prop('value', 'ye');
-        element.find('input').eq(0).prop('value', 'yetu');
-        $timeout.flush();  // TODO: $timeout(function() { expect... } does not work in tests either, expect does not get called
+        expect(elementScope.searchValue).toBe(undefined);
+        spyOn(elementScope, '$emit');
+        elementScope.searchValue = 'yetu';
+        scope.$digest();
         expect(elementScope.$emit).toHaveBeenCalledWith("app:search-value", "yetu");
         expect(elementScope.emitted).toBe('yetu');
     });
 
-    xit('should not debounce empty input value', function() {
+    it('should not debounce empty input value', function() {
         var element = $compile('<app-search trigger-search="auto"></app-search>')(scope);
         var elementScope = element.isolateScope();
-        spyOn(elementScope, '$emit');
         scope.$digest();
-        element.find('input').eq(0).prop('value', 'ye');
-        element.find('input').eq(0).prop('value', '');
+        expect(elementScope.searchValue).toBe(undefined);
+        spyOn(elementScope, '$emit');
+        elementScope.searchValue = '';
         expect(elementScope.$emit).not.toHaveBeenCalled();
-        $timeout.flush();  // TODO: seems not to work correctly, compare test above...
+        scope.$digest();
         expect(elementScope.$emit).not.toHaveBeenCalled;
         expect(elementScope.emitted).toBeUndefined();
     });

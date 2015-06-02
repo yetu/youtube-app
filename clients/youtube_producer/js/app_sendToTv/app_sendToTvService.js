@@ -3,7 +3,7 @@ module.exports = (function ($rootScope, $http, $location, $filter, serverPathsCo
 
     var buildPayload = function (data) {
         var url = $location.protocol() + '://' + $location.host() + ":" + $location.port(),
-            actTime = data.actTime - 5 < 0 ? 0 : data.actTime - 5,
+            actTime = !data.actTime || data.actTime - 5 < 0 ? 0 : data.actTime - 5,
             // for localhost testing set target url explicitly
             // url = 'https://youtubeapp-dev.yetu.me',
             payload = {
@@ -28,7 +28,6 @@ module.exports = (function ($rootScope, $http, $location, $filter, serverPathsCo
             };
 
         return payload;
-
     };
 
     var sendPayload = function (payload) {
@@ -38,7 +37,7 @@ module.exports = (function ($rootScope, $http, $location, $filter, serverPathsCo
             sent: true
         };
 
-        $http.post(serverPathsConfig.youtubeUrl, payload)
+        return $http.post(serverPathsConfig.youtubeUrl, payload)
             .success(function () {
                 $rootScope.$broadcast('appSendToTv:send', sendResult);
             })
@@ -50,7 +49,7 @@ module.exports = (function ($rootScope, $http, $location, $filter, serverPathsCo
     };
 
     var sendToTv = function (data) {
-        sendPayload(buildPayload(data));
+        return sendPayload(buildPayload(data));
     };
 
     return {

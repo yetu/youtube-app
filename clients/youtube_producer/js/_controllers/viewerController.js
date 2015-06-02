@@ -10,6 +10,7 @@ module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $route
         }
         $scope.video = data.video;
         $scope.playlist = data.playlist;
+        $scope.playlist.currentPlaying = 0;
     }, function(error) {
         // TODO: error handling
     });
@@ -20,17 +21,11 @@ module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $route
     });
 
     $rootScope.$on('appSendToTv:send', function(event, data){
-        if(data.sent === true) {
-            Notification.success({
-                message: '"' + data.name + '" ' + $filter('translate')('has been sent to TV'),
-                title: $filter('translate')('Play on TV')
-            });
-        } else {
+        if(data.sent !== true) {
             Notification.error({
-                message: '"' + data.name + '" ' + $filter('translate')('has not been sent to TV'),
-                title: $filter('translate')('Play on TV')
+                message: $filter('translate')('The video could not be played on TV. Please retry later.'),
+                title: $filter('translate')('Play video on TV')
             });
         }
-        
     });
 });

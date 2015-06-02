@@ -1,13 +1,27 @@
 <div class="{{ class || 'yt-viewer' }}" ng-class="{ 'playlist-visible': playlistVisible }">
     <h2 class="title">{{ video.title}} </h2>
     <div class="video">
-        <yt-player></yt-player>
+        <yt-player>
+            <div ng-if="playingOnTv" class="overlay">
+                <div>{{ ::('Playing on TV' | translate) }}</div>
+            </div>
+        </yt-player>
         <div class="yt-controls">Controls</div><!-- TODO: separate directive -->
         <div class="buttons">
-            <app-send-to-tv ng-model="video"></app-send-to-tv>
+            <app-send-to-tv ng-model="video" playing-on-tv="playingOnTv"></app-send-to-tv>
             <button class="toggle-playlist" ng-click="playlistVisible = !playlistVisible">
-                <span class="label_hidePlaylist" ng-show="playlistVisible">{{ ::('Hide video list' | translate) }}<img ng-src="assets/youtube_producer/js/yt_viewer/assets/arrow.svg"></span>
-                <span class="label_showPlaylist" ng-hide="playlistVisible"><img ng-src="assets/youtube_producer/js/yt_viewer/assets/arrow.svg">{{ ::('Show video list' | translate) }}</span>
+                <span class="label_hidePlaylist" ng-show="playlistVisible">
+                    <span class="btnLabel">{{ ::('Hide video list' | translate) }}</span>
+                    <svg version="1.1" id="arrow" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 12 13" enable-background="new 0 0 12 13" xml:space="preserve">
+                        <polygon fill="#FFFFFF" points="1,0.5 11,6.5 1,12.5"/>
+                    </svg>
+                </span>
+                <span class="label_showPlaylist" ng-hide="playlistVisible">
+                    <svg version="1.1" id="arrow" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 12 13" enable-background="new 0 0 12 13" xml:space="preserve">
+                        <polygon fill="#FFFFFF" points="1,0.5 11,6.5 1,12.5"/>
+                    </svg>
+                    <span class="btnLabel">{{ ::('Show video list' | translate) }}</span>
+                </span>
             </button>
         </div>
         <yt-video-description></yt-video-description>

@@ -1,3 +1,8 @@
+.list-title {
+    width: 240px;
+    margin: 0 auto;
+}
+
 .ui-video-list {
     display: block;
     width: 100%;
@@ -6,25 +11,46 @@
     list-style: none;
     list-style-position: outside;
     padding: 0;
-    
 }
 
 .ui-video-list-item {
+    display: block;
+    width: 240px;
+    height: 260px;
+    margin: 0 auto 30px;
     position: relative;
     background-color: bg-video-list-item;
-    float: left;
+    float: none;
     overflow: hidden;
     padding-bottom: 10px;
     
     .img {
-        position: relative;
-        margin: 10px 10px 0px;
         display: block;
-
+        width: auto;
+        height: 124px;
+        position: relative;
+        margin: 10px;
         img {
             max-width: 100%;
             width: 100%;
             height: auto;
+        }
+        
+        svg {
+            width: 30px;
+            height: auto;
+            position: absolute;
+            top: 37px;
+            left: 90px;
+            opacity: 0.8;
+            padding: 10px;
+        }
+        
+        &:hover {
+            cursor: pointer;
+            svg {
+                opacity: 1.0;
+            }
         }
 
         .duration,
@@ -32,16 +58,16 @@
             position: absolute;
             right: 0;
             bottom: 0;
-            width: 40px;
-            height: 20px;
+            width: auto;
+            height: 18px;
             background-color: #000;
             color: #fff;
             font-size: 13px;
+            padding: 2px 2px 0;
             span {
                 display: block;
                 width: 100%;
                 text-align: center;
-                padding-top:2px;
             }
         }
 
@@ -49,49 +75,22 @@
             content: "PL: "
         }
     }
-    
-    
-    .playBtn {
-        position: absolute;
-        width: auto;
-        height: auto;
-        z-index: 100;
-        .playimg {
-            img {
-                opacity: 0.8;
-                transform: scaleX(-1);
-                transform: rotate(0);
- /*                  -ms-filter: "flipH";
-                filter: flipH;
-             &.showOnPlaylist {
-                    display: none;
-                    
-                    width :40px;
-                    height: 40px;
-                }*/
-            }
-            &:hover {
-                cursor: pointer;
-                img {
-                    opacity: 1.0;
-                }
-            }
-        }
-    }
 
     .metadata {
         height: 150px;
         padding: 0 10px;
         overflow: hidden;
+        font-size: 13px;
 
         .title{
             color: color-title;
             padding: 0;
             margin: 0;
             font-size: 17px;
-            line-height: 100%;
+            line-height: 125%;
             font-weight: normal;
             font-family: source_sans_proregular;
+            text-decoration: none;
         }
 
         .subtitle {
@@ -121,6 +120,11 @@
 .ui-video-list {
     &.list .ui-video-list-item {
         width: 100%;
+        cursor: pointer;
+
+        &:hover {
+            /* TODO: ? */
+        }
 
         .img {
             width: 40%;

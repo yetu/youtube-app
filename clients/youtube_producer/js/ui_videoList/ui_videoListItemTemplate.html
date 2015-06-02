@@ -1,20 +1,23 @@
-<div class="playBtn">
-    <a ng-if="::playLink" class="playimg" ng-href="#/view/expand/{{::item.type}}/{{::item.id}}"> <!-- TODO: replace href with {{ playLink | replaceParams }} -->
-        <!--<img class="showOnResultList" src="assets/youtube_producer/img/play-icon.svg" />-->
-        <img class="showOnPlaylist" src="assets/youtube_producer/js/ui_videoList/assets/arrow.svg" />
-    </a>
-    <a ng-if="::playFn" class="playimg" ng-click="playFunction($index)">
-        <!--<img class="showOnResultList" src="assets/youtube_producer/img/play-icon.svg" />-->
-        <img class="showOnPlaylist" src="assets/youtube_producer/js/ui_videoList/assets/arrow.svg" />
-    </a>
-</div>
 <div class="img">
-    <img ng-if="::item.img" ng-src="{{::item.img}}"/>
+    <a ng-if="::playLink" class="playimg" ng-href="#/view/expand/{{::item.type}}/{{::item.id}}"> <!-- TODO: replace href with {{ playLink | replaceParams }} -->
+        <ui-video-list-play-arrow></ui-video-list-play-arrow>
+        <img ng-if="::item.img" ng-src="{{::item.img}}"/>
+    </a>
+    <a ng-if="::playFn" class="playimg">
+        <div class="index">{{ ::($index + 1) }}</div>
+        <ui-video-list-play-arrow></ui-video-list-play-arrow>
+        <img ng-if="::item.img" ng-src="{{::item.img}}"/>
+    </a>
     <div ng-if="::(item.type == 'video')" class="duration"><span>{{ item.duration | duration }}</span></div><!-- TODO: one-time binding with filter? -->
     <div ng-if="::(item.type == 'playlist')" class="items"><span>{{ ::item.totalItems }}</span></div>
 </div>
 <div class="metadata">
-    <p class="title">{{::item.title | limitTo : 45 }}...</p>
+    <a class="title" ng-if="::playLink" class="playimg" ng-href="#/view/expand/{{::item.type}}/{{::item.id}}"> <!-- TODO: replace href with {{ playLink | replaceParams }} -->
+        {{::item.title | limitTo : 45 }}...
+    </a>
+    <a class="title" ng-if="::playFn" class="playimg">
+        {{::item.title | limitTo : 45 }}...
+    </a>
     <p class="subtitle" ng-if="::item.channel">
         <span class="channel">by {{::item.channel}}</span><br />
         <span class="created">{{ ::item.created | timeAgo }}</span>

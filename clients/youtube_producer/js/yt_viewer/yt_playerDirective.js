@@ -3,6 +3,7 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
     return {
         restrict: 'E',
         template: require('./yt_playerTemplate.html'),
+        transclude: true,
         controller: function($scope) {
         },
         link: function(scope, element, attrs) {
@@ -35,16 +36,13 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
             }
 
             var initPlayer = function() {
-                scope.player.API.initialized = true;
-                player = new YT.Player('yt-player', {
-                    //height: '1080',
-                    //width: '1920',
+                var properties = {
+                    videoId: scope.video.id,
                     playerVars: {
                         autoplay: 1,
-                        controls: appMode.isPC() ? 1 : 0,
+                        controls: 1,
                         showinfo: 0
-                    },
-                    videoId: scope.video.id,
+                    },                    
                     events: {
                         onReady: function() {
                             scope.player.API.ready = true;
@@ -53,10 +51,23 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
                             }
                         }
                     }
-                });
+                };
+                
+                if(appMode.isTV()) {
+                    properties.playerVars.controls = 0;
+                    properties.height = '1080';
+                    properties.width = '1920';
+                }
+                
+                scope.player.API.initialized = true;
+                
+                player = new YT.Player('yt-player', properties);
             };
 
             var loadVideo = function() {
+                if(scope.playingOnTv) {
+                    scope.playingOnTv = false;
+                }
                 player.loadVideoById(scope.video.id);
             };
 
@@ -81,31 +92,40 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
                         if(data.info.playerState) {
                             scope.player.info.isPlaying = data.info.playerState === YT.PlayerState.PLAYING;
                         }
+                        if(data.info.playbackQuality && appMode.isTV()) {
+                            if(data.info.playbackQuality !== ytPlayerConfig.video.tvQuality) {
+                                player.setPlaybackQuality(ytPlayerConfig.video.tvQuality);
+                            }
+                        }
                         break;
                     }
                 }
             };
 
-            $rootScope.$on('appSendToTv:send', function(event, data){
+            _unbinder.push($rootScope.$on('appSendToTv:send', function(event, data){
                 if(data.sent === true) {
                     player.pauseVideo();
                 }
-            });
+            }));
 
-            _unbinder.push(scope.$watchCollection('player.API', function(n) {
+            _unbinder.push($rootScope.$on('appSendToTv:resume', function(event, data){
+                player.playVideo();
+            }));
+
+            scope.$watchCollection('player.API', function(n) {
                 if(n.loaded && scope.video && !n.initialized) {
                     initPlayer();
                 }
-            }));
+            });
 
-            _unbinder.push(scope.$watch('video', function(n, o) {
+            scope.$watch('video', function(n, o) {
                 if(n && (scope.player.API.loaded || YT && YT.loaded) && !scope.player.API.initialized) {
                     initPlayer();
                 }
                 if(n && o && n.id !== o.id) {
                     loadVideo();
                 }
-            }));
+            });
 
             scope.$on('$destroy', function() {
                 player = null;

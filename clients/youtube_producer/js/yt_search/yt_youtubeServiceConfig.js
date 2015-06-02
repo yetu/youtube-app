@@ -20,7 +20,7 @@ module.exports = ({
         id: 'id',
         url: 'https://www.googleapis.com/youtube/v3/videos',
         part: 'snippet,contentDetails,statistics',
-        maxResults: 20
+        maxResults: 16
     },
     category: {
         id: 'id',
