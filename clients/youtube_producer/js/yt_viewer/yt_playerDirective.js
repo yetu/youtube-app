@@ -77,8 +77,10 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
                     return;
                 }
                 var data = angular.fromJson(message.data);
+                // console.debug(data.event, data.info);
                 switch(data.event) {
                     case 'initialDelivery': {
+                        scope.player.info.video = scope.video;
                         scope.player.info.duration = data.info.duration;
                         break;
                     }
@@ -103,7 +105,6 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
             };
 
             var remoteControl = function(command) {
-                console.debug('player control called with ', command);
                 switch(command) {
                     case 'activate': {
                         element.attr('activated', true);
@@ -115,6 +116,22 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
                         } else if(scope.player.API.ready) {
                             player.playVideo();
                         }
+                        break;
+                    }
+                    case 'left': {
+                        var position = scope.player.info.actTime + ytPlayerConfig.video.fastRewind;
+                        if(position < 0) {
+                            position = 0;
+                        }
+                        player.seekTo(position, true);
+                        break;
+                    }
+                    case 'right': {
+                        var position = scope.player.info.actTime + ytPlayerConfig.video.fastForward;
+                        if(position > scope.player.info.duration) {
+                            position = scope.player.info.duration;
+                        }
+                        player.seekTo(position, true);
                         break;
                     }
                     case 'back': {
