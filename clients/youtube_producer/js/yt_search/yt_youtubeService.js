@@ -211,6 +211,13 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageServi
             var items, result;
             items = processResultList(type, data);
 
+            queries[data.etag] = {
+                type: type,
+                query: id,
+                url: settings[type].url,
+                params: params
+            };
+
             switch(type) {
                 case 'playlist': {
                     result = {
@@ -258,7 +265,7 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageServi
             params;
 
         if(!queries[etag]) {
-            throw { name: 'yt_youtubeService', message: 'No given etag found: ' + etag };
+            throw 'yt_youtubeService: No given etag found: ' + etag;
         }
         
         params = queries[etag].params;
