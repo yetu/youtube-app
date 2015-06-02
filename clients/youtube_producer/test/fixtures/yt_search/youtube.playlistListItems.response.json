@@ -1,6 +1,6 @@
 {
  "kind": "youtube#playlistItemListResponse",
- "etag": "some-etag-search",
+ "etag": "some-etag-playlist-items",
  "nextPageToken": "CBQQAA",
  "pageInfo": {
   "totalResults": 500,

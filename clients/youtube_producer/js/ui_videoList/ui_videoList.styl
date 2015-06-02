@@ -11,6 +11,21 @@
     list-style: none;
     list-style-position: outside;
     padding: 0;
+
+    &.popular {
+        .load-more {
+            display: none;
+        }
+    }
+
+    .spinner {
+        text-align: center;
+        display: none;
+
+        &.loading {
+            display: block;
+        }
+    }
 }
 
 .ui-video-list-item {

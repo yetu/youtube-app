@@ -1,6 +1,6 @@
 {
  "kind": "youtube#searchListResponse",
- "etag": "some-etag-search",
+ "etag": "some-etag-search-related",
  "nextPageToken": "CAgQAA",
  "pageInfo": {
   "totalResults": 3,

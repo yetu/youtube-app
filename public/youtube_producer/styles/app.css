@@ -125,6 +125,16 @@ h2 {
   list-style-position: outside;
   padding: 0;
 }
+.ui-video-list.popular .load-more {
+  display: none;
+}
+.ui-video-list .spinner {
+  text-align: center;
+  display: none;
+}
+.ui-video-list .spinner.loading {
+  display: block;
+}
 .ui-video-list-item {
   display: block;
   width: 240px;
