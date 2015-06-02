@@ -22,9 +22,6 @@ module.exports = function () {
 		controller: function($scope) {
 		},
 		link: function(scope, element){
-
-            console.debug('resultLists', scope.resultLists);
-            // TODO: handling next/prev links using ytYoutubeService
 		}
 	};
 };
