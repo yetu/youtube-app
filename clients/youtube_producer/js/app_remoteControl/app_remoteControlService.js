@@ -9,14 +9,28 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
         active,
         config,
         last,
-        controllerCb;
+        controller = { name: null, callback: null};
 
     var init = function() {
         if($window.yetu) {
             $window.yetu.onAnyActionDetected = function(data, topic, channel){
-                console.debug("yetu message received", data, topic, channel);
+                // console.debug("yetu message received", data, topic, channel);
                 action(topic.replace('control.', ''));
             };
+            // simulates remote by keys
+            document.onkeydown = function (evt) {
+                var key = appRemoteControlConfig.keys[evt.which];
+                // console.debug("document.onkeydown", evt.which, key);
+				if(key) {
+                    action(key);
+                }
+			};
+            // get focus back from player
+            document.body.addEventListener('blur' /* 'focusout' */, function() { // TODO: check why not really working
+                // console.debug('onfocusout');
+                document.body.focus();
+            });
+            document.body.focus();
         }
     };
 
@@ -27,6 +41,11 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
 
         if(registered[active]) {
             registered[active](command);
+            if(config.passthrough && config.passthrough[active]) {
+                if(registered[config.passthrough[active]]) {
+                    registered[config.passthrough[active]](command);
+                }
+            }
         } else {
             // ...
         }
@@ -34,15 +53,20 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
     
     var setController = function(name, callback) {
         // console.debug('appRemoteControlService.setController', name);
-        if(appRemoteControlConfig[name]) {
-            config = appRemoteControlConfig[name];
+        if(appRemoteControlConfig.controllers[name]) {
+            config = appRemoteControlConfig.controllers[name];
             // console.debug('config', config);
             active = config.order[0];
             // console.debug('active', active);
         } else {
             throw {message: 'Config of remote control doesnt exist for ' + name};
         }
-        controllerCb = callback;
+        controller.name = name;
+        controller.callback = callback;
+    };
+
+    var setOrder = function(order) {
+        config.order = order;
     };
 
     var register = function(name, callback) {
@@ -83,6 +107,7 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
 
     return {
         setController: setController,
+        setOrder: setOrder,
         register: register,
         deregister: deregister,
         activate: activate,
