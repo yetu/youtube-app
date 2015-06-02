@@ -6,7 +6,7 @@
                 <div>{{ ::('Playing on TV' | translate) }}</div>
             </div>
         </yt-player>
-        <div class="yt-controls">Controls</div><!-- TODO: separate directive -->
+        <yt-controlbar info="player.info"></yt-controlbar>
         <div class="buttons">
             <app-send-to-tv ng-model="video" playing-on-tv="playingOnTv"></app-send-to-tv>
             <button class="toggle-playlist" ng-click="playlistVisible = !playlistVisible">

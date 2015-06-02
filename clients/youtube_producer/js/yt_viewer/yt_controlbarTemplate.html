@@ -1,0 +1,15 @@
+<div class="controlbar-overlay" style="transform: translate(0px, 400px);" ng-style="{'transform': isVisible ? 'translate(0px,0px)':'translate(0px, 400px)'}">
+    <div class="controlbar-container">
+        <div class="button rewind" ng-class="{highlight: highlightRewind }"></div>
+        <div class="button pause" ng-show="info.isPlaying"></div>
+        <div class="button play" ng-show="!info.isPlaying"></div>
+        <div class="button forward" ng-class="{highlight: highlightForward }"></div>
+
+    <div class="time">{{ info.actTime | duration }}</div>
+    <progress id="progressbar" max="100" value="{{info.percentage}}"></progress>
+    <div class="duration">{{ info.duration | duration }}</div>
+  </div>
+  <div class="title">
+    {{ info.video.title }}
+  </div>
+</div>
