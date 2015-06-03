@@ -108,7 +108,7 @@ describe('Service: yt_youtubeService', function () {
                 videos: __fixtures__['yt_search/youtube.videoList.details.response']
             },
             expected = {
-                playlistitems: 'https://www.googleapis.com/youtube/v3/playlistItems?maxResults=20&part=snippet&playlistId=some-playlist-id',
+                playlistitems: 'https://www.googleapis.com/youtube/v3/playlistItems?maxResults=16&part=snippet&playlistId=some-playlist-id',
                 videos: 'https://www.googleapis.com/youtube/v3/videos?id=first-video-id&maxResults=1&part=snippet,contentDetails,statistics',
                 videoData: {
                     type : 'video', id : 'first-video-id', title : 'Wiz Khalifa - See You Again', img : 'https://i.ytimg.com/vi/first-video-id/mqdefault.jpg',

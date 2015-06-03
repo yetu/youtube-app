@@ -14,7 +14,7 @@ module.exports = ({
         id: 'playlistId',
         url: 'https://www.googleapis.com/youtube/v3/playlistItems',
         part: 'snippet',
-        maxResults: 20
+        maxResults: 16
     },
     video: {
         id: 'id',
