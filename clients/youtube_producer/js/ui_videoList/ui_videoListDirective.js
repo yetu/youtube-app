@@ -82,9 +82,9 @@ module.exports = function ($window) {
                 });
 
                 angular.element($window).bind('scroll', function() {
-                    if (container.scrollHeight - container.clientHeight !== 0 
-                        || scope.videoList && scope.videoList.items.length === 0
-                        || element.hasClass('ng-hide')){
+                    if (container.scrollHeight - container.clientHeight !== 0 ||
+                            scope.videoList && scope.videoList.items.length === 0 ||
+                            element.hasClass('ng-hide')) {
                         // in case of container has scroll or there is no items or is hidden - do nothing
                         return;
                     }
