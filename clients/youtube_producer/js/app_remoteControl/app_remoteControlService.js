@@ -3,7 +3,7 @@
  * Service for remote controling
  */
 module.exports = (function($window, $timeout, appRemoteControlConfig) {
-	'use strict';
+    'use strict';
 
     var registered = {},
         active,
@@ -21,10 +21,10 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
             document.onkeydown = function (evt) {
                 var key = appRemoteControlConfig.keys[evt.which];
                 // console.debug("document.onkeydown", evt.which, key);
-				if(key) {
+                if(key) {
                     action(key);
                 }
-			};
+            };
             // get focus back from player
             document.body.addEventListener('blur' /* 'focusout' */, function() { // TODO: check why not really working
                 // console.debug('onfocusout');
@@ -50,7 +50,7 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
             // ...
         }
     };
-    
+
     var setController = function(name, callback) {
         // console.debug('appRemoteControlService.setController', name);
         if(appRemoteControlConfig.controllers[name]) {
@@ -59,7 +59,7 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
             active = config.order[0];
             // console.debug('active', active);
         } else {
-            throw {message: 'Config of remote control doesnt exist for ' + name};
+            throw new Error('Config of remote control doesnt exist for ' + name);
         }
         controller.name = name;
         controller.callback = callback;
@@ -92,11 +92,11 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
     };
 
     var deactivate = function(name) {
-        console.debug('appRemoteControlService.deactivate', name);
+        // console.debug('appRemoteControlService.deactivate', name);
         switch(last) {
             case 'back': {
                 active = null;
-                controllerCb('back', name);
+                controller.callback('back', name);
                 break;
             }
             // TODO: depending on last command activate next/prev
