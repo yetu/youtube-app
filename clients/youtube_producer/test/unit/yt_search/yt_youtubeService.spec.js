@@ -179,7 +179,9 @@ describe('Service: yt_youtubeService', function () {
         $httpBackend.expectGET(expected.search).respond(200, respond.search);
         $httpBackend.expectGET(expected.playlist).respond(200, respond.playlist);
         $httpBackend.expectGET(expected.video).respond(200, respond.video);
-        $httpBackend.expectGET(expected.next).respond(200, respond.video);
+        $httpBackend.expectGET(expected.next).respond(200, respond.search);
+        $httpBackend.expectGET(expected.playlist).respond(200, respond.playlist);
+        $httpBackend.expectGET(expected.video).respond(200, respond.video);
 
         service.getResult('search', 'yetu').then(function(data) {
             service.getNext('some-etag-search', 'pg-tok');
