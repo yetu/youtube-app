@@ -85,11 +85,11 @@ module.exports = angular.module('_controllers', [])
 /*
  * Viewer controller
  */
-module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $routeParams, $location, Notification) {
+module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $routeParams, $window, $location, appRemoteControlService, Notification) {
 
     ytYoutubeService.getDetails($routeParams.type, $routeParams.id).then(function(data) {
         if($routeParams.time) {
-            data.video.startAt = $routeParams.time;
+            data.video.startAt = $routeParams.time.replace(/&.+/, ''); // TODO: do it with $routeProvider?
         }
         $scope.video = data.video;
         $scope.playlist = data.playlist;
@@ -101,6 +101,14 @@ module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $route
     $rootScope.$on('app:search-value', function(event, query){
         var action = '/dashboard/search/' + query;
         $location.path(action);
+    });
+
+    appRemoteControlService.setController('viewer', function(action, name) {
+        if(action === 'back' && name === 'player' && $routeParams.mode === 'fullscreen') {
+            var url = ['/view', 'normal', $routeParams.type, $routeParams.id].join('/');
+            $location.path(url);
+            //$window.location.reload();
+        }
     });
 
     $rootScope.$on('appSendToTv:send', function(event, data){
@@ -116,17 +124,33 @@ module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $route
 },{}],8:[function(require,module,exports){
 /* global module */
 /*
- * Duration Filter to convert the youtube duration to format hh:mm:ss
+ * Duration Filter to convert the youtube duration or integer seconds to format [hh:]mm:ss
  */
 module.exports = (function() {
     return function(time) {
-        // http://stackoverflow.com/a/19094191
-        var array = (time || '').match(/(\d+)(?=[MHS])/ig) || [];
+        var array = [];
+        
+        if(typeof time === 'number') {
+            var hours = parseInt(time / 3600) % 24;
+            var minutes = parseInt(time / 60) % 60;
+            var seconds = parseInt(time % 60);
+            array = [minutes, seconds];
+            if(hours) {
+                array.unshift(hours);
+            }
+        } else if(typeof time !== 'undefined') {
+            // http://stackoverflow.com/a/19094191
+            array = (time || '').match(/(\d+)(?=[MHS])/ig);
+        } else {
+            return '';
+        }
+
         if(array.length === 1) {
             array.unshift('0');
         }
+
         return array.map(function(item) {
-            if(item.length < 2) return '0' + item;
+            if((''+item).length < 2) return '0' + item;
             return item;
         })
         .join(':');
@@ -155,18 +179,17 @@ var youtubeApp = angular.module('youtubeApp',
         'ngResource',
         'ngCookies',
         'pascalprecht.translate',
-        'reactTo',
         'LocalStorageModule',
         'ui-notification',
         // app modules
         require('./app_search').name,
         require('./app_mode').name,
+        require('./app_remoteControl').name,
         require('./app_sendToTv').name,
         require('./ui_videoList').name,
         require('./yt_result').name,
         require('./yt_search').name,
         require('./yt_auth').name,
-        require('./yt_notification').name,
         require('./yt_viewer').name,
         // app main
         require('./_controllers').name,
@@ -224,7 +247,7 @@ youtubeApp.run(function($location, $translate, appMode, $rootScope, $window){
     }
 });
 
-},{"./_configs":3,"./_controllers":6,"./_filters":9,"./app_mode":13,"./app_search":16,"./app_sendToTv":20,"./dashboardTemplate.html":21,"./ui_videoList":22,"./viewerTemplate.html":29,"./yt_auth":30,"./yt_notification":32,"./yt_result":34,"./yt_search":37,"./yt_viewer":40}],12:[function(require,module,exports){
+},{"./_configs":3,"./_controllers":6,"./_filters":9,"./app_mode":13,"./app_remoteControl":16,"./app_search":19,"./app_sendToTv":23,"./dashboardTemplate.html":24,"./ui_videoList":25,"./viewerTemplate.html":32,"./yt_auth":33,"./yt_result":35,"./yt_search":38,"./yt_viewer":41}],12:[function(require,module,exports){
 /**
  * Service detecting application mode
  */
@@ -300,6 +323,177 @@ module.exports = angular.module('app_mode', [])
 	.service('appMode', require('./app_modeService'));
 
 },{"./app_modeService":12}],14:[function(require,module,exports){
+/* global module */
+
+/**
+ * Configuration for remote control service. It contains:
+ * - keys: key binding for simulating remote controls with keyboard
+ * - controllers: controller actions configuration, which can contain:
+ *      - order: order of modules used for navigation between them
+ *      - special: special action to be executed if particular key is pressed, can be:
+ *              - activate: activation of other module
+ *              - ... TODO, WIP, not implemented and used yet
+ *      - passthrough: passes event to other module if currentmodule is active now (syntax: { currentmodule: 'other' })
+ */
+
+module.exports = ({
+    // key configuration to simulate remote control events with keyboard
+    keys: {
+        87: 'up',    // w
+        65: 'left',  // a
+        68: 'right', // d
+        69: 'enter', // e
+        83: 'down',  // s
+        81: 'quit',  // q
+        72: 'home',  // h
+        77: 'menu',  // m
+        80: 'play'   // p
+    },
+    
+    controllers: {
+        dashboard: {
+            order: ['search', 'list-1', 'list-2'],
+            special: {
+                menu: {activate: 'search' },
+                quit: {}
+            }
+        },
+        viewer: {
+            order: [/*'search',*/ 'player', 'playlist'],
+            passthrough: {
+                player: 'controlbar'
+            },
+            special: {
+                menu: {activate: 'search'},
+                quit: {}
+            }
+        }
+    }
+});
+},{}],15:[function(require,module,exports){
+/* global module */
+/**
+ * Service for remote controling
+ */
+module.exports = (function($window, $timeout, appRemoteControlConfig) {
+	'use strict';
+
+    var registered = {},
+        active,
+        config,
+        last,
+        controller = { name: null, callback: null};
+
+    var init = function() {
+        if($window.yetu) {
+            $window.yetu.onAnyActionDetected = function(data, topic, channel){
+                // console.debug("yetu message received", data, topic, channel);
+                action(topic.replace('control.', ''));
+            };
+            // simulates remote by keys
+            document.onkeydown = function (evt) {
+                var key = appRemoteControlConfig.keys[evt.which];
+                // console.debug("document.onkeydown", evt.which, key);
+				if(key) {
+                    action(key);
+                }
+			};
+            // get focus back from player
+            document.body.addEventListener('blur' /* 'focusout' */, function() { // TODO: check why not really working
+                // console.debug('onfocusout');
+                document.body.focus();
+            });
+            document.body.focus();
+        }
+    };
+
+    var action = function(command) {
+        last = command;
+
+        // TODO: if action special
+
+        if(registered[active]) {
+            registered[active](command);
+            if(config.passthrough && config.passthrough[active]) {
+                if(registered[config.passthrough[active]]) {
+                    registered[config.passthrough[active]](command);
+                }
+            }
+        } else {
+            // ...
+        }
+    };
+    
+    var setController = function(name, callback) {
+        // console.debug('appRemoteControlService.setController', name);
+        if(appRemoteControlConfig.controllers[name]) {
+            config = appRemoteControlConfig.controllers[name];
+            // console.debug('config', config);
+            active = config.order[0];
+            // console.debug('active', active);
+        } else {
+            throw {message: 'Config of remote control doesnt exist for ' + name};
+        }
+        controller.name = name;
+        controller.callback = callback;
+    };
+
+    var setOrder = function(order) {
+        config.order = order;
+    };
+
+    var register = function(name, callback) {
+        // console.debug('appRemoteControlService.register', name);
+        registered[name] = callback;
+        if(active === name) {
+            // activate configured element after registration
+            activate(name);
+        }
+    };
+
+    var deregister = function(name) {
+        registered[name] = null;
+    };
+
+    var activate = function(name) {
+        if(registered[name]) {
+            active = name;
+            registered[name]('activate');
+        } else {
+            // ...
+        }
+    };
+
+    var deactivate = function(name) {
+        console.debug('appRemoteControlService.deactivate', name);
+        switch(last) {
+            case 'back': {
+                active = null;
+                controllerCb('back', name);
+                break;
+            }
+            // TODO: depending on last command activate next/prev
+        }
+    };
+
+    $timeout(init, 1000);
+
+    return {
+        setController: setController,
+        setOrder: setOrder,
+        register: register,
+        deregister: deregister,
+        activate: activate,
+        deactivate: deactivate
+    };
+});
+
+},{}],16:[function(require,module,exports){
+module.exports = angular.module('app_remoteControl', [])
+    .constant('appRemoteControlConfig', require('./app_remoteControlConfig'))
+	.service('appRemoteControlService', require('./app_remoteControlService'));
+
+},{"./app_remoteControlConfig":14,"./app_remoteControlService":15}],17:[function(require,module,exports){
 /* global module */
 /*
  * <app-search placeholder="" value="" trigger-search="enter,button,auto" auto-delay="" allow-repeat="" on-search="" on-reset=""></app-search>
@@ -379,14 +573,14 @@ module.exports = function () {
 };
 
 
-},{"./app_searchTemplate.html":15}],15:[function(require,module,exports){
+},{"./app_searchTemplate.html":18}],18:[function(require,module,exports){
 module.exports = "<div class=\"app-search\">\r\n  <input class=\"query\" ng-model=\"searchValue\" ng-model-options=\"{ debounce: 500 }\" ng-keyup=\"searchOnKeyUp($event)\" type=\"text\"\r\n         placeholder=\"{{placeholder}}\" value=\"{{searchValue}}\">\r\n  <button class=\"search\" ng-click=\"searchButtonClick()\">\r\n    <svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\r\n\t    viewBox=\"0 0 21.7 21.7\" enable-background=\"new 0 0 21.7 21.7\" xml:space=\"preserve\">\r\n      <path fill=\"#777\" d=\"M21.7,20.3l-6-6c1.2-1.5,1.9-3.4,1.9-5.5c0-4.9-4-8.8-8.8-8.8C4,0,0,4,0,8.8c0,4.9,4,8.8,8.8,8.8\r\n        c2.1,0,4-0.7,5.5-1.9l6,6L21.7,20.3z M8.8,15.6C5.1,15.6,2,12.6,2,8.8C2,5.1,5.1,2,8.8,2c3.8,0,6.8,3.1,6.8,6.8\r\n        C15.6,12.6,12.6,15.6,8.8,15.6z\"/>\r\n    </svg>\r\n  </button>\r\n</div>";
 
-},{}],16:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 module.exports = angular.module('app_search', ['pascalprecht.translate'])
 	.directive('appSearch', require('./app_searchDirective'));
 
-},{"./app_searchDirective":14}],17:[function(require,module,exports){
+},{"./app_searchDirective":17}],20:[function(require,module,exports){
 module.exports = function($rootScope, appSendToTvService) {
     return {
         restrict: 'E',
@@ -418,7 +612,7 @@ module.exports = function($rootScope, appSendToTvService) {
     };
 };
 
-},{"./app_sendToTvTemplate.html":19}],18:[function(require,module,exports){
+},{"./app_sendToTvTemplate.html":22}],21:[function(require,module,exports){
 module.exports = (function ($rootScope, $http, $location, $filter, serverPathsConfig) {
     'use strict';
 
@@ -478,27 +672,27 @@ module.exports = (function ($rootScope, $http, $location, $filter, serverPathsCo
     };
 });
 
-},{}],19:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 module.exports = "<button class=\"{{ class || 'app-send-to-tv'}}\" ng-click=\"onSendButtonClick($event)\">\r\n    <span class=\"label_sendToTv\" ng-hide=\"playingOnTv\">\r\n        <svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 30 20\" enable-background=\"new 0 0 30 20\" xml:space=\"preserve\">\r\n            <g>\r\n                <g>\r\n                    <g>\r\n                        <path fill=\"#FFFFFF\" d=\"M28.4,0.9h-21v4h1v-3h19v14h-19v-2.8h-1v3.8h8.3c-0.8,0.5-1.4,1.3-1.5,2.2l7.6,0c-0.2-0.9-0.7-1.7-1.5-2.2h8.3V0.9z\"/>\r\n                    </g>\r\n                </g>\r\n                <polygon fill=\"#FFFFFF\" points=\"1.6,2.7 1.6,15 12.3,8.9\"/>\r\n            </g>\r\n        </svg>\r\n        <span class=\"btnLabel\">{{ ::('Play video on TV' | translate) }}</span>\r\n    </span>\r\n    <span class=\"label_stopStreaming\" ng-show=\"playingOnTv\">\r\n        <svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 28.8 19.6\" enable-background=\"new 0 0 28.8 19.6\" xml:space=\"preserve\">\r\n            <g>\r\n                <g>\r\n                    <g>\r\n                        <path fill=\"#FFFFFF\" d=\"M27.1,1.4H6v4h1v-3h19v14H7v-2.8H6v3.8h8.3c-0.8,0.5-1.4,1.3-1.5,2.2l7.6,0c-0.2-0.9-0.7-1.7-1.5-2.2h8.3V1.4z\"/>\r\n                        <polygon fill=\"#FFFFFF\" points=\"0.3,3.3 0.3,15.6 11,9.4\"/>\r\n                    </g>\r\n                </g>\r\n            </g>\r\n            <g>\r\n                <g>\r\n                    <rect fill=\"#FFFFFF\" x=\"1.7\" y=\"9\" transform=\"matrix(0.7965 -0.6046 0.6046 0.7965 -2.3774 11.9133)\" width=\"29.6\" height=\"1\"/>\r\n                </g>\r\n            </g>\r\n        </svg>\r\n        <span class=\"btnLabel\">{{ ::('Resume playing' | translate) }}</span>\r\n    </span>\r\n</button>\r\n";
 
-},{}],20:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 module.exports = angular.module('app_sendToTv', ['ngResource'])
   .service('appSendToTvService', require('./app_sendToTvService'))
   .directive('appSendToTv', require('./app_sendToTvDirective'));
 
 
 
-},{"./app_sendToTvDirective":17,"./app_sendToTvService":18}],21:[function(require,module,exports){
+},{"./app_sendToTvDirective":20,"./app_sendToTvService":21}],24:[function(require,module,exports){
 module.exports = "<!-- TODO: distinguish type on application mode tv/pc -> regular/inline -->\r\n<yt-result-set ng-model=\"mainResultList\" play-link=\"#/view/:type/:id\" display=\"floating\" control=\"\" service=\"ytYoutubeService\"></yt-result-set>\r\n";
 
-},{}],22:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 module.exports = angular.module('ui_videoList', ['ngResource', 'pascalprecht.translate'])
 	.directive('uiVideoList', require('./ui_videoListDirective'))
 	.directive('uiVideoListItem', require('./ui_videoListItemDirective'))
     .directive('uiVideoListPlayArrow', require('./ui_videoListPlayArrowDirective'));
 
 
-},{"./ui_videoListDirective":23,"./ui_videoListItemDirective":24,"./ui_videoListPlayArrowDirective":26}],23:[function(require,module,exports){
+},{"./ui_videoListDirective":26,"./ui_videoListItemDirective":27,"./ui_videoListPlayArrowDirective":29}],26:[function(require,module,exports){
 /*
  * <ui-video-list ng-model="" display="floating" control="pc" play-link="" service="" load-more=""></ui-video-list>
  *
@@ -555,13 +749,13 @@ module.exports = function ($window) {
         link: function (scope, element){
             var container = element[0];
 
-            // add display type as a class also
-            element.addClass(scope.displayType);
-            
             // default display type
             if (!scope.displayType) {
                 scope.displayType = 'floating';
             }
+
+            // add display type as a class also
+            element.addClass(scope.displayType);
 
             scope.playFunction = function (index) {
                 if (typeof(scope.$parent[scope.playFn]) === 'function') {
@@ -572,25 +766,26 @@ module.exports = function ($window) {
             };
 
             if(scope.loadMore === 'scroll') {
-
                 // TODO: check in unbind necessary on $destroy
                 element.bind('scroll', function () {
-                        distance = container.scrollHeight * 0.1; // 10% from the end
-                        toBottom = container.scrollHeight - container.clientHeight - container.scrollTop;
+                        var distance = container.scrollHeight * 0.1; // 10% from the end
+                        var toBottom = container.scrollHeight - container.clientHeight - container.scrollTop;
                     
                     if(toBottom < distance) {
                         scope.loadNext();
                     }
                 });
 
-                angular.element($window).bind("scroll", function() {
-
-                    if ( container.scrollHeight - container.clientHeight !== 0 || scope.videoList && scope.videoList.items.length === 0){
+                angular.element($window).bind('scroll', function() {
+                    if (container.scrollHeight - container.clientHeight !== 0 ||
+                            scope.videoList && scope.videoList.items.length === 0 ||
+                            element.hasClass('ng-hide')) {
+                        // in case of container has scroll or there is no items or is hidden - do nothing
                         return;
                     }
 
-                    distance = document.body.scrollHeight * 0.1; // 10% to end
-                    toBottom = document.body.scrollHeight - window.innerHeight - window.scrollY;
+                    var distance = document.body.scrollHeight * 0.1; // 10% to end
+                    var toBottom = document.body.scrollHeight - window.innerHeight - window.scrollY;
 
                     if(toBottom < distance) {
                         scope.loadNext();
@@ -600,7 +795,7 @@ module.exports = function ($window) {
         }
     };
 };
-},{"./ui_videoListTemplate.html":28}],24:[function(require,module,exports){
+},{"./ui_videoListTemplate.html":31}],27:[function(require,module,exports){
 /* global angular, module */
 
 module.exports = function () {
@@ -612,10 +807,10 @@ module.exports = function () {
 	};
 };
 
-},{"./ui_videoListItemTemplate.html":25}],25:[function(require,module,exports){
+},{"./ui_videoListItemTemplate.html":28}],28:[function(require,module,exports){
 module.exports = "<div class=\"img\">\r\n    <a ng-if=\"::playLink\" class=\"playimg\" ng-href=\"#/view/expand/{{::item.type}}/{{::item.id}}\"> <!-- TODO: replace href with {{ playLink | replaceParams }} -->\r\n        <ui-video-list-play-arrow></ui-video-list-play-arrow>\r\n        <img ng-if=\"::item.img\" ng-src=\"{{::item.img}}\"/>\r\n    </a>\r\n    <a ng-if=\"::playFn\" class=\"playimg\">\r\n        <div class=\"index\">{{ ::($index + 1) }}</div>\r\n        <ui-video-list-play-arrow></ui-video-list-play-arrow>\r\n        <img ng-if=\"::item.img\" ng-src=\"{{::item.img}}\"/>\r\n    </a>\r\n    <div ng-if=\"::(item.type == 'video')\" class=\"duration\"><span>{{ item.duration | duration }}</span></div><!-- TODO: one-time binding with filter? -->\r\n    <div ng-if=\"::(item.type == 'playlist')\" class=\"items\"><span>{{ ::item.totalItems }}</span></div>\r\n</div>\r\n<div class=\"metadata\">\r\n    <a class=\"title\" ng-if=\"::playLink\" class=\"playimg\" ng-href=\"#/view/expand/{{::item.type}}/{{::item.id}}\"> <!-- TODO: replace href with {{ playLink | replaceParams }} -->\r\n        {{::item.title | limitTo : 50 }}<span ng-show=\"item.title.length >= 50\">...</span>\r\n    </a>\r\n    <a class=\"title\" ng-if=\"::playFn\" class=\"playimg\">\r\n        {{::item.title | limitTo : 50 }}<span ng-show=\"item.title.length >= 50\">...</span>\r\n    </a>\r\n    <p class=\"subtitle\" ng-if=\"::item.channel\">\r\n        <span class=\"channel\">by {{::item.channel}}</span><br />\r\n        <span class=\"created\">{{ ::item.created | timeAgo }}</span>\r\n    </p>\r\n    <p class=\"description\" data-type=\"description\" cw-reveal-label ng-if=\"::item.description\">\r\n        {{::item.description | limitTo : 75 }}<span ng-show=\"item.description.length >= 75\">...</span>\r\n    </p>\r\n    <p class=\"description\" ng-if=\"::(!item.description)\">No description available.</p>\r\n</div>\r\n<div class=\"buttons\">\r\n    <app-send-to-tv ng-model=\"::item\"></app-send-to-tv>\r\n</div>\r\n";
 
-},{}],26:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 module.exports = function () {
 	return {
 		restrict: 'E',
@@ -625,20 +820,20 @@ module.exports = function () {
 	};
 };
 
-},{"./ui_videoListPlayArrowTemplate.html":27}],27:[function(require,module,exports){
+},{"./ui_videoListPlayArrowTemplate.html":30}],30:[function(require,module,exports){
 module.exports = "<svg version=\"1.1\" id=\"arrow\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 12 13\" enable-background=\"new 0 0 12 13\" xml:space=\"preserve\">\r\n    <defs>\r\n        <filter id=\"dropshadow\" x=\"-25%\" y=\"-25%\" height=\"150%\" width=\"150%\">\r\n            <feGaussianBlur in=\"SourceAlpha\" stdDeviation=\"1\"/>\r\n            <feOffset dx=\"0.25\" dy=\"0.25\" result=\"offsetblur\"/>\r\n            <feMerge>\r\n                <feMergeNode/>\r\n                <feMergeNode in=\"SourceGraphic\"/>\r\n            </feMerge>\r\n        </filter>\r\n    </defs>\r\n    <polygon filter=\"url(#dropshadow)\" fill=\"#FFFFFF\" points=\"1,0.5 11,6.5 1,12.5\"/>\r\n</svg>";
 
-},{}],28:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 module.exports = "<ui-video-list-item class=\"ui-video-list-item\" ng-repeat=\"item in videoList.items\" ng-click=\"playFn ? playFunction($index) : null\"></ui-video-list-item>\r\n<div class=\"clearfix\">\r\n    <button class=\"load-more\"  ng-if=\"::(loadMore == 'button' && videoList.items.length > 0)\" ng-click=\"loadNext()\">{{ ::('Load more videos' | translate) }}<ui-video-list-play-arrow class=\"arrow-svg\"></ui-video-list-play-arrow></button>\r\n</div>\r\n\r\n<div class=\"spinner\" ng-class=\"{ loading: loadingMore }\">Loading...</div>\r\n<div ng-if=\"videoList.items.length == 0\">\r\n    {{ ::('No results found' | translate) }}\r\n</div>\r\n";
 
-},{}],29:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 module.exports = "<yt-viewer video-model=\"video\" playlist-model=\"playlist\"></yt-viewer>\r\n";
 
-},{}],30:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 module.exports = angular.module('yt_auth', ['ngResource'])
 	.directive('ytAuth', require('./yt_authDirective'));
 
-},{"./yt_authDirective":31}],31:[function(require,module,exports){
+},{"./yt_authDirective":34}],34:[function(require,module,exports){
 /* global angular, module, config */
 module.exports = function ($window, $http, $interval, $log, $timeout, $rootScope) {
     'use strict';
@@ -686,60 +881,13 @@ module.exports = function ($window, $http, $interval, $log, $timeout, $rootScope
         }
     };
 };
-},{}],32:[function(require,module,exports){
-module.exports = angular.module('yt_notification', ['ngResource'])
-.service('ytNotification', require('./ytNotification'));
-},{"./ytNotification":33}],33:[function(require,module,exports){
-module.exports = function($http, SERVERPATHS, SPECIALPURPOSE) {
-	'use strict';
-	//array object with possible payloads
-	var payloads = [{
-        headline: 'CamBot',
-		notification: {
-			subTitle: 'motion detected outside back window',
-			image: 'http://i4.mirror.co.uk/incoming/article141978.ece/alternates/s2197/burglar-trying-to-pry-open-window-on-house-pic-getty-images-123608196.jpg'
-		}
-	}, {
-        headline: 'WaterBot',
-		notification: {
-			subTitle: 'basement water sensor activated',
-			image: 'http://www.smbywills.com/core/images/waterproofing/basement-flooding/flooded-basement-home-lg.jpg'
-		}
-	}, {
-        headline: 'DoorBot',
-		notification: {
-			subTitle: 'doorbell activated',
-			image: 'http://static.guim.co.uk/sys-images/Guardian/Pix/pictures/2011/9/4/1315149322196/Man-at-front-door-007.jpg'
-		}
-	}];
-	//checks if the special triggerphrase was entered
-	this.isSpecialTrigger = function(inputValue) {
-		var result = [];
-		angular.forEach(SPECIALPURPOSE.notificationTriggers, function(value, key) {
-			if (inputValue.toLowerCase().indexOf(value) === -1) {
-				result.push(0);
-			} else {
-				result.push(1);
-			}
-		});
-		if (result.indexOf(0) !== -1) {
-			return false;
-		} else {
-			return true;
-		}
-	};
-	//returns a random element of the payloads object
-	this.sendGeneralNotification = function() {
-		return $http.post(SERVERPATHS.notificationUrl, payloads[Math.floor((Math.random() * payloads.length))]);
-	};
-};
 
-},{}],34:[function(require,module,exports){
-module.exports = angular.module('yt_result', ['ngResource', 'pascalprecht.translate', 'reactTo', 'ui_videoList'])
+},{}],35:[function(require,module,exports){
+module.exports = angular.module('yt_result', ['ngResource', 'pascalprecht.translate', 'ui_videoList'])
     .directive('ytResultSet', require('./yt_resultSetDirective'));
 
 
-},{"./yt_resultSetDirective":35}],35:[function(require,module,exports){
+},{"./yt_resultSetDirective":36}],36:[function(require,module,exports){
 /*
  * <yt-result-set ng-model="" display="" control="" play-link=""></yt-result-set>
  *
@@ -767,15 +915,15 @@ module.exports = function () {
 		}
 	};
 };
-},{"./yt_resultSetTemplate.html":36}],36:[function(require,module,exports){
+},{"./yt_resultSetTemplate.html":37}],37:[function(require,module,exports){
 module.exports = "<div class=\"{{ class || 'yt-result-set' }}\">\r\n  <div ng-repeat=\"videoList in resultLists\" class=\"result\">\r\n    <h2 class=\"list-title\">{{ videoList.title }}</h2>\r\n    <ui-video-list class=\"{{ ::(class || 'ui-video-list') }} {{ ::displayType }} {{ ::videoList.type }} clearfix\" ng-model=\"videoList\" \r\n        play-link=\"{{ ::playLink }}\" display=\"{{ ::displayType }}\" service=\"ytYoutubeService\" load-more=\"button\">\r\n    </ui-video-list>\r\n  </div>\r\n</div>\r\n";
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 module.exports = angular.module('yt_search', ['ngResource', 'yaru22.angular-timeago'])
     .constant('ytYoutubeServiceConfig', require('./yt_youtubeServiceConfig'))
 	.service('ytYoutubeService', require('./yt_youtubeService'));
 
-},{"./yt_youtubeService":38,"./yt_youtubeServiceConfig":39}],38:[function(require,module,exports){
+},{"./yt_youtubeService":39,"./yt_youtubeServiceConfig":40}],39:[function(require,module,exports){
 /* global angular, module, config */
 module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageService) {
     'use strict';
@@ -989,6 +1137,13 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageServi
             var items, result;
             items = processResultList(type, data);
 
+            queries[data.etag] = {
+                type: type,
+                query: id,
+                url: settings[type].url,
+                params: params
+            };
+
             switch(type) {
                 case 'playlist': {
                     result = {
@@ -1036,7 +1191,7 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageServi
             params;
 
         if(!queries[etag]) {
-            throw { name: 'yt_youtubeService', message: 'No given etag found: ' + etag };
+            throw 'yt_youtubeService: No given etag found: ' + etag;
         }
         
         params = queries[etag].params;
@@ -1100,7 +1255,7 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageServi
         // setRelevanceLanguage
     };
 });
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 /* global module */
 module.exports = ({
     search: {
@@ -1117,7 +1272,7 @@ module.exports = ({
         id: 'playlistId',
         url: 'https://www.googleapis.com/youtube/v3/playlistItems',
         part: 'snippet',
-        maxResults: 20
+        maxResults: 16
     },
     video: {
         id: 'id',
@@ -1141,15 +1296,65 @@ module.exports = ({
     relevanceLanguage: config.relevanceLanguage || 'en',
     developerToken: config.youtubeDeveloperToken
 });
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 module.exports = angular.module('yt_viewer', ['ngResource', 'pascalprecht.translate'])
     .directive('ytViewer', require('./yt_viewerDirective'))
     .constant('ytPlayerConfig', require('./yt_playerConfig'))
     .directive('ytPlayer', require('./yt_playerDirective'))
     .directive('ytVideoDescription', require('./yt_videoDescriptionDirective'))
-    .directive('ytPlaylist', require('./yt_playlistDirective'));
+    .directive('ytPlaylist', require('./yt_playlistDirective'))
+    .directive('ytControlbar', require('./yt_controlbarDirective'));
 
-},{"./yt_playerConfig":41,"./yt_playerDirective":42,"./yt_playlistDirective":44,"./yt_videoDescriptionDirective":46,"./yt_viewerDirective":48}],41:[function(require,module,exports){
+},{"./yt_controlbarDirective":42,"./yt_playerConfig":44,"./yt_playerDirective":45,"./yt_playlistDirective":47,"./yt_videoDescriptionDirective":49,"./yt_viewerDirective":51}],42:[function(require,module,exports){
+module.exports = function ($timeout, ytPlayerConfig, appRemoteControlService) {
+    'use strict';
+    return {
+        restrict: 'E',
+        template: require('./yt_controlbarTemplate.html'),
+        scope: {
+            info: '='
+        },
+        link: function (scope, element, attrs) {
+
+            var remoteControl = function(command) {
+                switch(command) {
+                    case 'left': {
+                        scope.highlightRewind = true;
+                        $timeout(resetHighlight, ytPlayerConfig.video.highlightTimeout);
+                        break;
+                    }
+                    case 'right': {
+                        scope.highlightForward = true;
+                        $timeout(resetHighlight, ytPlayerConfig.video.highlightTimeout);
+                        break;
+                    }
+                    case 'down': {
+                        scope.isVisible = !scope.isVisible;
+                        break;
+                    }
+                }
+                if (!scope.$$phase) {
+                    scope.$apply();
+                }
+            };
+
+            var resetHighlight = function() {
+                scope.highlightForward = false;
+                scope.highlightRewind = false;
+            };
+
+            appRemoteControlService.register('controlbar', remoteControl);
+
+            scope.$on('$destroy', function() {
+                appRemoteControlService.deregister('controlbar');
+            });
+        }
+    };
+};
+},{"./yt_controlbarTemplate.html":43}],43:[function(require,module,exports){
+module.exports = "<div class=\"controlbar-overlay\" style=\"transform: translate(0px, 400px);\" ng-style=\"{'transform': isVisible ? 'translate(0px,0px)':'translate(0px, 400px)'}\">\r\n    <div class=\"controlbar-container\">\r\n        <div class=\"button rewind\" ng-class=\"{highlight: highlightRewind }\"></div>\r\n        <div class=\"button pause\" ng-show=\"info.isPlaying\"></div>\r\n        <div class=\"button play\" ng-show=\"!info.isPlaying\"></div>\r\n        <div class=\"button forward\" ng-class=\"{highlight: highlightForward }\"></div>\r\n\r\n    <div class=\"time\">{{ info.actTime | duration }}</div>\r\n    <progress id=\"progressbar\" max=\"100\" value=\"{{info.percentage}}\"></progress>\r\n    <div class=\"duration\">{{ info.duration | duration }}</div>\r\n  </div>\r\n  <div class=\"title\">\r\n    {{ info.video.title }}\r\n  </div>\r\n</div>\r\n";
+
+},{}],44:[function(require,module,exports){
 /* global module */
 module.exports = ({
     origin: 'https://www.youtube.com',
@@ -1165,8 +1370,8 @@ module.exports = ({
     pathToLogo: '/assets/appMetaData/assets/logo.svg'
 });
 
-},{}],42:[function(require,module,exports){
-module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
+},{}],45:[function(require,module,exports){
+module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemoteControlService) {
     'use strict';
     return {
         restrict: 'E',
@@ -1245,8 +1450,10 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
                     return;
                 }
                 var data = angular.fromJson(message.data);
+                // console.debug(data.event, data.info);
                 switch(data.event) {
                     case 'initialDelivery': {
+                        scope.player.info.video = scope.video;
                         scope.player.info.duration = data.info.duration;
                         break;
                     }
@@ -1269,6 +1476,48 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
                     }
                 }
             };
+
+            var remoteControl = function(command) {
+                var position;
+                
+                switch(command) {
+                    case 'activate': {
+                        element.attr('activated', true);
+                        break;
+                    }
+                    case 'play': {
+                        if(scope.player.info.isPlaying) {
+                            player.pauseVideo();
+                        } else if(scope.player.API.ready) {
+                            player.playVideo();
+                        }
+                        break;
+                    }
+                    case 'left': {
+                        position = scope.player.info.actTime + ytPlayerConfig.video.fastRewind;
+                        if(position < 0) {
+                            position = 0;
+                        }
+                        player.seekTo(position, true);
+                        break;
+                    }
+                    case 'right': {
+                        position = scope.player.info.actTime + ytPlayerConfig.video.fastForward;
+                        if(position > scope.player.info.duration) {
+                            position = scope.player.info.duration;
+                        }
+                        player.seekTo(position, true);
+                        break;
+                    }
+                    case 'back': {
+                        player.pauseVideo();
+                        appRemoteControlService.deactivate('player'); // just concept example
+                        break;
+                    }
+                }
+            };
+
+            appRemoteControlService.register('player', remoteControl);
 
             _unbinder.push($rootScope.$on('appSendToTv:send', function(event, data){
                 if(data.sent === true) {
@@ -1296,6 +1545,7 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
             });
 
             scope.$on('$destroy', function() {
+                appRemoteControlService.deregister('player');
                 player = null;
                 angular.element($window).off('message', receiveMessage);
                 _unbinder.forEach(function(unbind) {
@@ -1306,10 +1556,10 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode) {
     };
 };
 
-},{"./yt_playerTemplate.html":43}],43:[function(require,module,exports){
+},{"./yt_playerTemplate.html":46}],46:[function(require,module,exports){
 module.exports = "<div class=\"yt-player\" id=\"yt-player\"></div>\r\n<ng-transclude></ng-transclude>";
 
-},{}],44:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 
 module.exports = function () {
 	return {
@@ -1321,10 +1571,10 @@ module.exports = function () {
 		}
 	};
 };
-},{"./yt_playlistTemplate.html":45}],45:[function(require,module,exports){
+},{"./yt_playlistTemplate.html":48}],48:[function(require,module,exports){
 module.exports = "<div class=\"yt-playlist\">\r\n    <span>Playlist</span>\r\n</div>";
 
-},{}],46:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 
 module.exports = function () {
 	return {
@@ -1336,10 +1586,10 @@ module.exports = function () {
 		}
 	};
 };
-},{"./yt_videoDescriptionTemplate.html":47}],47:[function(require,module,exports){
-module.exports = "<div class=\"yt-video-description\">\r\n    <div class=\"text\">\r\n        <span ng-show=\"!expanded\">{{ video.description | limitTo : 300 }}</span><!-- TODO: trust as html and | nl2br filter? -->\r\n        <span ng-show=\"!expanded\" ng-if=\"video.description.length > 300\" ng-click=\"expanded = true\">...</span>\r\n        <span ng-show=\"expanded\">{{ video.description }}</span>\r\n    </div>\r\n    <div class=\"metadata\">\r\n        <div class=\"row\">{{ ::('From' | translate) }}: {{ video.channel }}</div>\r\n        <div>{{ ::('Added' | translate) }}: {{ video.created | date }}</div>\r\n        <div class=\"row\">{{ ::('Category' | translate) }}: {{ video.category }}</div>\r\n        <div>{{ ::('Views' | translate) }}: {{ video.views }}</div>\r\n    </div>\r\n</div>";
+},{"./yt_videoDescriptionTemplate.html":50}],50:[function(require,module,exports){
+module.exports = "<div class=\"yt-video-description\">\r\n    <div class=\"text\">\r\n        <span ng-show=\"!expanded\">{{ ::(video.description | limitTo : 300) }}</span><!-- TODO: trust as html and | nl2br filter? -->\r\n        <span ng-show=\"!expanded\" ng-if=\"::(video.description.length > 300)\" ng-click=\"expanded = true\">...</span>\r\n        <span ng-show=\"expanded\">{{ ::video.description }}</span>\r\n    </div>\r\n    <div class=\"metadata\">\r\n        <div class=\"row\">{{ ::('From' | translate) }}: {{ video.channel }}</div>\r\n        <div>{{ ::('Added' | translate) }}: {{ video.created | date }}</div>\r\n        <div class=\"row\">{{ ::('Category' | translate) }}: {{ video.category }}</div>\r\n        <div>{{ ::('Views' | translate) }}: {{ video.views }}</div>\r\n    </div>\r\n</div>";
 
-},{}],48:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 
 module.exports = function ($timeout, appMode) {
 	return {
@@ -1386,7 +1636,7 @@ module.exports = function ($timeout, appMode) {
 		}
 	};
 };
-},{"./yt_viewerTemplate.html":49}],49:[function(require,module,exports){
-module.exports = "<div class=\"{{ class || 'yt-viewer' }}\" ng-class=\"{ 'playlist-visible': playlistVisible }\">\r\n    <h2 class=\"title\">{{ video.title}} </h2>\r\n    <div class=\"video\">\r\n        <yt-player>\r\n            <div ng-if=\"playingOnTv\" class=\"overlay\">\r\n                <div>{{ ::('Playing on TV' | translate) }}</div>\r\n            </div>\r\n        </yt-player>\r\n        <div class=\"yt-controls\">Controls</div><!-- TODO: separate directive -->\r\n        <div class=\"buttons\">\r\n            <app-send-to-tv ng-model=\"video\" playing-on-tv=\"playingOnTv\"></app-send-to-tv>\r\n            <button class=\"toggle-playlist\" ng-click=\"playlistVisible = !playlistVisible\">\r\n                <span class=\"label_hidePlaylist\" ng-show=\"playlistVisible\">\r\n                    <span class=\"btnLabel\">{{ ::('Hide video list' | translate) }}</span>\r\n                    <svg version=\"1.1\" id=\"arrow\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 12 13\" enable-background=\"new 0 0 12 13\" xml:space=\"preserve\">\r\n                        <polygon fill=\"#FFFFFF\" points=\"1,0.5 11,6.5 1,12.5\"/>\r\n                    </svg>\r\n                </span>\r\n                <span class=\"label_showPlaylist\" ng-hide=\"playlistVisible\">\r\n                    <svg version=\"1.1\" id=\"arrow\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 12 13\" enable-background=\"new 0 0 12 13\" xml:space=\"preserve\">\r\n                        <polygon fill=\"#FFFFFF\" points=\"1,0.5 11,6.5 1,12.5\"/>\r\n                    </svg>\r\n                    <span class=\"btnLabel\">{{ ::('Show video list' | translate) }}</span>\r\n                </span>\r\n            </button>\r\n        </div>\r\n        <yt-video-description></yt-video-description>\r\n    </div>\r\n    <div class=\"playlist\">\r\n        <h3>{{ ::(playlist.title | translate) }}</h3>\r\n        <ui-video-list class=\"ui-video-list\" ng-model=\"playlist\" display=\"list\" play-fn=\"playVideo\" load-more=\"scroll\" service=\"ytYoutubeService\"></ui-video-list>\r\n    </div>\r\n</div>\r\n";
+},{"./yt_viewerTemplate.html":52}],52:[function(require,module,exports){
+module.exports = "<div class=\"{{ class || 'yt-viewer' }}\" ng-class=\"{ 'playlist-visible': playlistVisible }\">\r\n    <h2 class=\"title\">{{ video.title}} </h2>\r\n    <div class=\"video\">\r\n        <yt-player>\r\n            <div ng-if=\"playingOnTv\" class=\"overlay\">\r\n                <div>{{ ::('Playing on TV' | translate) }}</div>\r\n            </div>\r\n        </yt-player>\r\n        <yt-controlbar info=\"player.info\"></yt-controlbar>\r\n        <div class=\"buttons\">\r\n            <app-send-to-tv ng-model=\"video\" playing-on-tv=\"playingOnTv\"></app-send-to-tv>\r\n            <button class=\"toggle-playlist\" ng-click=\"playlistVisible = !playlistVisible\">\r\n                <span class=\"label_hidePlaylist\" ng-show=\"playlistVisible\">\r\n                    <span class=\"btnLabel\">{{ ::('Hide video list' | translate) }}</span>\r\n                    <svg version=\"1.1\" id=\"arrow\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 12 13\" enable-background=\"new 0 0 12 13\" xml:space=\"preserve\">\r\n                        <polygon fill=\"#FFFFFF\" points=\"1,0.5 11,6.5 1,12.5\"/>\r\n                    </svg>\r\n                </span>\r\n                <span class=\"label_showPlaylist\" ng-hide=\"playlistVisible\">\r\n                    <svg version=\"1.1\" id=\"arrow\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 12 13\" enable-background=\"new 0 0 12 13\" xml:space=\"preserve\">\r\n                        <polygon fill=\"#FFFFFF\" points=\"1,0.5 11,6.5 1,12.5\"/>\r\n                    </svg>\r\n                    <span class=\"btnLabel\">{{ ::('Show video list' | translate) }}</span>\r\n                </span>\r\n            </button>\r\n        </div>\r\n        <yt-video-description></yt-video-description>\r\n    </div>\r\n    <div class=\"playlist\">\r\n        <h3>{{ ::(playlist.title | translate) }}</h3>\r\n        <ui-video-list class=\"ui-video-list\" ng-model=\"playlist\" display=\"list\" play-fn=\"playVideo\" load-more=\"scroll\" service=\"ytYoutubeService\"></ui-video-list>\r\n    </div>\r\n</div>\r\n";
 
 },{}]},{},[1])

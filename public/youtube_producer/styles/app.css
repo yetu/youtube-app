@@ -429,6 +429,7 @@ yt-player .overlay {
 }
 .yt-viewer .playlist {
   height: auto;
+  overflow: hidden;
   margin-bottom: 30px;
 }
 .yt-viewer .playlist .ui-video-list {
@@ -440,7 +441,6 @@ yt-player .overlay {
   display: none;
 }
 .yt-viewer .playlist .ui-video-list-item {
-  zoom: 1;
   width: 100%;
   height: 60px;
   padding: 0;
@@ -449,15 +449,6 @@ yt-player .overlay {
   transition: background-color 0.25s ease-in-out;
   border-top: 1px solid #eee;
   border-bottom: 1px solid #ccc;
-}
-.yt-viewer .playlist .ui-video-list-item:after,
-.yt-viewer .playlist .ui-video-list-item:before {
-  content: "";
-  display: table;
-}
-.yt-viewer .playlist .ui-video-list-item:after,
-.yt-viewer .playlist .ui-video-list-item:before {
-  clear: both;
 }
 .yt-viewer .playlist .ui-video-list-item:first-child {
   border-top: 0;
@@ -724,7 +715,8 @@ button.app-send-to-tv:hover {
     display: none;
   }
   .yt-viewer .playlist {
-    float: right;
+    position: relative;
+    min-height: 50vh;
     margin: 10px;
     width: 280px;
   }

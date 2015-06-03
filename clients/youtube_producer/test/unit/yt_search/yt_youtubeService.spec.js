@@ -68,6 +68,35 @@ describe('Service: yt_youtubeService', function () {
         $httpBackend.flush();
     });
 
+    it('should request youtube api for most popular videos', function() {
+        var categories = { '1': { 'id': 1, 'title': 'Film & Animation'}, '25': { 'id': 25, 'title': 'News & Politics'} };
+        var respond = {
+                popular: __fixtures__['yt_search/youtube.video.popular.response'],
+                video: __fixtures__['yt_search/youtube.videoList.response']
+            },
+            expected = {
+                popular: 'https://www.googleapis.com/youtube/v3/videos?chart=mostPopular&maxResults=4&part=snippet&regionCode=GB&type=playlist,video&videoCategoryId=25',
+                video: 'https://www.googleapis.com/youtube/v3/videos?id=first-video-id,second-video-id&maxResults=2&part=contentDetails',
+                item0: {
+                    type: 'video', id: 'first-video-id', title: 'Alton Towers crash: Four seriously injured - BBC News', img: 'https://i.ytimg.com/vi/first-video-id/mqdefault.jpg',
+                    channel: 'BBC News', created: '2015-06-02T14:51:12.000Z', description: 'BBC News descritpion', views: null}
+            };
+
+        spyOn(localStorageService, 'get').and.returnValue(categories);
+        service.initialize();
+        $httpBackend.expectGET(expected.popular).respond(200, respond.popular);
+        $httpBackend.expectGET(expected.video).respond(200, respond.video);
+        service.getResult('popular', 25).then(function(data) {
+            expect(data.type).toBe('popular');
+            expect(data.categoryId).toBe(25);
+            expect(data.title).toBe('News & Politics');
+            expect(data.etag).toBe('some-etag-popular');
+            expect(data.items[0]).toEqual(expected.item0);
+            expect(data.items[2]).not.toBeDefined();
+        });
+        $httpBackend.flush();
+    });
+
     it('should request youtube api for details of video', function() {
         var respond = {
                 video: __fixtures__['yt_search/youtube.videoList.details.response'],
@@ -150,7 +179,9 @@ describe('Service: yt_youtubeService', function () {
         $httpBackend.expectGET(expected.search).respond(200, respond.search);
         $httpBackend.expectGET(expected.playlist).respond(200, respond.playlist);
         $httpBackend.expectGET(expected.video).respond(200, respond.video);
-        $httpBackend.expectGET(expected.next).respond(200, respond.video);
+        $httpBackend.expectGET(expected.next).respond(200, respond.search);
+        $httpBackend.expectGET(expected.playlist).respond(200, respond.playlist);
+        $httpBackend.expectGET(expected.video).respond(200, respond.video);
 
         service.getResult('search', 'yetu').then(function(data) {
             service.getNext('some-etag-search', 'pg-tok');

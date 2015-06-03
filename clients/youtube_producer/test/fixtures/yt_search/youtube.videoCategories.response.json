@@ -11,6 +11,16 @@
     "title": "Film & Animation",
     "assignable": true
    }
+  },
+  {
+   "kind": "youtube#videoCategory",
+   "etag": "\"dhbhlDw5j8dK10GxeV_UG6RSReM/QiLK0ZIrFoORdk_g2l_XR_ECjDc\"",
+   "id": "25",
+   "snippet": {
+    "channelId": "UCBR8-60-B28hp2BmDPdntcQ",
+    "title": "News & Politics",
+    "assignable": true
+   }
   }
  ]
-}
+}  
