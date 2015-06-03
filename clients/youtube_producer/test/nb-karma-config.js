@@ -18,7 +18,6 @@ module.exports = function (config) {
             '../../public/bower_components/angular-route/angular-route.js',
             '../../public/bower_components/angular-translate/angular-translate.min.js',
             '../../public/bower_components/angular-mocks/angular-mocks.js',
-            '../../public/bower_components/reactTo/reactTo.js',
             '../../public/bower_components/angular-timeago/dist/angular-timeago.min.js',
             //include all test helpers from /test folder
             {pattern: 'test/**/!(spec.js)+(.js)'},

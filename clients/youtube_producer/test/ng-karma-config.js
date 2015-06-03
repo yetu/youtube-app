@@ -22,7 +22,6 @@ module.exports = function (config) {
             '../../public/bower_components/angular-translate/angular-translate.min.js',
             '../../public/bower_components/angular-mocks/angular-mocks.js',
             '../../public/bower_components/angular-cookies/angular-cookies.js',
-            '../../public/bower_components/reactTo/reactTo.js',
             '../../public/bower_components/angular-timeago/dist/angular-timeago.min.js',
             '../../public/bower_components/angular-local-storage/dist/angular-local-storage.min.js',
             '../../public/bower_components/angular-ui-notification/dist/angular-ui-notification.min.js',
