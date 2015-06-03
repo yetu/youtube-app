@@ -507,12 +507,16 @@ yt-player .overlay {
   height: auto;
 }
 .yt-viewer .playlist .ui-video-list-item .metadata .title {
+  position: relative;
   color: #333;
   font-size: 1.125em;
   min-width: 50%;
-  line-height: 150%;
+  line-height: 125%;
   height: 25px;
-  margin-bottom: 5px;
+  top: 5px;
+}
+.yt-viewer .playlist .ui-video-list-item .metadata .subtitle {
+  margin: 0;
 }
 .yt-viewer .playlist .ui-video-list-item .metadata .channel {
   font-size: 0.8125em;
