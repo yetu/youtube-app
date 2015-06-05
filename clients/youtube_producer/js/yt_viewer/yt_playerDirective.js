@@ -46,6 +46,9 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
                     events: {
                         onReady: function() {
                             scope.player.API.ready = true;
+                            if(scope.video.startAt) {
+                                player.seekTo(scope.video.startAt);
+                            }
                         }
                     }
                 };
@@ -79,9 +82,6 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
                     case 'initialDelivery': {
                         scope.player.info.video = scope.video;
                         scope.player.info.duration = data.info.duration;
-                        if(scope.video.startAt) {
-                            player.seekTo(scope.video.startAt);
-                        }
                         break;
                     }
                     case 'infoDelivery': {
