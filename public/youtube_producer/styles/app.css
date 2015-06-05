@@ -320,20 +320,10 @@ h2 {
 .yt-viewer {
   margin: 0 auto 30px;
   background-color: #f6f6f6;
-  min-height: 75vh;
+  height: auto;
   overflow: hidden;
   -webkit-box-shadow: 7px 7px 10px 0 rgba(0,0,0,0.3);
   box-shadow: 7px 7px 10px 0 rgba(0,0,0,0.3);
-  zoom: 1;
-}
-.yt-viewer:after,
-.yt-viewer:before {
-  content: "";
-  display: table;
-}
-.yt-viewer:after,
-.yt-viewer:before {
-  clear: both;
 }
 .yt-viewer h2 {
   display: none;
@@ -432,16 +422,6 @@ yt-player .overlay {
 }
 .yt-video-description {
   margin-top: 20px;
-  zoom: 1;
-}
-.yt-video-description:after,
-.yt-video-description:before {
-  content: "";
-  display: table;
-}
-.yt-video-description:after,
-.yt-video-description:before {
-  clear: both;
 }
 .yt-video-description .metadata {
   margin-top: 10px;
@@ -460,10 +440,9 @@ yt-player .overlay {
 .yt-viewer .playlist {
   height: auto;
   overflow: hidden;
-  margin-bottom: 30px;
 }
 .yt-viewer .playlist .ui-video-list {
-  height: 100%;
+  height: 620px; /*10 video list items*/
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -873,11 +852,11 @@ button.app-send-to-tv:hover {
     display: block;
   }
   .yt-viewer .playlist {
-    height: 75vh;
+    padding-bottom: 20px;
     position: relative;
     width: 280px;
     float: right;
-    margin: 0 -300px 20px 0;
+    margin: 0 -300px 0 0;
     -webkit-transition: margin-right 0.5s ease-in-out;
     transition: margin-right 0.5s ease-in-out;
   }
@@ -909,7 +888,7 @@ button.app-send-to-tv:hover {
     transition: all 0.5s ease-in-out;
   }
   .yt-viewer.playlist-visible .playlist {
-    margin: 0 20px 20px 0;
+    margin: 0 20px 0 0;
     -webkit-transition: margin-right 0.5s ease-in-out;
     transition: margin-right 0.5s ease-in-out;
   }
@@ -956,7 +935,8 @@ button.app-send-to-tv:hover {
   }
   .yt-viewer .playlist {
     width: 370px;
-    margin: 0 -390px 30px 0;
+    margin: 0 -390px 0 0;
+    padding-bottom: 30px;
   }
   .yt-viewer.playlist-visible .video {
     width: 500px;
@@ -973,7 +953,7 @@ button.app-send-to-tv:hover {
     width: 480px;
   }
   .yt-viewer.playlist-visible .playlist {
-    margin: 0 30px 30px 0;
+    margin: 0 30px 0 0;
   }
 }
 @media (min-width: 1200px) {
@@ -1017,7 +997,8 @@ button.app-send-to-tv:hover {
   }
   .yt-viewer .playlist {
     width: 410px;
-    margin: 0 -430px 60px 0;
+    margin: 0 -430px 0 0;
+    padding-bottom: 60px;
   }
   .yt-viewer.playlist-visible .video {
     width: 550px;
@@ -1034,7 +1015,7 @@ button.app-send-to-tv:hover {
     width: 530px;
   }
   .yt-viewer.playlist-visible .playlist {
-    margin: 0 60px 60px 0;
+    margin: 0 60px 0 0;
   }
 }
 @media (min-width: 1400px) {
