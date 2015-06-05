@@ -835,7 +835,7 @@ module.exports = function () {
 };
 
 },{"./ui_videoListPlaylistIconTemplate.html":32}],32:[function(require,module,exports){
-module.exports = "<svg version=\"1.1\" id=\"Ebene_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\r\n\t viewBox=\"0 0 22 14.9\" enable-background=\"new 0 0 22 14.9\" xml:space=\"preserve\">\r\n<g>\r\n\t<rect x=\"0.6\" y=\"0.7\" fill=\"#FFFFFF\" stroke=\"#000000\" stroke-miterlimit=\"10\" width=\"17\" height=\"9.6\"/>\r\n\t<rect x=\"2.4\" y=\"2.6\" fill=\"#FFFFFF\" stroke=\"#000000\" stroke-miterlimit=\"10\" width=\"17\" height=\"9.6\"/>\r\n\t<rect x=\"4.3\" y=\"4.6\" fill=\"#FFFFFF\" stroke=\"#000000\" stroke-miterlimit=\"10\" width=\"17\" height=\"9.6\"/>\r\n</g>\r\n</svg>";
+module.exports = "<svg version=\"1.1\" id=\"playlist-icon\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\r\n\t viewBox=\"0 0 22 14.9\" enable-background=\"new 0 0 22 14.9\" xml:space=\"preserve\">\r\n<g>\r\n\t<rect x=\"0.6\" y=\"0.7\" fill=\"#FFFFFF\" stroke=\"#000000\" stroke-miterlimit=\"10\" width=\"17\" height=\"9.6\"/>\r\n\t<rect x=\"2.4\" y=\"2.6\" fill=\"#FFFFFF\" stroke=\"#000000\" stroke-miterlimit=\"10\" width=\"17\" height=\"9.6\"/>\r\n\t<rect x=\"4.3\" y=\"4.6\" fill=\"#FFFFFF\" stroke=\"#000000\" stroke-miterlimit=\"10\" width=\"17\" height=\"9.6\"/>\r\n</g>\r\n</svg>";
 
 },{}],33:[function(require,module,exports){
 module.exports = "<ui-video-list-item class=\"ui-video-list-item\" ng-repeat=\"item in videoList.items\" ng-click=\"playFn ? playFunction($index) : null\"></ui-video-list-item>\r\n<div class=\"clearfix\">\r\n    <button class=\"load-more\"  ng-if=\"::(loadMore == 'button' && videoList.items.length > 0)\" ng-click=\"loadNext()\">{{ ::('Load more videos' | translate) }}<ui-video-list-play-arrow class=\"arrow-svg\"></ui-video-list-play-arrow></button>\r\n</div>\r\n\r\n<div class=\"spinner\" ng-class=\"{ loading: loadingMore }\">Loading...</div>\r\n<div ng-if=\"videoList.items.length == 0\">\r\n    {{ ::('No results found' | translate) }}\r\n</div>\r\n";
@@ -930,7 +930,7 @@ module.exports = function () {
 	};
 };
 },{"./yt_resultSetTemplate.html":39}],39:[function(require,module,exports){
-module.exports = "<div class=\"{{ class || 'yt-result-set' }}\">\r\n  <div ng-repeat=\"videoList in resultLists\" class=\"result\">\r\n    <h2 class=\"list-title\">{{ videoList.title }}</h2>\r\n    <ui-video-list class=\"{{ ::(class || 'ui-video-list') }} {{ ::displayType }} {{ ::videoList.type }} clearfix\" ng-model=\"videoList\" \r\n        play-link=\"{{ ::playLink }}\" display=\"{{ ::displayType }}\" service=\"ytYoutubeService\" load-more=\"button\">\r\n    </ui-video-list>\r\n  </div>\r\n</div>\r\n";
+module.exports = "<div class=\"{{ class || 'yt-result-set' }}\">\r\n  <div ng-repeat=\"videoList in resultLists\" class=\"result\">\r\n    <h2 class=\"list-title {{ videoList.type }}\">{{ videoList.title }}</h2>\r\n    <ui-video-list class=\"{{ ::(class || 'ui-video-list') }} {{ ::displayType }} {{ ::videoList.type }} clearfix\" ng-model=\"videoList\" \r\n        play-link=\"{{ ::playLink }}\" display=\"{{ ::displayType }}\" service=\"ytYoutubeService\" load-more=\"button\">\r\n    </ui-video-list>\r\n  </div>\r\n</div>\r\n";
 
 },{}],40:[function(require,module,exports){
 module.exports = angular.module('yt_search', ['ngResource', 'yaru22.angular-timeago'])
@@ -1433,6 +1433,9 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
                     events: {
                         onReady: function() {
                             scope.player.API.ready = true;
+                            if(scope.video.startAt) {
+                                player.seekTo(scope.video.startAt);
+                            }
                         }
                     }
                 };
@@ -1466,9 +1469,6 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
                     case 'initialDelivery': {
                         scope.player.info.video = scope.video;
                         scope.player.info.duration = data.info.duration;
-                        if(scope.video.startAt) {
-                            player.seekTo(scope.video.startAt);
-                        }
                         break;
                     }
                     case 'infoDelivery': {
