@@ -119,10 +119,9 @@ describe('Directive: app_search', function () {
         var element = $compile('<app-search trigger-search="button" value="test"></app-search>')(scope);
         scope.$digest();
         var inputField = element.find('input').eq(0);
-        expect(inputField.isFocused).toBe(false);
         inputField.triggerHandler('click');
         scope.$digest();
-        expect(inputField.isFocused).toBe(true);
+        expect(inputField[0]).toBe(document.activeElement);
     });
     
     xit('should loose focus on the input field on blur', function() {
@@ -130,10 +129,11 @@ describe('Directive: app_search', function () {
         scope.$digest();
         var inputField = element.find('input').eq(0);
         inputField.triggerHandler('click');
+        console.log(inputField.html());
         scope.$digest();
-        expect(inputField.isFocused).toBe(true);
+        expect(inputField[0]).toBe(document.activeElement);
         inputField.triggerHandler('blur');
         scope.$digest();
-        expect(inputField.isFocused).toBe(false);
+        expect(inputField[0]).not.toBe(document.activeElement);
     });
 });
