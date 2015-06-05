@@ -338,8 +338,8 @@ h2 {
 }
 .yt-viewer h3 {
   font-family: 'source_sans_prolight';
-  font-size: 1.4275em;
-  margin: 20px 0 13px;
+  font-size: 1.25em;
+  margin: 10px 0 5px;
   color: #666;
 }
 .yt-viewer .video {
@@ -843,7 +843,7 @@ button.app-send-to-tv:hover {
   }
   .yt-viewer .video {
     width: 700px;
-    margin: 20px;
+    margin: 40px 20px 20px;
     float: left;
     -webkit-transition: width 0.5s ease-in-out;
     transition: width 0.5s ease-in-out;
@@ -874,12 +874,9 @@ button.app-send-to-tv:hover {
     position: relative;
     width: 280px;
     float: right;
-    margin: 20px -300px 20px 0;
+    margin: 0 -300px 20px 0;
     -webkit-transition: margin-right 0.5s ease-in-out;
     transition: margin-right 0.5s ease-in-out;
-  }
-  .yt-viewer .playlist h3 {
-    display: none;
   }
   .yt-viewer.playlist-visible {
     background-color: #c6c6c6;
@@ -909,7 +906,7 @@ button.app-send-to-tv:hover {
     transition: all 0.5s ease-in-out;
   }
   .yt-viewer.playlist-visible .playlist {
-    margin: 20px 20px 20px 0;
+    margin: 0 20px 20px 0;
     -webkit-transition: margin-right 0.5s ease-in-out;
     transition: margin-right 0.5s ease-in-out;
   }
@@ -941,7 +938,7 @@ button.app-send-to-tv:hover {
   }
   .yt-viewer .video {
     width: 900px;
-    margin: 30px 30px 0;
+    margin: 40px 30px 0;
   }
   .yt-viewer .video .yt-player,
   .yt-viewer .video .overlay {
@@ -956,7 +953,7 @@ button.app-send-to-tv:hover {
   }
   .yt-viewer .playlist {
     width: 370px;
-    margin: 30px -390px 30px 0;
+    margin: 0 -390px 30px 0;
   }
   .yt-viewer.playlist-visible .video {
     width: 500px;
@@ -973,7 +970,7 @@ button.app-send-to-tv:hover {
     width: 480px;
   }
   .yt-viewer.playlist-visible .playlist {
-    margin: 30px 30px 30px 0;
+    margin: 0 30px 30px 0;
   }
 }
 @media (min-width: 1200px) {
@@ -1002,7 +999,7 @@ button.app-send-to-tv:hover {
   }
   .yt-viewer .video {
     width: 1020px;
-    margin: 60px 60px 0;
+    margin: 40px 60px 0;
   }
   .yt-viewer .video .yt-player,
   .yt-viewer .video .overlay {
@@ -1018,9 +1015,6 @@ button.app-send-to-tv:hover {
   .yt-viewer .playlist {
     width: 410px;
     margin: 0 -430px 60px 0;
-  }
-  .yt-viewer .playlist h3 {
-    display: block;
   }
   .yt-viewer.playlist-visible .video {
     width: 550px;
