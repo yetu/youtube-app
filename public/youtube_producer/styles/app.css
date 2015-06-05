@@ -231,8 +231,35 @@ h2 {
   width: 100%;
   text-align: center;
 }
-.ui-video-list-item .img .items span::before {
-  content: "PL: ";
+.ui-video-list-item .img .items {
+  background-color: #fff;
+  -webkit-box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.2);
+  box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.2);
+  zoom: 1;
+}
+.ui-video-list-item .img .items:after,
+.ui-video-list-item .img .items:before {
+  content: "";
+  display: table;
+}
+.ui-video-list-item .img .items:after,
+.ui-video-list-item .img .items:before {
+  clear: both;
+}
+.ui-video-list-item .img .items svg {
+  position: relative;
+  float: left;
+  width: auto;
+  height: 14px;
+  margin-right: 5px;
+  top: 1px;
+  left: 1px;
+  padding: 0;
+}
+.ui-video-list-item .img .items span {
+  float: right;
+  width: auto;
+  color: #000;
 }
 .ui-video-list-item .metadata {
   height: 150px;

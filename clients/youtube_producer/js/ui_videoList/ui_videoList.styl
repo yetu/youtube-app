@@ -125,9 +125,27 @@
             }
         }
 
-        .items span::before {
-            content: "PL: "
+        .items {
+            background-color: bg-playlist-icon;
+            box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.2);
+            clearfix();
+            svg {
+                position: relative;
+                float: left;
+                width: auto;
+                height: 14px;
+                margin-right: 5px;
+                top: 1px;
+                left: 1px;
+                padding: 0;
+            }
+            span {
+                float: right;
+                width: auto;
+                color: color-playlist-icon-font;
+            }
         }
+            
     }
 
     .metadata {

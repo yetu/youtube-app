@@ -114,4 +114,26 @@ describe('Directive: app_search', function () {
         expect(elementScope.$emit).not.toHaveBeenCalled;
         expect(elementScope.emitted).toBeUndefined();
     });
+    
+    xit('should get focus on the input field on click in input field', function() {
+        var element = $compile('<app-search trigger-search="button" value="test"></app-search>')(scope);
+        scope.$digest();
+        var inputField = element.find('input').eq(0);
+        expect(inputField.isFocused).toBe(false);
+        inputField.triggerHandler('click');
+        scope.$digest();
+        expect(inputField.isFocused).toBe(true);
+    });
+    
+    xit('should loose focus on the input field on blur', function() {
+        var element = $compile('<app-search trigger-search="button" value="test"></app-search>')(scope);
+        scope.$digest();
+        var inputField = element.find('input').eq(0);
+        inputField.triggerHandler('click');
+        scope.$digest();
+        expect(inputField.isFocused).toBe(true);
+        inputField.triggerHandler('blur');
+        scope.$digest();
+        expect(inputField.isFocused).toBe(false);
+    });
 });

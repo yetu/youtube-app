@@ -9,7 +9,7 @@
         <img ng-if="::item.img" ng-src="{{::item.img}}"/>
     </a>
     <div ng-if="::(item.type == 'video')" class="duration"><span>{{ item.duration | duration }}</span></div><!-- TODO: one-time binding with filter? -->
-    <div ng-if="::(item.type == 'playlist')" class="items"><span>{{ ::item.totalItems }}</span></div>
+    <div ng-if="::(item.type == 'playlist')" class="items"><ui-video-list-playlist-icon></ui-video-list-playlist-icon><span>{{ ::item.totalItems }}</span></div>
 </div>
 <div class="metadata">
     <a class="title" ng-if="::playLink" class="playimg" ng-href="#/view/expand/{{::item.type}}/{{::item.id}}"> <!-- TODO: replace href with {{ playLink | replaceParams }} -->
