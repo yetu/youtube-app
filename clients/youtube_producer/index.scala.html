@@ -45,7 +45,7 @@
         <![endif]-->
         
         <div class="container">
-            <app-search class="app-search" placeholder="Search YouTube" value="{{ searchValue }}" trigger-search="button,enter"></app-search>
+            <app-search class="app-search" placeholder="Search YouTube" value="{{ searchValue }}" trigger-search="button,enter" allow-repeat="true"></app-search>
             <div ng-view></div>
         </div>
         <yt-auth ng-if="authEnabled" class="ng-hide"></yt-auth>
