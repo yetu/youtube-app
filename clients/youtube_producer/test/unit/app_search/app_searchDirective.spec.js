@@ -11,6 +11,10 @@ describe('Directive: app_search', function () {
         $timeout = _$timeout_;
     }));
 
+    afterEach(function() {
+        scope.$destroy();
+    });
+
     it('should compile to div with default class with input and button elements inside', function() {
         var element = $compile('<app-search></app-search>')(scope);
         scope.$digest();
