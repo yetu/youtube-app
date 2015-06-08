@@ -26,7 +26,6 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
             $window.onYouTubeIframeAPIReady = function() {
                 scope.player.API.loaded = true;
                 $rootScope.YTloaded = true;
-                angular.element($window).on('message', receiveMessage);
             };
 
             if(!$rootScope.YTloaded) {
@@ -72,6 +71,7 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
                         playerContainer.style.transform = '';
                     }
                 }
+                angular.element($window).on('message', receiveMessage);
             };
 
             var loadVideo = function() {
@@ -181,7 +181,7 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
                 player = null;
                 angular.element($window).off('message', receiveMessage);
                 _unbinder.forEach(function(unbind) {
-                  unbind();
+                    unbind();
                 });
             });
         }
