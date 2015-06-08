@@ -1,0 +1,6 @@
+<ul class="keys">
+  Current: {{ current }}
+  <li class="char" char="{{ ::key }}" ng-click="addChar($event)" activated="{{ $index == current }}" ng-repeat="key in keyList">{{ ::key }}</li>
+  <li class="char del" ng-click="deleteChar()" ng-class="{activated: keyList.length == current}">del</li>
+  <li class="char switch {{ next }}" ng-class="{activated: keyList.length + 1 == current}" ng-click="switchList()">{{ keyList.length }} {{ next }}</li>
+</ul>
