@@ -27,7 +27,8 @@ module.exports = ({
     
     controllers: {
         dashboard: {
-            order: ['search', 'list-1', 'list-2'],
+            order: ['search', 'searchKeys', 'list-1', 'list-2'],
+            first: 1,
             special: {
                 menu: {activate: 'search' },
                 quit: {}

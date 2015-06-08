@@ -55,9 +55,7 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
         // console.debug('appRemoteControlService.setController', name);
         if(appRemoteControlConfig.controllers[name]) {
             config = appRemoteControlConfig.controllers[name];
-            // console.debug('config', config);
-            active = config.order[0];
-            // console.debug('active', active);
+            active = config.order[config.first || 0];
         } else {
             throw new Error('Config of remote control doesnt exist for ' + name);
         }
@@ -84,10 +82,20 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
 
     var activate = function(name) {
         if(registered[name]) {
+            registered[active]('deactivate');
             active = name;
             registered[name]('activate');
         } else {
             // ...
+        }
+    };
+
+    var findPrev = function(name) {
+        var idx = config.order.indexOf(name);
+        if(idx - 1 >= 0) {
+            activate(config.order[idx - 1]);
+        } else {
+            activate(config.order[config.order.length - 1]);
         }
     };
 
@@ -99,6 +107,12 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
                 controller.callback('back', name);
                 break;
             }
+            case 'up':
+            case 'left': {
+                activate(findPrev(name));
+                break;
+            }
+
             // TODO: depending on last command activate next/prev
         }
     };
