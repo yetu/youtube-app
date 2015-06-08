@@ -9,14 +9,16 @@
  * @attr allow-repeat boolean Allow repeatition of the same value if not changed (for example on enter and button)
  * @attr on-search string|fn Search event name (default 'app:search-value') or callback function
  * @attr on-reset string|fn Reset search event name (default 'app:search-reset') or callback function
+ * @attr key-input boolean
  */
-module.exports = function () {
+module.exports = function (appRemoteControlService) {
     return {
         restrict: 'E',
         template: require('./app_searchTemplate.html'),
         scope: {
-            searchValue: '@value',
-            placeholder: '@placeholder'
+            searchValue: '=ngModel',
+            placeholder: '@placeholder',
+            keyInput: '@?'
         },
         link: function(scope, element, attr){
             var _unbinder = [],
@@ -25,6 +27,10 @@ module.exports = function () {
                 triggerAuto = attr.triggerSearch && attr.triggerSearch.indexOf('auto') > -1,
                 input = element.find('input')[0],
                 $input = angular.element(input);
+
+            if(attr.value) {
+                scope.searchValue = attr.value;
+            }
 
             scope.searchButtonClick = function() {
                 if (triggerButton === true) {
@@ -67,7 +73,33 @@ module.exports = function () {
                 }));
             }
 
+            var remoteControl = function(command) {
+
+                switch(command) {
+                    case 'activate': {
+                        element.attr('activated', true);
+                        break;
+                    }
+                    case 'deactivate': {
+                        element.attr('activated', false);
+                        break;
+                    }
+                    case 'enter': {
+                        var el = angular.element(element.find('button')[0]);
+                        el.triggerHandler('click');
+                        break;
+                    }
+                }
+            };
+            
+            if(attr.remote) {
+                appRemoteControlService.register(attr.remote, remoteControl);
+            }
+
             scope.$on('$destroy', function() {
+                if(attr.remote) {
+                    appRemoteControlService.deregister(attr.remote, remoteControl);
+                }
                 _unbinder.forEach(function(unbind) {
                   unbind();
                 });

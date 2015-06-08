@@ -7,6 +7,7 @@ var youtubeApp = angular.module('youtubeApp',
         'LocalStorageModule',
         'ui-notification',
         // app modules
+        require('./app_input').name,
         require('./app_search').name,
         require('./app_mode').name,
         require('./app_remoteControl').name,
