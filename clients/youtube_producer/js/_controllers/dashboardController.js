@@ -4,7 +4,7 @@
 /*
  * Dashbord controller
  */
-module.exports = (function($scope, ytYoutubeService, $routeParams, $location, $rootScope, $filter) {
+module.exports = (function($scope, ytYoutubeService, $routeParams, $location, $rootScope, $filter, appRemoteControlService) {
 
     if($routeParams.action === 'search' && $routeParams.param) {
         $rootScope.searchValue = $routeParams.param;
@@ -35,6 +35,10 @@ module.exports = (function($scope, ytYoutubeService, $routeParams, $location, $r
         }
         // TODO: seems always the same videos - should be rerquested more and shuffle?
     }
+
+    appRemoteControlService.setController('dashboard', function(action, name) {
+
+    });
 
     $rootScope.$on('app:search-value', function(event, query){
         $location.path('/dashboard/search/' + query);
