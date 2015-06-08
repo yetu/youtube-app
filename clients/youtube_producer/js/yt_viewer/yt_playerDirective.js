@@ -55,13 +55,23 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
                 
                 if(appMode.isTV()) {
                     properties.playerVars.controls = 0;
-                    properties.height = '1080';
-                    properties.width = '1920';
                 }
                 
                 scope.player.API.initialized = true;
                 
                 player = new YT.Player('yt-player', properties);
+
+                if(appMode.isTV()) {
+                    var playerContainer = document.getElementById('yt-player');
+                    var fullHdWidth = 1920;
+                    var scaleFactor = fullHdWidth / playerContainer.width;
+
+                    if (scaleFactor !== 1){
+                        playerContainer.style.transform = 'scale('+ scaleFactor +')';
+                    } else {
+                        playerContainer.style.transform = '';
+                    }
+                }
             };
 
             var loadVideo = function() {
@@ -93,11 +103,6 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
                         }
                         if(data.info.playerState) {
                             scope.player.info.isPlaying = data.info.playerState === YT.PlayerState.PLAYING;
-                        }
-                        if(data.info.playbackQuality && appMode.isTV()) {
-                            if(data.info.playbackQuality !== ytPlayerConfig.video.tvQuality) {
-                                player.setPlaybackQuality(ytPlayerConfig.video.tvQuality);
-                            }
                         }
                         break;
                     }

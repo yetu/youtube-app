@@ -254,10 +254,7 @@ yt-controlbar {
         position: absolute;
         bottom: 0;
         left: 0;
-        background-image: -webkit-linear-gradient(#fff 0%, #000 100%);
-        background-image: -moz-linear-gradient(#fff 0%, #000 100%);
-        background-image: -o-linear-gradient(#fff 0%, #000 100%);
-        background-image: linear-gradient(#fff 0%, #000 100%);
+        background-linear-gradient(top, #fff, 0%, #000, 100%);        
         opacity: 0.9;
         transition: 0.5s;
     
@@ -352,11 +349,21 @@ yt-controlbar {
 .tvmode.fullscreen {
 
     .container, .yt-viewer, .video, .yt-player {
-        height: 1080px !important;
-        width: 1920px !important;
         position: relative;
         margin: 0 !important;
         padding: 0 !important;
+    }
+
+    .container, .yt-viewer, .video {
+        height: 1080px !important;
+        width: 1920px !important;
+    }
+
+    .yt-player {
+        transform-origin: top left;
+        /* for scalling up workaround */
+        height: 360px !important;
+        width: 640px !important;
     }
 
     yt-controlbar {
