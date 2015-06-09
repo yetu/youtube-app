@@ -59,7 +59,7 @@ describe('dashboardController function', function() {
             count++;
             return deferred.promise;
         });
-        spyOn($location, 'path');
+        spyOn($location, 'path').and.returnValue({search: function(){ return { replace: function(){}}}});
         $controller('DashboardCtrl', {$scope: scope, ytYoutubeService: ytYoutubeService});
         $rootScope.$broadcast('app:search-value', 'yetu');
         $rootScope.$digest();
@@ -74,7 +74,7 @@ describe('dashboardController function', function() {
             count++;
             return deferred.promise;
         });
-        spyOn($location, 'path');
+        spyOn($location, 'path').and.returnValue({search: function(){ return { replace: function(){}}}});
         $controller('DashboardCtrl', {$scope: scope, ytYoutubeService: ytYoutubeService});
         $rootScope.$broadcast('app:search-reset');
         $rootScope.$digest();
