@@ -4,7 +4,7 @@
 /*
  * Dashbord controller
  */
-module.exports = (function($scope, ytYoutubeService, $routeParams, $location, $rootScope, $filter, appRemoteControlService) {
+module.exports = (function($scope, ytYoutubeService, $route, $routeParams, $location, $rootScope, $filter, appRemoteControlService) {
 
     if($routeParams.action === 'search' && $routeParams.param) {
         $rootScope.searchValue = $routeParams.param;
@@ -41,7 +41,12 @@ module.exports = (function($scope, ytYoutubeService, $routeParams, $location, $r
     });
 
     $rootScope.$on('app:search-value', function(event, query){
-        $location.path('/dashboard/search/' + query);
+        var url = '/dashboard/search/' + query;
+        if(url === $location.path()) {
+            $route.reload();
+        } else {
+            $location.path(url);
+        }
     });
 
     $rootScope.$on('app:search-reset', function(){
