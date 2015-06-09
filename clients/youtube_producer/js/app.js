@@ -7,6 +7,7 @@ var youtubeApp = angular.module('youtubeApp',
         'LocalStorageModule',
         'ui-notification',
         // app modules
+        require('./app_input').name,
         require('./app_search').name,
         require('./app_mode').name,
         require('./app_remoteControl').name,
@@ -65,6 +66,7 @@ youtubeApp.run(function($location, $translate, appMode, $rootScope, $window){
     }
     $rootScope.$on('$routeChangeSuccess', function(){
         $rootScope.appModeClass = appMode.getClass();
+        $rootScope.appMode = appMode;
     });
     if(appMode.get() !== 'tv') {
         $window.yetu = null;

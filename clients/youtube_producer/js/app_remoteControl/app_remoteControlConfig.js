@@ -27,14 +27,16 @@ module.exports = ({
     
     controllers: {
         dashboard: {
-            order: ['search', 'list-1', 'list-2'],
+            order: ['search', 'input', 'result'],
+            first: 1,
             special: {
                 menu: {activate: 'search' },
                 quit: {}
             }
         },
         viewer: {
-            order: [/*'search',*/ 'player', 'playlist'],
+            order: ['search', 'player', 'playlist'],
+            first: 1,
             passthrough: {
                 player: 'controlbar'
             },

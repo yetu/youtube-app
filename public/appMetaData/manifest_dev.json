@@ -5,8 +5,10 @@
   "controlsType": "form",
   "tileType": "app",
   "category": [
-    "Web TV"
+    "Apps"
   ],
+  "tvcategory": "Apps from your Homescreen",
+  "tvready" : true,
   "url": "https://youtubeapp-dev.yetu.me",
   "logo": "https://youtubeapp-dev.yetu.me/assets/appMetaData/assets/logo.svg",
   "controls": {

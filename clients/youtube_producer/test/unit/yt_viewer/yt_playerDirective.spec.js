@@ -28,7 +28,12 @@ describe('Directive: yt-player', function () {
         // mock YT iframe api
         $window.YT = {
             PlayerState: { PLAYING: '2'},
-            Player: function(){
+            Player: function(id, params){
+                // simulates IFrame API and element added
+                var container = document.createElement('div');
+                container.id = id;
+                document.body.appendChild(container);
+                
                 return { 
                     loadVideoById: function(arg) { test.loadVideoById = arg; },
                     setPlaybackQuality: function(arg) { test.setPlaybackQuality = arg; },
@@ -96,9 +101,21 @@ describe('Directive: yt-player', function () {
         expect($scope.player.API.ready).toBeTruthy();
     });
 
-    it('should init player and set special params if TV mode', function() {
+    it('should init player and seek to defined time if given', function() {
         var args;
         $compile('<yt-player></yt-player>')($scope);
+        spyOn($window.YT, 'Player').and.callThrough();
+        $scope.video = { id: 'video-id', startAt: 33 };
+        $window.onYouTubeIframeAPIReady();
+        $rootScope.$digest();
+        args = $window.YT.Player.calls.argsFor(0)[1];
+        args.events.onReady();
+        expect(test.seekTo).toEqual(33);
+    });
+
+    it('should init player and set special params if TV mode', function() {
+        var args;
+        var element = $compile('<yt-player></yt-player>')($scope);
         spyOn($window.YT, 'Player');
         spyOn(appMode, 'isTV').and.returnValue(true);
         $scope.video = { id: 'video-id' };
@@ -106,8 +123,6 @@ describe('Directive: yt-player', function () {
         $rootScope.$digest();
         args = $window.YT.Player.calls.argsFor(0)[1];
         expect(args.playerVars.controls).toBe(0);
-        expect(args.height).toBe('1080');
-        expect(args.width).toBe('1920');
     });
 
     describe('after initialization', function () {
@@ -142,12 +157,6 @@ describe('Directive: yt-player', function () {
             angular.element($window).triggerHandler({type: 'message', data: '{"event":"initialDelivery","info":{"duration":"111"}}'});
             expect($scope.player.info.duration).toEqual('111');
         });
-        
-        xit('should react on initialDelivery event and set seek to time if specified', function() {
-            $scope.video.startAt = 33;
-            angular.element($window).triggerHandler({type: 'message', data: '{"event":"initialDelivery","info":{}}'});
-            expect(test.seekTo).toEqual(33);
-        });
 
         it('should react on infoDelivery event with playerState and set playing state', function() {
             angular.element($window).triggerHandler({type: 'message', data: '{"event":"infoDelivery","info":{"playerState":"2"}}'});
@@ -159,18 +168,6 @@ describe('Directive: yt-player', function () {
             angular.element($window).triggerHandler({type: 'message', data: '{"event":"infoDelivery","info":{"currentTime":"55"}}'});
             expect($scope.video.actTime).toEqual(55);
             expect($scope.player.info.percentage).toBeCloseTo(50);
-        });
-
-        it('should react on infoDelivery event with playbackQuality and set force resolution on TV if different', function() {
-            spyOn(appMode, 'isTV').and.returnValue(true);
-            angular.element($window).triggerHandler({type: 'message', data: '{"event":"infoDelivery","info":{"playbackQuality":"hd1280"}}'});
-            expect(test.setPlaybackQuality).toEqual('hd333');
-        });
-        
-        it('should react on infoDelivery event with playbackQuality and not force resolution on TV if the same', function() {
-            spyOn(appMode, 'isTV').and.returnValue(true);
-            angular.element($window).triggerHandler({type: 'message', data: '{"event":"infoDelivery","info":{"playbackQuality":"hd333"}}'});
-            expect(typeof test.setPlaybackQuality).toEqual('undefined');
         });
 
         it('should react on appSendToTv sent message', function() {

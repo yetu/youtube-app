@@ -1,0 +1,70 @@
+app-key-input {
+    clear:both;
+    color: #696969;
+    display: block;
+    height: 30px;
+    list-style-type: none;
+    margin:0;
+    padding:0;
+    margin-top: 10px;
+
+    li.char,
+    li.button {
+        float:left;
+        width: 50px;
+        height: 50px;
+        text-align: center;
+        font-size: 29px;
+        padding-top: 3px;
+
+        &[activated="true"] {
+            background: #696969;
+            color: #fff;
+        }
+    }
+
+    li.char.c-space {
+        background-image: url(../img/space.svg);
+        background-repeat: no-repeat;
+        background-position: 50% 100%;
+        width: 50px;
+        &[activated="true"] {
+            background-image: url(../img/space_activated.svg);
+        }
+        span {
+            display: none;
+        }
+    }
+
+    li.button {
+        &.switch {
+            float: right;
+            background-repeat: no-repeat;
+            background-position: 50% 50%;
+            width: 50px;
+            &.numbers {
+                background-image: url('../img/123.svg');
+                &[activated="true"] {
+                    background-image: url('../img/123_activated.svg');
+                }
+            }
+            &.letters {
+                background-image: url('../img/abc.svg');
+                &[activated="true"] {
+                    background-image: url('../img/abc_activated.svg');
+                }
+            }
+        }
+
+        &.del {
+            background-image: url(../img/backspace.svg);
+            background-repeat: no-repeat;
+            background-position: 40% 50%;
+            width: 50px;
+            margin-left: 10px;
+            &[activated="true"] {
+                background-image: url('../img/backspace_activated.svg');
+            }
+        }
+    }
+}

@@ -2,7 +2,7 @@
   <div ng-repeat="videoList in resultLists" class="result">
     <h2 class="list-title {{ videoList.type }}">{{ videoList.title }}</h2>
     <ui-video-list class="{{ ::(class || 'ui-video-list') }} {{ ::displayType }} {{ ::videoList.type }} clearfix" ng-model="videoList" 
-        play-link="{{ ::playLink }}" display="{{ ::displayType }}" service="ytYoutubeService" load-more="button">
+        play-link="{{ ::playLink }}" display="{{ ::displayType }}" control="{{ ::controlType }}" service="ytYoutubeService" load-more="button">
     </ui-video-list>
   </div>
 </div>

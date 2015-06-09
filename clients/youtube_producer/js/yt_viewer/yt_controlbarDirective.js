@@ -1,4 +1,4 @@
-module.exports = function ($timeout, ytPlayerConfig, appRemoteControlService) {
+module.exports = function ($timeout, $window, $location, ytPlayerConfig, appRemoteControlService) {
     'use strict';
     return {
         restrict: 'E',
@@ -22,6 +22,14 @@ module.exports = function ($timeout, ytPlayerConfig, appRemoteControlService) {
                     }
                     case 'down': {
                         scope.isVisible = !scope.isVisible;
+                        break;
+                    }
+                    case 'quit': {
+                        if($window.history.length > 2) {
+                            window.history.back();
+                        } else {
+                            $location.path('/');
+                        }
                         break;
                     }
                 }

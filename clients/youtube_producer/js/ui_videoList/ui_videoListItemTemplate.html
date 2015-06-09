@@ -1,5 +1,5 @@
 <div class="img">
-    <a ng-if="::playLink" class="playimg" ng-href="#/view/expand/{{::item.type}}/{{::item.id}}"> <!-- TODO: replace href with {{ playLink | replaceParams }} -->
+    <a ng-if="::playLink" class="playimg" ng-href="#/view/{{::(controlType == 'tv' ? 'fullscreen' : 'expand') }}/{{::item.type}}/{{::item.id}}"> <!-- TODO: replace href with {{ playLink | replaceParams }} -->
         <ui-video-list-play-arrow></ui-video-list-play-arrow>
         <img ng-if="::item.img" ng-src="{{::item.img}}"/>
     </a>
@@ -12,7 +12,7 @@
     <div ng-if="::(item.type == 'playlist')" class="items"><ui-video-list-playlist-icon></ui-video-list-playlist-icon><span>{{ ::item.totalItems }}</span></div>
 </div>
 <div class="metadata">
-    <a class="title" ng-if="::playLink" class="playimg" ng-href="#/view/expand/{{::item.type}}/{{::item.id}}"> <!-- TODO: replace href with {{ playLink | replaceParams }} -->
+    <a class="title" ng-if="::playLink" class="playimg" ng-href="#/view/{{::(controlType == 'tv' ? 'fullscreen' : 'expand') }}/{{::item.type}}/{{::item.id}}"> <!-- TODO: replace href with {{ playLink | replaceParams }} -->
         {{::item.title | limitTo : 50 }}<span ng-show="item.title.length >= 50">...</span>
     </a>
     <a class="title" ng-if="::playFn" class="playimg">
