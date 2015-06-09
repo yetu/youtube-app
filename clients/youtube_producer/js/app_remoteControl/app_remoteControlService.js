@@ -82,7 +82,9 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
 
     var activate = function(name) {
         if(registered[name]) {
-            registered[active]('deactivate');
+            if(name !== active) {
+                registered[active]('deactivate');
+            }
             active = name;
             registered[name]('activate');
         } else {
@@ -94,8 +96,13 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
         var idx = config.order.indexOf(name);
         if(idx - 1 >= 0) {
             activate(config.order[idx - 1]);
-        } else {
-            activate(config.order[config.order.length - 1]);
+        }
+    };
+
+    var findNext = function(name) {
+        var idx = config.order.indexOf(name);
+        if(idx + 1 < config.order.length) {
+            activate(config.order[idx + 1]);
         }
     };
 
@@ -110,6 +117,11 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
             case 'up':
             case 'left': {
                 activate(findPrev(name));
+                break;
+            }
+            case 'down':
+            case 'right': {
+                activate(findNext(name));
                 break;
             }
 
