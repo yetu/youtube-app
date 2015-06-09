@@ -22,7 +22,16 @@ transform-origin()
  
 user-select()
 	vendor('user-select', arguments)
- 
+        
+clearfix()
+    zoom 1
+    &:after
+    &:before
+        content ""
+        display table
+    &:after
+        clear both
+        
 background-linear-gradient(startPoint, startColor, startInterval, endColor, endInterval, deprecatedWebkitStartPoint = false, deprecatedWebkitEndPoint = false)
 	background-color startColor
 	if deprecatedWebkitStartPoint && deprecatedWebkitEndPoint

@@ -35,6 +35,11 @@
             {id: 10, name: 'Music'},
             {id: 17, name: 'Sports'}
         ];
+        // for having possibility to add national chars
+        config.input = {
+            letters: 'a b c d e f g h i j k l m n o p q r s t u v w x y z space',
+            numbers: '1 2 3 4 5 6 7 8 9 0 ! ? - * # &'
+        };
         </script>
         <!--<link rel="stylesheet" href="css/app.css"/>-->
     </head>
@@ -45,7 +50,8 @@
         <![endif]-->
         
         <div class="container">
-            <app-search class="app-search" placeholder="Search YouTube" value="{{ searchValue }}" trigger-search="button,enter"></app-search>
+            <app-search class="app-search" placeholder="Search YouTube" ng-model="searchValue" trigger-search="button,enter" allow-repeat="true"
+                key-input="true" remote-control="search"></app-search>
             <div ng-view></div>
         </div>
         <yt-auth ng-if="authEnabled" class="ng-hide"></yt-auth>

@@ -12,6 +12,25 @@
   font-weight: normal;
   font-style: normal;
 }
+zoom 1,
+:after,
+:before,
+content "",
+display table,
+clear both,
+background-linear-gradient(startPoint,
+startColor,
+startInterval,
+endColor,
+endInterval,
+deprecatedWebkitStartPoint = false,
+deprecatedWebkitEndPoint = false) {
+  background-color: startColor;
+  background-image: -webkit-gradient(linear, deprecatedWebkitStartPoint, deprecatedWebkitEndPoint, color-stop(startInterval, startColor), color-stop(endInterval, endColor));
+  background-image: -webkit-linear-gradient(startPoint, startColor startInterval, endColor endInterval);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(startPoint), color-stop(startInterval, startColor), color-stop(endInterval, endColor));
+  background-image: linear-gradient(startPoint, startColor startInterval, endColor endInterval);
+}
 html,
 body {
   padding: 0;
@@ -37,33 +56,11 @@ body {
   background: #dadada;
   color: #333;
   margin: 0 auto;
-  zoom: 1;
-}
-.container:after,
-.container:before {
-  content: "";
-  display: table;
-}
-.container:after,
-.container:before {
-  clear: both;
 }
 h2 {
   font-size: 25px;
   line-height: 200%;
   margin: 0;
-}
-.clearfix {
-  zoom: 1;
-}
-.clearfix:after,
-.clearfix:before {
-  content: "";
-  display: table;
-}
-.clearfix:after,
-.clearfix:before {
-  clear: both;
 }
 .tile-label-semi-transparent {
   opacity: 1;
@@ -144,6 +141,8 @@ h2 {
   outline: 0;
   color: #fff;
   -webkit-box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.3);
+  -ms-box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.3);
+  -o-box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.3);
   box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.3);
 }
 .ui-video-list .load-more svg {
@@ -237,17 +236,9 @@ h2 {
 .ui-video-list-item .img .items {
   background-color: #fff;
   -webkit-box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.2);
+  -ms-box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.2);
+  -o-box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.2);
   box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.2);
-  zoom: 1;
-}
-.ui-video-list-item .img .items:after,
-.ui-video-list-item .img .items:before {
-  content: "";
-  display: table;
-}
-.ui-video-list-item .img .items:after,
-.ui-video-list-item .img .items:before {
-  clear: both;
 }
 .ui-video-list-item .img .items svg {
   position: relative;
@@ -323,6 +314,8 @@ h2 {
   height: auto;
   overflow: hidden;
   -webkit-box-shadow: 7px 7px 10px 0 rgba(0,0,0,0.3);
+  -ms-box-shadow: 7px 7px 10px 0 rgba(0,0,0,0.3);
+  -o-box-shadow: 7px 7px 10px 0 rgba(0,0,0,0.3);
   box-shadow: 7px 7px 10px 0 rgba(0,0,0,0.3);
 }
 .yt-viewer h2 {
@@ -359,16 +352,6 @@ h2 {
 .yt-viewer .buttons {
   position: relative;
   margin: 15px auto 0;
-  zoom: 1;
-}
-.yt-viewer .buttons:after,
-.yt-viewer .buttons:before {
-  content: "";
-  display: table;
-}
-.yt-viewer .buttons:after,
-.yt-viewer .buttons:before {
-  clear: both;
 }
 .yt-viewer .buttons button {
   font-family: source_sans_prolight;
@@ -382,6 +365,8 @@ h2 {
   outline: 0;
   color: #fff;
   -webkit-box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.3);
+  -ms-box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.3);
+  -o-box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.3);
   box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.3);
 }
 .yt-viewer .buttons button:hover {
@@ -562,9 +547,6 @@ yt-controlbar .controlbar-overlay {
   position: absolute;
   bottom: 0;
   left: 0;
-  background-image: -webkit-linear-gradient(#fff 0%, #000 100%);
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#000));
-  background-image: linear-gradient(#fff 0%, #000 100%);
   opacity: 0.9;
   -webkit-transition: 0.5s;
   transition: 0.5s;
@@ -614,10 +596,12 @@ yt-controlbar .controlbar-overlay progress[value] {
 }
 yt-controlbar .controlbar-overlay progress[value]::-webkit-progress-bar {
   background-color: #989898;
+  -o-border-radius: 5px;
   border-radius: 5px;
 }
 yt-controlbar .controlbar-overlay progress[value]::-webkit-progress-value {
   background-color: #cdcccc;
+  -o-border-radius: 5px;
   border-radius: 5px;
   -webkit-transition: 1s;
   transition: 1s;
@@ -648,11 +632,23 @@ yt-controlbar .controlbar-overlay .title {
 .tvmode.fullscreen .yt-viewer,
 .tvmode.fullscreen .video,
 .tvmode.fullscreen .yt-player {
-  height: 1080px !important;
-  width: 1920px !important;
   position: relative;
   margin: 0 !important;
   padding: 0 !important;
+}
+.tvmode.fullscreen .container,
+.tvmode.fullscreen .yt-viewer,
+.tvmode.fullscreen .video {
+  height: 1080px !important;
+  width: 1920px !important;
+}
+.tvmode.fullscreen .yt-player {
+  -webkit-transform-origin: top left;
+  -ms-transform-origin: top left;
+  transform-origin: top left;
+/* for scalling up workaround */
+  height: 360px !important;
+  width: 640px !important;
 }
 .tvmode.fullscreen yt-controlbar {
   display: block;
@@ -695,6 +691,70 @@ button.app-send-to-tv .label_stopStreaming {
 button.app-send-to-tv:hover {
   cursor: pointer;
   background: #fff;
+}
+app-key-input {
+  clear: both;
+  color: #696969;
+  display: block;
+  height: 30px;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  margin-top: 10px;
+}
+app-key-input li.char,
+app-key-input li.button {
+  float: left;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  font-size: 29px;
+  padding-top: 3px;
+}
+app-key-input li.char[activated="true"],
+app-key-input li.button[activated="true"] {
+  background: #696969;
+  color: #fff;
+}
+app-key-input li.char.c-space {
+  background-image: url("../img/space.svg");
+  background-repeat: no-repeat;
+  background-position: 50% 100%;
+  width: 50px;
+}
+app-key-input li.char.c-space[activated="true"] {
+  background-image: url("../img/space_activated.svg");
+}
+app-key-input li.char.c-space span {
+  display: none;
+}
+app-key-input li.button.switch {
+  float: right;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  width: 50px;
+}
+app-key-input li.button.switch.numbers {
+  background-image: url("../img/123.svg");
+}
+app-key-input li.button.switch.numbers[activated="true"] {
+  background-image: url("../img/123_activated.svg");
+}
+app-key-input li.button.switch.letters {
+  background-image: url("../img/abc.svg");
+}
+app-key-input li.button.switch.letters[activated="true"] {
+  background-image: url("../img/abc_activated.svg");
+}
+app-key-input li.button.del {
+  background-image: url("../img/backspace.svg");
+  background-repeat: no-repeat;
+  background-position: 40% 50%;
+  width: 50px;
+  margin-left: 10px;
+}
+app-key-input li.button.del[activated="true"] {
+  background-image: url("../img/backspace_activated.svg");
 }
 @media (min-width: 320px) {
   .container,
@@ -1139,4 +1199,126 @@ button.app-send-to-tv:hover {
   .yt-viewer.playlist-visible .video .yt-video-description {
     width: 770px;
   }
+}
+.pcmode app-search app-key-input {
+  display: none;
+}
+.tvmode .container {
+  width: 100vw;
+  padding: 0;
+}
+.tvmode .container,
+.tvmode yt-result-set,
+.tvmode .yt-result-set,
+.tvmode .result,
+.tvmode .ui-video-list {
+  overflow-y: visible;
+}
+.tvmode .yt-result-set,
+.tvmode .app-search {
+  margin-left: 160px;
+}
+.tvmode .app-search {
+  margin-right: 160px;
+}
+.tvmode .app-search,
+.tvmode app-key-input {
+  width: auto;
+}
+.tvmode app-key-input {
+  margin-bottom: 65px;
+}
+.tvmode .yt-result-set {
+  height: 900px;
+}
+.tvmode .yt-result-set .result {
+  margin-bottom: 65px;
+}
+.tvmode .yt-result-set .list-title {
+  line-height: 100%;
+  font-size: 3.125em;
+  color: #3c3c3b;
+  margin: 0 0 40px 0 !important;
+}
+.tvmode .yt-result-set .ui-video-list {
+  min-width: 100vw;
+  height: 460px;
+  padding-bottom: 10px;
+  white-space: nowrap;
+}
+.tvmode .yt-result-set .ui-video-list-item {
+  width: 460px;
+  height: 465px;
+  padding: 0;
+  margin: 0 10px 0 0 !important; /* lazy but memory saving approach to override responsive styles ;) */
+  background-color: #f6f6f6;
+}
+.tvmode .yt-result-set .ui-video-list-item:after {
+  content: '';
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: rgba(237,237,237,0.3);
+  -webkit-transition: background-color 0.25s ease-in-out;
+  transition: background-color 0.25s ease-in-out;
+}
+.tvmode .yt-result-set .ui-video-list-item .img {
+  margin: 0;
+  height: 259px;
+}
+.tvmode .yt-result-set .ui-video-list-item .metadata {
+  height: auto;
+  margin-top: 10px;
+  padding: 0 20px;
+}
+.tvmode .yt-result-set .ui-video-list-item .metadata .title {
+  height: 60px;
+  white-space: normal;
+  font-size: 1.625em;
+  color: #3c3c3b;
+}
+.tvmode .yt-result-set .ui-video-list-item .metadata .subtitle {
+  margin: 10px 0;
+}
+.tvmode .yt-result-set .ui-video-list-item .metadata .channel,
+.tvmode .yt-result-set .ui-video-list-item .metadata .created {
+  font-size: 1.125em;
+  color: #666;
+}
+.tvmode .yt-result-set .ui-video-list-item .metadata .description {
+  margin: 0;
+  height: auto;
+  width: auto;
+  white-space: normal;
+  font-size: 1.125em;
+  color: #3c3c3b;
+}
+.tvmode .yt-result-set .ui-video-list-item .duration,
+.tvmode .yt-result-set .ui-video-list-item svg {
+  display: none;
+}
+.tvmode .ui-video-list-item[activated="true"] {
+  -webkit-transform-origin: center center;
+  -ms-transform-origin: center center;
+  transform-origin: center center;
+  -webkit-transform: scale(1.025);
+  -ms-transform: scale(1.025);
+  transform: scale(1.025);
+  -webkit-box-shadow: 7px 7px 10px 0 rgba(0,0,0,0.3);
+  -ms-box-shadow: 7px 7px 10px 0 rgba(0,0,0,0.3);
+  -o-box-shadow: 7px 7px 10px 0 rgba(0,0,0,0.3);
+  box-shadow: 7px 7px 10px 0 rgba(0,0,0,0.3);
+  z-index: 10;
+}
+.tvmode .ui-video-list-item[activated="true"]:after {
+  background-color: rgba(237,237,237,0);
+  -webkit-transition: background-color 0.25s ease-in-out;
+  transition: background-color 0.25s ease-in-out;
+}
+.tvmode .activated button.search path,
+.tvmode *[activated="true"] button.search path {
+  fill: #fff;
 }
