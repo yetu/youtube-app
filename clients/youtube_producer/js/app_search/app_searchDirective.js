@@ -1,22 +1,25 @@
 /* global module */
 /*
- * <app-search placeholder="" value="" trigger-search="enter,button,auto" auto-delay="" allow-repeat="" on-search="" on-reset=""></app-search>
+ * <app-search placeholder="" ng-model="" value="" trigger-search="enter,button,auto" auto-delay="" allow-repeat="" on-search="" on-reset="" 
+ *             key-input="" remote-control=""></app-search>
  *
  * @attr placeholder string Placeholder text
+ * @attr ng-model string Scope variable to be used as model
  * @attr value string Predefined value
  * @attr trigger-search string Comma separated triggers for searching start: enter - by Enter key, button - search button, auto - automatically started on typing
  * @attr auto-delay integer Triggering search after X ms of change (0 for disable) - for auto trigger
  * @attr allow-repeat boolean Allow repeatition of the same value if not changed (for example on enter and button)
  * @attr on-search string|fn Search event name (default 'app:search-value') or callback function
  * @attr on-reset string|fn Reset search event name (default 'app:search-reset') or callback function
- * @attr key-input boolean
+ * @attr remote-control string Element name to be registered within remote control service
+ * @attr key-input boolean [optional] Indicates if app-input directive has to be added
  */
 module.exports = function (appRemoteControlService) {
     return {
         restrict: 'E',
         template: require('./app_searchTemplate.html'),
         scope: {
-            searchValue: '=ngModel',
+            searchValue: '=?ngModel',
             placeholder: '@placeholder',
             keyInput: '@?'
         },
@@ -84,6 +87,11 @@ module.exports = function (appRemoteControlService) {
                         element.attr('activated', false);
                         break;
                     }
+                    case 'up':
+                    case 'down': {
+                        appRemoteControlService.deactivate(attr.remoteControl);
+                        break;
+                    }
                     case 'enter': {
                         var el = angular.element(element.find('button')[0]);
                         el.triggerHandler('click');
@@ -92,13 +100,13 @@ module.exports = function (appRemoteControlService) {
                 }
             };
             
-            if(attr.remote) {
-                appRemoteControlService.register(attr.remote, remoteControl);
+            if(attr.remoteControl) {
+                appRemoteControlService.register(attr.remoteControl, remoteControl);
             }
 
             scope.$on('$destroy', function() {
-                if(attr.remote) {
-                    appRemoteControlService.deregister(attr.remote, remoteControl);
+                if(attr.remoteControl) {
+                    appRemoteControlService.deregister(attr.remoteControl, remoteControl);
                 }
                 _unbinder.forEach(function(unbind) {
                   unbind();
