@@ -1,14 +1,15 @@
 'use strict';
 
 describe('Directive: app_search', function () {
-    var $compile, scope, $timeout;
-
+    var $compile, scope, $timeout, $window;
     beforeEach(module('youtubeApp'));
 
-    beforeEach(inject(function(_$compile_, $rootScope, _$timeout_){
+    beforeEach(inject(function(_$compile_, $rootScope, _$timeout_, _$window_){
         $compile = _$compile_;
         scope = $rootScope.$new();
         $timeout = _$timeout_;
+        $window = _$window_;
+        $window.config.input = {};
     }));
 
     afterEach(function() {

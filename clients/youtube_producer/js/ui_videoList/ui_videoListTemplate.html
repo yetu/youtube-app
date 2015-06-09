@@ -1,6 +1,9 @@
 <ui-video-list-item class="ui-video-list-item" ng-repeat="item in videoList.items" ng-click="playFn ? playFunction($index) : null"></ui-video-list-item>
 <div class="clearfix">
-    <button class="load-more"  ng-if="::(loadMore == 'button' && videoList.items.length > 0)" ng-click="loadNext()">{{ ::('Load more videos' | translate) }}<ui-video-list-play-arrow class="arrow-svg"></ui-video-list-play-arrow></button>
+    <button class="load-more" ng-if="::(loadMore == 'button' && videoList.items.length > 0)" ng-click="loadNext()">
+        {{ ::('Load more videos' | translate) }}
+        <ui-video-list-play-arrow class="arrow-svg"></ui-video-list-play-arrow>
+    </button>
 </div>
 
 <div class="spinner" ng-class="{ loading: loadingMore }">Loading...</div>

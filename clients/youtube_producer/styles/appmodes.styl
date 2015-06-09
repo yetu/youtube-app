@@ -6,10 +6,48 @@
 }
 
 .tvmode {
-    .activated, *[activated="true"] {
-        border: solid red 1px;
+    .yt-result-set {
+        height: 900px;
+        overflow-y: hidden;
+        overflow-x: hidden;
+
+        .result {
+            &:first-of-type {
+                margin-top: 80px;
+            }
+            &:last-of-type {
+                margin-bottom: 250px;
+            }
+        }
+        ui-video-list-item {
+            width: 365px;
+            height: 360px;
+
+            &:nth-child(6n+1) {
+                margin-left: 20px;
+            }
+
+            &:nth-child(4n+1) {
+                margin-left: 0;
+            }
+
+            .img {
+                height: 194px;
+            }
+        }
     }
 
+    ui-video-list-item[activated="true"] {
+        transform-origin: left top;
+        transform: scale(1.1);
+        box-shadow: 7px 7px 10px 0 rgba(0,0,0,0.3);
+        z-index: 10;
+        top: -15px;
+        left: -15px;
+    }
+}
+
+.tvmode {
     .activated, *[activated="true"] {
         button.search path {
             fill: #fff;

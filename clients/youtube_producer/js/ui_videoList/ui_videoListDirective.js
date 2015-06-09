@@ -13,7 +13,7 @@
  * @attr play-fn string Function name to open video - should be defined in scope and accept list index param ($index of ng-repeat is used).
  *                      Note: if play-fn is defined the whole item element is bind to click handler
  */
-module.exports = function ($window) {
+module.exports = function ($window, $timeout) {
     return {
         restrict: 'E',
         template: require('./ui_videoListTemplate.html'),
@@ -32,7 +32,7 @@ module.exports = function ($window) {
                 myService = $injector.get($attrs.service);
             }
 
-            $scope.loadNext = function() {
+            $scope.loadNext = function(callback) {
                 if(!$scope.videoList || !$scope.videoList.etag || !$scope.videoList.next || $scope.loadingMore) {
                     return;
                 }
@@ -44,6 +44,9 @@ module.exports = function ($window) {
                         var temparray = $scope.videoList.items;
                         $scope.videoList.items = temparray.concat(moreVideos.items);
                         $scope.videoList.next = moreVideos.next;
+                        if(callback) {
+                            $timeout(callback); // after compilation
+                        }
                     })
                     .finally(function() {
                         $scope.loadingMore = false;
