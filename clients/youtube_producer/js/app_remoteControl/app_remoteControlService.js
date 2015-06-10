@@ -9,6 +9,7 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
         active,
         config,
         last,
+        initialized = false,
         controller = { name: null, callback: null};
 
     var init = function() {
@@ -31,6 +32,9 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
                 document.body.focus();
             });
             document.body.focus();
+            // activate first element
+            activate(active);
+            initialized = true;
         }
     };
 
@@ -70,7 +74,7 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
     var register = function(name, callback) {
         // console.debug('appRemoteControlService.register', name);
         registered[name] = callback;
-        if(active === name) {
+        if(active === name && initialized) {
             // activate configured element after registration
             activate(name);
         }
