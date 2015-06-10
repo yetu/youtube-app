@@ -94,7 +94,7 @@ module.exports = angular.module('_controllers', [])
 /*
  * Viewer controller
  */
-module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $routeParams, $window, $location, appRemoteControlService, Notification) {
+module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $routeParams, $location, appRemoteControlService, Notification) {
 
     ytYoutubeService.getDetails($routeParams.type, $routeParams.id).then(function(data) {
         if($routeParams.time) {
@@ -112,11 +112,13 @@ module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $route
         $location.path(action);
     });
 
-    appRemoteControlService.setController('viewer', function(action, name) {
-        if(action === 'back' && name === 'player' && $routeParams.mode === 'fullscreen') {
-            var url = ['/view', 'normal', $routeParams.type, $routeParams.id].join('/');
+    appRemoteControlService.setController('viewer-' + $routeParams.mode, function(action, name) {
+        if(action === 'quit' && name === 'player' && $routeParams.mode === 'fullscreen') {
+            var url = '/dashboard';
+            if($rootScope.searchValue) {
+                url += '/search/' + $rootScope.searchValue;
+            }
             $location.path(url);
-            //$window.location.reload();
         }
     });
 
@@ -465,7 +467,7 @@ module.exports = angular.module('app_mode', [])
 /**
  * Configuration for remote control service. It contains:
  * - keys: key binding for simulating remote controls with keyboard
- * - controllers: controller actions configuration, which can contain:
+ * - controllers: controller actions configuration (key as name used by setController method), which can contain:
  *      - order: order of modules used for navigation between them
  *      - special: special action to be executed if particular key is pressed, can be:
  *              - activate: activation of other module
@@ -496,16 +498,26 @@ module.exports = ({
                 quit: {}
             }
         },
-        viewer: {
+
+        // viewer has different controls based on display type
+        'viewer-fullscreen': {
             order: ['search', 'player', 'playlist'],
             first: 1,
             passthrough: {
                 player: 'controlbar'
-            },
-            special: {
-                menu: {activate: 'search'},
-                quit: {}
             }
+        },
+        'viewer-expand': {
+            order: ['search', 'playlist'],
+            first: 1
+        },
+        'viewer-normal': {
+            order: ['search', 'playlist'],
+            first: 1
+        },
+        'viewer-undefined': {
+            order: ['search', 'playlist'],
+            first: 1
         }
     }
 });
@@ -621,9 +633,9 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
     var deactivate = function(name) {
         // console.debug('appRemoteControlService.deactivate', name);
         switch(last) {
-            case 'back': {
+            case 'quit': {
                 active = null;
-                controller.callback('back', name);
+                controller.callback(last, name);
                 break;
             }
             case 'up':
@@ -1046,7 +1058,7 @@ module.exports = function () {
 module.exports = "<svg version=\"1.1\" id=\"playlist-icon\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\r\n\t viewBox=\"0 0 22 14.9\" enable-background=\"new 0 0 22 14.9\" xml:space=\"preserve\">\r\n<g>\r\n\t<rect x=\"0.6\" y=\"0.7\" fill=\"#FFFFFF\" stroke=\"#000000\" stroke-miterlimit=\"10\" width=\"17\" height=\"9.6\"/>\r\n\t<rect x=\"2.4\" y=\"2.6\" fill=\"#FFFFFF\" stroke=\"#000000\" stroke-miterlimit=\"10\" width=\"17\" height=\"9.6\"/>\r\n\t<rect x=\"4.3\" y=\"4.6\" fill=\"#FFFFFF\" stroke=\"#000000\" stroke-miterlimit=\"10\" width=\"17\" height=\"9.6\"/>\r\n</g>\r\n</svg>";
 
 },{}],37:[function(require,module,exports){
-module.exports = "<ui-video-list-item class=\"ui-video-list-item\" ng-repeat=\"item in videoList.items\" ng-click=\"playFn ? playFunction($index) : null\"></ui-video-list-item>\r\n<div class=\"clearfix\">\r\n    <button class=\"load-more\" ng-if=\"::(loadMore == 'button' && videoList.items.length > 0)\" ng-click=\"loadNext()\">\r\n        {{ ::('Load more videos' | translate) }}\r\n        <ui-video-list-play-arrow class=\"arrow-svg\"></ui-video-list-play-arrow>\r\n    </button>\r\n</div>\r\n\r\n<div class=\"spinner\" ng-class=\"{ loading: loadingMore }\">Loading...</div>\r\n<div ng-if=\"videoList.items.length == 0\">\r\n    {{ ::('No results found' | translate) }}\r\n</div>\r\n";
+module.exports = "<ui-video-list-item class=\"ui-video-list-item\" ng-repeat=\"item in videoList.items\" ng-click=\"playFn ? playFunction($index) : null\"></ui-video-list-item>\r\n<div class=\"load-more-wrap clearfix\">\r\n    <button class=\"load-more\" ng-if=\"::(loadMore == 'button' && videoList.items.length > 0)\" ng-click=\"loadNext()\">\r\n        {{ ::('Load more videos' | translate) }}\r\n        <ui-video-list-play-arrow class=\"arrow-svg\"></ui-video-list-play-arrow>\r\n    </button>\r\n</div>\r\n\r\n<div class=\"spinner\" ng-class=\"{ loading: loadingMore }\">Loading...</div>\r\n<div ng-if=\"videoList.items.length == 0\">\r\n    {{ ::('No results found' | translate) }}\r\n</div>\r\n";
 
 },{}],38:[function(require,module,exports){
 module.exports = "<yt-viewer video-model=\"video\" playlist-model=\"playlist\"></yt-viewer>\r\n";
@@ -1134,25 +1146,31 @@ module.exports = function (appRemoteControlService, $location) {
 		},
 		link: function(scope, element, attr){
             var _unbinder = [],
-                items, current, $current, lists, loadNext,
+                items, current, $current, lists, loadNext, row, elementDistance,
                 activate = function(act) {
+                    // deactivate old
                     if(items[current]) {
                         angular.element(items[current]).attr('activated', false);
+                        if(lists.length > 1) {
+                            row = angular.element(items[current].parentNode).attr('row');
+                            angular.element(items[current].parentNode.parentNode.parentNode).removeClass('row-' + row + '-activated');
+                        }
                     }
+                    // activate new
                     current = act;
                     if(current !== null) {
                         var parent = items[current].parentNode,
-                            container = parent.parentNode.parentNode,
-                            offset;
-                        
+                            $parent = angular.element(parent),
+                            $container = angular.element(parent.parentNode.parentNode);
+
                         $current = angular.element(items[current]).attr('activated', true);
 
                         if(lists.length > 1) {
-                            offset = parent.offsetTop - 250;
+                            row = $parent.attr('row');
+                            $container.addClass('row-' + row + '-activated');
                         } else {
-                            offset = items[current].offsetTop - 120;
+                            $container.css({transform: 'translate(-' + (current * elementDistance.x) + 'px, 0px)'}); // TODO: evantually add control of Y
                         }
-                        container.scrollTop = offset; // TODO: animation on scroll?
                     }
                 };
 
@@ -1165,6 +1183,10 @@ module.exports = function (appRemoteControlService, $location) {
                         element.attr('activated', true);
                         lists = element.find('ui-video-list');
                         items = element.find('ui-video-list-item');
+                        elementDistance = {
+                            x: items[1] && items[0] ? items[1].offsetLeft - items[0].offsetLeft : 0,
+                            y: items[1] && items[0] ? items[1].offsetTop - items[0].offsetTop : 0
+                        };
                         activate(0);
                         break;
                     }
@@ -1237,7 +1259,7 @@ module.exports = function (appRemoteControlService, $location) {
 	};
 };
 },{"./yt_resultSetTemplate.html":43}],43:[function(require,module,exports){
-module.exports = "<div class=\"{{ class || 'yt-result-set' }}\">\r\n  <div ng-repeat=\"videoList in resultLists\" class=\"result\">\r\n    <h2 class=\"list-title {{ videoList.type }}\">{{ videoList.title }}</h2>\r\n    <ui-video-list class=\"{{ ::(class || 'ui-video-list') }} {{ ::displayType }} {{ ::videoList.type }} clearfix\" ng-model=\"videoList\" \r\n        play-link=\"{{ ::playLink }}\" display=\"{{ ::displayType }}\" control=\"{{ ::controlType }}\" service=\"ytYoutubeService\" load-more=\"button\">\r\n    </ui-video-list>\r\n  </div>\r\n</div>\r\n";
+module.exports = "<div class=\"{{ class || 'yt-result-set' }}\">\r\n  <div ng-repeat=\"videoList in resultLists\" class=\"result\">\r\n    <h2 class=\"list-title {{ videoList.type }}\">{{ videoList.title }}</h2>\r\n    <ui-video-list row=\"{{ $index + 1 }}\" class=\"{{ ::(class || 'ui-video-list') }} {{ ::displayType }} {{ ::videoList.type }} clearfix\" ng-model=\"videoList\"\r\n        play-link=\"{{ ::playLink }}\" display=\"{{ ::displayType }}\" control=\"{{ ::controlType }}\" service=\"ytYoutubeService\" load-more=\"button\">\r\n    </ui-video-list>\r\n  </div>\r\n</div>\r\n";
 
 },{}],44:[function(require,module,exports){
 module.exports = angular.module('yt_search', ['ngResource', 'yaru22.angular-timeago'])
@@ -1653,14 +1675,6 @@ module.exports = function ($timeout, $window, $location, ytPlayerConfig, appRemo
                         scope.isVisible = !scope.isVisible;
                         break;
                     }
-                    case 'quit': {
-                        if($window.history.length > 2) {
-                            window.history.back();
-                        } else {
-                            $location.path('/');
-                        }
-                        break;
-                    }
                 }
                 if (!scope.$$phase) {
                     scope.$apply();
@@ -1843,9 +1857,9 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
                         player.seekTo(position, true);
                         break;
                     }
-                    case 'back': {
+                    case 'quit': {
                         player.pauseVideo();
-                        appRemoteControlService.deactivate('player'); // just concept example
+                        appRemoteControlService.deactivate('player');
                         break;
                     }
                 }
@@ -1921,7 +1935,7 @@ module.exports = function () {
 	};
 };
 },{"./yt_videoDescriptionTemplate.html":56}],56:[function(require,module,exports){
-module.exports = "<div class=\"yt-video-description\">\r\n    <div class=\"text\">\r\n        <span ng-show=\"!expanded\">{{ ::(video.description | limitTo : 300) }}</span><!-- TODO: trust as html and | nl2br filter? -->\r\n        <span ng-show=\"!expanded\" ng-if=\"::(video.description.length > 300)\" ng-click=\"expanded = true\">...</span>\r\n        <span ng-show=\"expanded\">{{ ::video.description }}</span>\r\n    </div>\r\n    <div class=\"metadata\">\r\n        <div class=\"row\">{{ ::('From' | translate) }}: {{ video.channel }}</div>\r\n        <div>{{ ::('Added' | translate) }}: {{ video.created | date }}</div>\r\n        <div class=\"row\">{{ ::('Category' | translate) }}: {{ video.category }}</div>\r\n        <div>{{ ::('Views' | translate) }}: {{ video.views }}</div>\r\n    </div>\r\n</div>";
+module.exports = "<div class=\"yt-video-description\">\r\n    <div class=\"text\">\r\n        <span ng-show=\"!expanded\">{{ video.description | limitTo : 300 }}</span><!-- TODO: trust as html and | nl2br filter? -->\r\n        <span ng-show=\"!expanded\" ng-if=\"video.description.length > 300\" ng-click=\"expanded = true\">...</span>\r\n        <span ng-show=\"expanded\">{{ video.description }}</span>\r\n    </div>\r\n    <div class=\"metadata\">\r\n        <div class=\"row\">{{ ::('From' | translate) }}: {{ video.channel }}</div>\r\n        <div>{{ ::('Added' | translate) }}: {{ video.created | date }}</div>\r\n        <div class=\"row\">{{ ::('Category' | translate) }}: {{ video.category }}</div>\r\n        <div>{{ ::('Views' | translate) }}: {{ video.views }}</div>\r\n    </div>\r\n</div>";
 
 },{}],57:[function(require,module,exports){
 

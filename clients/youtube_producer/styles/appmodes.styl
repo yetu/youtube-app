@@ -16,15 +16,20 @@
         overflow-y: visible;
     }
     
-    .yt-result-set,
-    .app-search {
+    .app-search,
+    .yt-result-set {
         margin-left: 160px;
     }
     
     .app-search {
+        z-index: 100;
+        width: 1490px !important;
         margin-right: 160px;
-    }
+        .query {
+            width: 100%;
+        }
     
+    }
     .app-search,
     app-key-input {
         width: auto;
@@ -32,15 +37,39 @@
     
     app-key-input {
         margin-bottom: 65px;
+        
+        li {
+            display: table;
+            padding:0;
+            span {
+                display: table-cell;
+                vertical-align: middle;
+            }
+        }
     }
     
     .yt-result-set {
-        height: 900px;
-        
+        transition: transform 0.5s ease-in-out;
         .result {
             margin-bottom: 65px;
         }
         
+        &.row-1-activated {
+            transform: translateY(0);
+        }
+        
+        &.row-2-activated {
+            transform: translateY(-620px);
+        }
+        
+        &.row-3-activated {
+            transform: translateY(-1240px);
+        }
+        
+        &.row-4-activated {
+            transform: translateY(-1860px);
+            
+        }
 
         .list-title {
             line-height: 100%;
@@ -50,10 +79,14 @@
         }
             
         .ui-video-list {
-            min-width: 100vw;
+            width: auto;
             height: 460px;
             padding-bottom: 10px;
-            white-space: nowrap;
+            display: -webkit-inline-box;
+            display: inline-flex;
+            .load-more-wrap {
+                display: none;
+            }
         }
         
         .ui-video-list-item {
@@ -62,7 +95,7 @@
             padding: 0;
             margin: 0 10px 0 0 !important; /* lazy but memory saving approach to override responsive styles ;) */
             background-color: bg-video-list-item-tv;
-            
+            transition: transform 0.25s ease-in-out;
             &:after {
                 content: '';
                 position: absolute;
@@ -73,6 +106,19 @@
                 left: 0;
                 background-color: rgba(237,237,237,0.3);
                 transition: background-color 0.25s ease-in-out;
+            }
+            
+            &[activated="true"] {
+                transform-origin: center center;
+                transform: scale(1.025);
+                box-shadow: 7px 7px 10px 0 rgba(0,0,0,0.3);
+                z-index: 10;
+                transition: transform 0.25s ease-in-out;
+                transition-delay: 0.5s;
+                &:after {
+                    background-color: rgba(237,237,237,0);
+                    transition: background-color 0.25s ease-in-out;
+                }
             }
 
             .img {
@@ -112,17 +158,6 @@
             svg {
                 display: none;
             }
-        }
-    }
-
-    .ui-video-list-item[activated="true"] {
-        transform-origin: center center;
-        transform: scale(1.025);
-        box-shadow: 7px 7px 10px 0 rgba(0,0,0,0.3);
-        z-index: 10;
-        &:after {
-            background-color: rgba(237,237,237,0);
-            transition: background-color 0.25s ease-in-out;
         }
     }
 }
