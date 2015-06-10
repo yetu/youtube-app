@@ -13,11 +13,12 @@ module.exports = function ($timeout, appMode) {
 		link: function(scope, element){
 
             scope.playVideo = function(index) {
+                var list = scope.playlist[0] || scope.playlist;
                 // check if exists and is contains video id (dummy unavailable list handling)
-                if(scope.playlist.items[index] && scope.playlist.items[index].id) {
-                    scope.activatePlaylistItem(index, scope.playlist.currentPlaying);
-                    scope.playlist.currentPlaying = index;
-                    scope.video = scope.playlist.items[index];
+                if(list.items[index] && list.items[index].id) {
+                    scope.activatePlaylistItem(index, list.currentPlaying);
+                    list.currentPlaying = index;
+                    scope.video = list.items[index];
                 }
             };
 
@@ -30,7 +31,7 @@ module.exports = function ($timeout, appMode) {
                     angular.element(items[curr]).addClass('playing');
                 }
             };
-            
+
             scope.$watch('playlist', function(n) {
                 if(n) {
                     // activate (styling) first playlist item after rendering

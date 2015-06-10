@@ -9,8 +9,8 @@ module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $route
             data.video.startAt = $routeParams.time.replace(/&.+/, ''); // TODO: do it with $routeProvider?
         }
         $scope.video = data.video;
-        $scope.playlist = data.playlist;
-        $scope.playlist.currentPlaying = 0;
+        data.playlist.currentPlaying = 0;
+        $scope.playlist = [data.playlist];
     }, function(error) {
         // TODO: error handling
     });

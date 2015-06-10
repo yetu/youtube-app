@@ -41,7 +41,7 @@ describe('viewerController function', function() {
         expect(ytYoutubeService.getDetails).toHaveBeenCalled();
         expect(scope.video).toEqual(['video 1']);
         expect(scope.video.startAt).toBeUndefined();
-        expect(scope.playlist).toEqual(['playlist']);
+        expect(scope.playlist).toEqual([['playlist']]);
     });
 
     it('should show the details with given start time', function() {
@@ -52,7 +52,7 @@ describe('viewerController function', function() {
         expect(ytYoutubeService.getDetails).toHaveBeenCalled();
         expect(scope.video).toEqual(['video 1']);
         expect(scope.video.startAt).toBe('03:15');
-        expect(scope.playlist).toEqual(['playlist']);
+        expect(scope.playlist).toEqual([['playlist']]);
     });
 
     it('should redirect to dashboard with search results when triggered by the app search event', function() {

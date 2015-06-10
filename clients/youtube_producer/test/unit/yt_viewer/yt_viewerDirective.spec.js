@@ -41,17 +41,17 @@ describe('Directive: yt-viewer', function () {
 
     it('should change currentPlaying in scope on playVideo function', function() {
         $scope.vid = { id: 'video-1' };
-        $scope.ply = { items: [{ id: 'video-1' }, { id: 'video-2' }] };
+        $scope.ply = [{ items: [{ id: 'video-1' }, { id: 'video-2' }] }];
         var element = $compile('<yt-viewer video-model="vid" playlist-model="ply"></yt-viewer>')($scope),
             isolatedScope = element.isolateScope();
         $scope.$digest();
-        expect(isolatedScope.playlist.currentPlaying).toBeUndefined();
+        expect(isolatedScope.playlist[0].currentPlaying).toBeUndefined();
         isolatedScope.playVideo(1);
-        expect(isolatedScope.playlist.currentPlaying).toBe(1);
+        expect(isolatedScope.playlist[0].currentPlaying).toBe(1);
         expect(element.find('ui-video-list-item').eq(1).hasClass('playing')).toBeTruthy();
         expect(element.find('ui-video-list-item').eq(0).hasClass('playing')).toBeFalsy();
         isolatedScope.playVideo(0);
-        expect(isolatedScope.playlist.currentPlaying).toBe(0);
+        expect(isolatedScope.playlist[0].currentPlaying).toBe(0);
         expect(element.find('ui-video-list-item').eq(0).hasClass('playing')).toBeTruthy();
         expect(element.find('ui-video-list-item').eq(1).hasClass('playing')).toBeFalsy();
     });

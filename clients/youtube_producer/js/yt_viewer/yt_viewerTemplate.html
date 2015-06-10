@@ -1,5 +1,5 @@
 <div class="{{ class || 'yt-viewer' }}" ng-class="{ 'playlist-visible': playlistVisible }">
-    <h2 class="title">{{ video.title}} </h2>
+    <h2 class="title">{{ video.title }} </h2>
     <div class="video">
         <yt-player>
             <div ng-if="playingOnTv" class="overlay">
@@ -26,8 +26,5 @@
         </div>
         <yt-video-description></yt-video-description>
     </div>
-    <div class="playlist">
-        <h3>{{ ::(playlist.title | translate) }}</h3>
-        <ui-video-list class="ui-video-list" ng-model="playlist" display="list" play-fn="playVideo" load-more="scroll" service="ytYoutubeService"></ui-video-list>
-    </div>
+    <yt-result-set class="playlist" ng-model="playlist" display="list" play-fn="playVideo" load-more="scroll" service="ytYoutubeService" control="{{ ::appMode.get() }}" remote-control="playlist"></yt-result-set>
 </div>
