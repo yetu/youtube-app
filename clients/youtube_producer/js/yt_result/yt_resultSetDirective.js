@@ -22,25 +22,31 @@ module.exports = function (appRemoteControlService, $location) {
 		},
 		link: function(scope, element, attr){
             var _unbinder = [],
-                items, current, $current, lists, loadNext,
+                items, current, $current, lists, loadNext, row, elementDistance,
                 activate = function(act) {
+                    // deactivate old
                     if(items[current]) {
                         angular.element(items[current]).attr('activated', false);
+                        if(lists.length > 1) {
+                            row = angular.element(items[current].parentNode).attr('row');
+                            angular.element(items[current].parentNode.parentNode.parentNode).removeClass('row-' + row + '-activated');
+                        }
                     }
+                    // activate new
                     current = act;
                     if(current !== null) {
                         var parent = items[current].parentNode,
-                            container = parent.parentNode.parentNode,
-                            offset;
-                        
+                            $parent = angular.element(parent),
+                            $container = angular.element(parent.parentNode.parentNode);
+
                         $current = angular.element(items[current]).attr('activated', true);
 
                         if(lists.length > 1) {
-                            offset = parent.offsetTop - 250;
+                            row = $parent.attr('row');
+                            $container.addClass('row-' + row + '-activated');
                         } else {
-                            offset = items[current].offsetTop - 120;
+                            $container.css({transform: 'translate(-' + (current * elementDistance.x) + 'px, 0px)'}); // TODO: evantually add control of Y
                         }
-                        container.scrollTop = offset; // TODO: animation on scroll?
                     }
                 };
 
@@ -53,6 +59,10 @@ module.exports = function (appRemoteControlService, $location) {
                         element.attr('activated', true);
                         lists = element.find('ui-video-list');
                         items = element.find('ui-video-list-item');
+                        elementDistance = {
+                            x: items[1] && items[0] ? items[1].offsetLeft - items[0].offsetLeft : 0,
+                            y: items[1] && items[0] ? items[1].offsetTop - items[0].offsetTop : 0
+                        };
                         activate(0);
                         break;
                     }

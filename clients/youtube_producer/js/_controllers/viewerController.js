@@ -22,11 +22,11 @@ module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $route
 
     appRemoteControlService.setController('viewer-' + $routeParams.mode, function(action, name) {
         if(action === 'quit' && name === 'player' && $routeParams.mode === 'fullscreen') {
-            var action = '/dashboard';
+            var url = '/dashboard';
             if($rootScope.searchValue) {
-                action += '/search/' + $rootScope.searchValue;
+                url += '/search/' + $rootScope.searchValue;
             }
-            $location.path(action);
+            $location.path(url);
         }
     });
 
