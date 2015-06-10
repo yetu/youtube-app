@@ -141,9 +141,9 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
                         player.seekTo(position, true);
                         break;
                     }
-                    case 'back': {
+                    case 'quit': {
                         player.pauseVideo();
-                        appRemoteControlService.deactivate('player'); // just concept example
+                        appRemoteControlService.deactivate('player');
                         break;
                     }
                 }

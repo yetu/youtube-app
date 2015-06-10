@@ -2,7 +2,7 @@
 /*
  * Viewer controller
  */
-module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $routeParams, $window, $location, appRemoteControlService, Notification) {
+module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $routeParams, $location, appRemoteControlService, Notification) {
 
     ytYoutubeService.getDetails($routeParams.type, $routeParams.id).then(function(data) {
         if($routeParams.time) {
@@ -20,11 +20,13 @@ module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $route
         $location.path(action);
     });
 
-    appRemoteControlService.setController('viewer', function(action, name) {
-        if(action === 'back' && name === 'player' && $routeParams.mode === 'fullscreen') {
-            var url = ['/view', 'normal', $routeParams.type, $routeParams.id].join('/');
-            $location.path(url);
-            //$window.location.reload();
+    appRemoteControlService.setController('viewer-' + $routeParams.mode, function(action, name) {
+        if(action === 'quit' && name === 'player' && $routeParams.mode === 'fullscreen') {
+            var action = '/dashboard';
+            if($rootScope.searchValue) {
+                action += '/search/' + $rootScope.searchValue;
+            }
+            $location.path(action);
         }
     });
 

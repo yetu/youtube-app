@@ -24,14 +24,6 @@ module.exports = function ($timeout, $window, $location, ytPlayerConfig, appRemo
                         scope.isVisible = !scope.isVisible;
                         break;
                     }
-                    case 'quit': {
-                        if($window.history.length > 2) {
-                            window.history.back();
-                        } else {
-                            $location.path('/');
-                        }
-                        break;
-                    }
                 }
                 if (!scope.$$phase) {
                     scope.$apply();

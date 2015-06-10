@@ -3,7 +3,7 @@
 /**
  * Configuration for remote control service. It contains:
  * - keys: key binding for simulating remote controls with keyboard
- * - controllers: controller actions configuration, which can contain:
+ * - controllers: controller actions configuration (key as name used by setController method), which can contain:
  *      - order: order of modules used for navigation between them
  *      - special: special action to be executed if particular key is pressed, can be:
  *              - activate: activation of other module
@@ -34,16 +34,26 @@ module.exports = ({
                 quit: {}
             }
         },
-        viewer: {
+
+        // viewer has different controls based on display type
+        'viewer-fullscreen': {
             order: ['search', 'player', 'playlist'],
             first: 1,
             passthrough: {
                 player: 'controlbar'
-            },
-            special: {
-                menu: {activate: 'search'},
-                quit: {}
             }
+        },
+        'viewer-expand': {
+            order: ['search', 'playlist'],
+            first: 1
+        },
+        'viewer-normal': {
+            order: ['search', 'playlist'],
+            first: 1
+        },
+        'viewer-undefined': {
+            order: ['search', 'playlist'],
+            first: 1
         }
     }
 });

@@ -17,6 +17,7 @@ describe('viewerController function', function() {
 
     beforeEach(module('youtubeApp', function($provide) {
         $provide.value('$window', {location: {href: 'dummy'}});
+        $provide.value('$routeParams', {mode: 'fullscreen'});
     }));
 
     beforeEach(inject(function(_$rootScope_, _$controller_, _ytYoutubeService_, _$location_, $q, _$timeout_, _Notification_) {
@@ -33,7 +34,7 @@ describe('viewerController function', function() {
     }));
 
     it('should show the details without given start time', function() {
-        $controller('ViewerCtrl', {$scope: scope, ytYoutubeService: ytYoutubeService, $routeParams: {type: 'playlist', id: 1}});
+        $controller('ViewerCtrl', {$scope: scope, ytYoutubeService: ytYoutubeService, $routeParams: {mode: 'fullscreen', type: 'playlist', id: 1}});
         scope.$digest();
         $timeout.flush();
         $timeout.verifyNoPendingTasks();
@@ -44,7 +45,7 @@ describe('viewerController function', function() {
     });
 
     it('should show the details with given start time', function() {
-        $controller('ViewerCtrl', {$scope: scope, ytYoutubeService: ytYoutubeService, $routeParams: {type: 'playlist', id: 1, time: '03:15'}});
+        $controller('ViewerCtrl', {$scope: scope, ytYoutubeService: ytYoutubeService, $routeParams: {mode: 'fullscreen', type: 'playlist', id: 1, time: '03:15'}});
         scope.$digest();
         $timeout.flush();
         $timeout.verifyNoPendingTasks();

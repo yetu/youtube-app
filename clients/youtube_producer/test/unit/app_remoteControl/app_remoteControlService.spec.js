@@ -24,7 +24,7 @@ describe('Service: app_remoteControl', function () {
             $timeout.flush();
         }
         if(initialized.controller) {
-            service.setController('viewer', controller.callback);
+            service.setController('viewer-fullscreen', controller.callback);
         }
     }));
 
@@ -85,10 +85,10 @@ describe('Service: app_remoteControl', function () {
 
     it('should call controller callback action on deactivation of directive', function() {
         spyOn(controller, 'callback');
-        service.setController('viewer', controller.callback);
-        $window.yetu.onAnyActionDetected('data', 'control.back', 'channel');
+        service.setController('viewer-fullscreen', controller.callback);
+        $window.yetu.onAnyActionDetected('data', 'control.quit', 'channel');
         service.deactivate('player');
-        expect(controller.callback).toHaveBeenCalledWith('back', 'player');
+        expect(controller.callback).toHaveBeenCalledWith('quit', 'player');
     });
 
     it('should call callback action on keyboard', function() {
