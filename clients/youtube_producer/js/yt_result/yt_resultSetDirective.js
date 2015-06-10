@@ -25,30 +25,36 @@ module.exports = function (appRemoteControlService, $location) {
 		controller: function($scope) {
 		},
 		link: function(scope, element, attr){
-            var _unbinder = [],
-                items, current, $current, lists, loadNext, row, elementDistance;
+            var _unbinder = [], items = [], rows = [],
+                current, $current, parent, $parent, $container, lists, loadNext, row, elementDistance, perRow;
 
             var activate = function(act) {
                 // deactivate old
                 if(items[current]) {
                     angular.element(items[current]).attr('activated', false);
                     if(lists.length > 1) {
-                        row = angular.element(items[current].parentNode).attr('row');
-                        angular.element(items[current].parentNode.parentNode.parentNode).removeClass('row-' + row + '-activated');
+                        parent = items[current].parentNode;
+                        $parent = angular.element(parent);
+                        $parent.css({transform: 'translate(0, 0)'});
+                        angular.element(parent.parentNode.parentNode).removeClass('row-' + items[current].rowNumber + '-activated');
+                        // check if row switched and reset to first in row, but not for left (-1)
+                        if(items[act] && items[current].rowNumber !== items[act].rowNumber &&  current - act !== 1) {
+                            act = items.indexOf(rows[items[act].rowNumber - 1][0]);
+                        }
                     }
                 }
                 // activate new
                 current = act;
                 if(current !== null) {
-                    var parent = items[current].parentNode,
-                        $parent = angular.element(parent),
-                        $container = angular.element(parent.parentNode.parentNode);
-
+                    parent = items[current].parentNode;
+                    $container = angular.element(parent.parentNode.parentNode);
+                    $parent = angular.element(parent);
                     $current = angular.element(items[current]).attr('activated', true);
 
                     if(lists.length > 1) {
-                        row = $parent.attr('row');
-                        $container.addClass('row-' + row + '-activated');
+                        $container.addClass('row-' + items[current].rowNumber + '-activated');
+                        // TODO: adapt to calculate different number of elements in row if needed
+                        $parent.css({transform: 'translate(-' + (( current - perRow * ( items[current].rowNumber - 1 )) * elementDistance.x) + 'px, 0px)'});
                     } else {
                         $container.css({transform: 'translate(-' + (current * elementDistance.x) + 'px, 0px)'}); // TODO: evantually add control of Y
                     }
@@ -61,7 +67,17 @@ module.exports = function (appRemoteControlService, $location) {
                     case 'activate': {
                         element.attr('activated', true);
                         lists = element.find('ui-video-list');
-                        items = element.find('ui-video-list-item');
+                        angular.forEach(lists, function(val, key) {
+                            var its = angular.element(val).find('ui-video-list-item');
+                            rows[key] = [];
+                            angular.forEach(its, function(it, pos) {
+                                it.rowNumber = key + 1;
+                                it.positionIndex = pos;
+                                items.push(it);
+                                rows[key].push(it);
+                            });
+                        });
+                        perRow = items.length / lists.length;
                         if(lists[0]) {
                             loadNext = angular.element(lists[0]).isolateScope().loadNext;
                         }
