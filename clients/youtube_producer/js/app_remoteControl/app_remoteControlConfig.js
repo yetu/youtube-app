@@ -37,10 +37,10 @@ module.exports = ({
 
         // viewer has different controls based on display type
         'viewer-fullscreen': {
-            order: ['search', 'player', 'playlist'],
-            first: 1,
+            order: ['search', 'playlist', 'player'],
+            first: 2,
             passthrough: {
-                player: 'controlbar'
+                player: ['controlbar']
             }
         },
         'viewer-expand': {

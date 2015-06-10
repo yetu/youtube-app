@@ -46,9 +46,11 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
         if(registered[active]) {
             registered[active](command);
             if(config.passthrough && config.passthrough[active]) {
-                if(registered[config.passthrough[active]]) {
-                    registered[config.passthrough[active]](command);
-                }
+                angular.forEach(config.passthrough[active], function(value) {
+                    if(registered[value]) {
+                        registered[value](command);
+                    }
+                });
             }
         } else {
             // ...
@@ -85,9 +87,10 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
     };
 
     var activate = function(name) {
+        // console.debug('appRemoteControlService.activate', name);
         if(registered[name]) {
             if(name !== active) {
-                registered[active]('deactivate');
+                action('deactivate');
             }
             active = name;
             registered[name]('activate');
