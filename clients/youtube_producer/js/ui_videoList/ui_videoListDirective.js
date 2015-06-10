@@ -19,8 +19,8 @@ module.exports = function ($window, $timeout) {
         template: require('./ui_videoListTemplate.html'),
         scope: {
             videoList: '=ngModel',
-            playLink: '@playLink',
-            playFn: '@playFn', // TODO: some function binding?
+            playLink: '@?playLink',
+            playFn: '@?playFn', // TODO: some function binding?
             displayType: '@display',
             controlType: '@control',
             loadMore: '@?loadMore'
@@ -31,6 +31,24 @@ module.exports = function ($window, $timeout) {
             if ($attrs.service) {
                 myService = $injector.get($attrs.service);
             }
+
+            /**
+             * Internal function for finding function wherever defined in parent scope (given as fn name)
+             * @param {object} scpe Initial scope
+             * @param {string} name Function name
+             * @returns {function|null} Found function or null
+             */
+            $scope.findFunction = function(scpe, name) {
+                if(typeof(scpe[name]) === 'function') {
+                    return scpe[name];
+                } else if (scpe.$parent && typeof(scpe.$parent[name]) === 'function') {
+                    return scpe.$parent[name];
+                } else if(scpe.$parent) {
+                    return $scope.findFunction(scpe.$parent, name);
+                } else {
+                    return null;
+                }
+            };
 
             $scope.loadNext = function(callback) {
                 if(!$scope.videoList || !$scope.videoList.etag || !$scope.videoList.next || $scope.loadingMore) {
@@ -55,19 +73,25 @@ module.exports = function ($window, $timeout) {
 
         },
         link: function (scope, element){
-            var container = element[0];
+            var container = element[0],
+                playFunction = null;
 
             // default display type
             if (!scope.displayType) {
                 scope.displayType = 'floating';
             }
 
+            // find play function if defined
+            if(scope.playFn) {
+                playFunction = scope.findFunction(scope, scope.playFn);
+            }
+
             // add display type as a class also
             element.addClass(scope.displayType);
 
             scope.playFunction = function (index) {
-                if (typeof(scope.$parent[scope.playFn]) === 'function') {
-                    scope.$parent[scope.playFn](index);
+                if (typeof(playFunction) === 'function') {
+                    playFunction(index);
                 } else {
                     console.error('ui-video-directive: ' + scope.playFn + ' is not a function');
                 }
@@ -78,7 +102,7 @@ module.exports = function ($window, $timeout) {
                 element.bind('scroll', function () {
                         var distance = container.scrollHeight * 0.1; // 10% from the end
                         var toBottom = container.scrollHeight - container.clientHeight - container.scrollTop;
-                    
+
                     if(toBottom < distance) {
                         scope.loadNext();
                     }

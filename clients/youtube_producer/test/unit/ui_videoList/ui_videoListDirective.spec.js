@@ -35,15 +35,15 @@ describe('Directive: ui-video-list', function () {
     });
 
     it('should react on play link if defined', function () {
+        $rootScope.someFunction = function () {
+        };
+        spyOn($rootScope, 'someFunction');
         var element = $compile('<ui-video-list ng-model="videos" play-fn="someFunction"></ui-video-list>')($rootScope);
         $rootScope.videos = { etag: "123", next: "123", items:
             [
                 {id: 'id123', title: 'Some title', type: 'video', img: 'some.img', description: 'Some description'}
             ]};
         $rootScope.$digest();
-        $rootScope.someFunction = function () {
-        };
-        spyOn($rootScope, 'someFunction');
         expect(element.find('a').eq(0).attr('href')).not.toBeDefined();
         element.find('ui-video-list-item').eq(0).triggerHandler('click');
         expect($rootScope.someFunction).toHaveBeenCalledWith(0);
