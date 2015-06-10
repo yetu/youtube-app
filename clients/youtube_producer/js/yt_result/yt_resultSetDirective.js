@@ -1,11 +1,13 @@
 /*
- * <yt-result-set ng-model="" display="" control="" play-link=""></yt-result-set>
+ * <yt-result-set ng-model="" display="" control="" play-link="" play-fn="" load-more=""></yt-result-set>
  *
  * @attr ng-model array Scope model to be used as data feed - with elements containing: { list_type, title, items},
  *                      where list_type determines search strategy - used by search/load
  * @attr display @see ui-video-list
  * @attr control @see ui-video-list
  * @attr play-link @see ui-video-list
+ * @attr play-fn @see ui-video-list
+ * @attr load-more @see ui-video-list
  *
  */
 module.exports = function (appRemoteControlService, $location) {
@@ -14,51 +16,55 @@ module.exports = function (appRemoteControlService, $location) {
 		template: require('./yt_resultSetTemplate.html'),
         scope: {
             resultLists: '=ngModel',
-            playLink: '@playLink',
+            playLink: '@?playLink',
+            playFn: '@?playFn',
             displayType: '@display',
-            controlType: '@control'
+            controlType: '@control',
+            loadMore: '@loadMore'
         },
 		controller: function($scope) {
 		},
 		link: function(scope, element, attr){
             var _unbinder = [],
-                items, current, $current, lists, loadNext, row, elementDistance,
-                activate = function(act) {
-                    // deactivate old
-                    if(items[current]) {
-                        angular.element(items[current]).attr('activated', false);
-                        if(lists.length > 1) {
-                            row = angular.element(items[current].parentNode).attr('row');
-                            angular.element(items[current].parentNode.parentNode.parentNode).removeClass('row-' + row + '-activated');
-                        }
-                    }
-                    // activate new
-                    current = act;
-                    if(current !== null) {
-                        var parent = items[current].parentNode,
-                            $parent = angular.element(parent),
-                            $container = angular.element(parent.parentNode.parentNode);
+                items, current, $current, lists, loadNext, row, elementDistance;
 
-                        $current = angular.element(items[current]).attr('activated', true);
-
-                        if(lists.length > 1) {
-                            row = $parent.attr('row');
-                            $container.addClass('row-' + row + '-activated');
-                        } else {
-                            $container.css({transform: 'translate(-' + (current * elementDistance.x) + 'px, 0px)'}); // TODO: evantually add control of Y
-                        }
+            var activate = function(act) {
+                // deactivate old
+                if(items[current]) {
+                    angular.element(items[current]).attr('activated', false);
+                    if(lists.length > 1) {
+                        row = angular.element(items[current].parentNode).attr('row');
+                        angular.element(items[current].parentNode.parentNode.parentNode).removeClass('row-' + row + '-activated');
                     }
-                };
+                }
+                // activate new
+                current = act;
+                if(current !== null) {
+                    var parent = items[current].parentNode,
+                        $parent = angular.element(parent),
+                        $container = angular.element(parent.parentNode.parentNode);
+
+                    $current = angular.element(items[current]).attr('activated', true);
+
+                    if(lists.length > 1) {
+                        row = $parent.attr('row');
+                        $container.addClass('row-' + row + '-activated');
+                    } else {
+                        $container.css({transform: 'translate(-' + (current * elementDistance.x) + 'px, 0px)'}); // TODO: evantually add control of Y
+                    }
+                }
+            };
 
             var remoteControl = function(command) {
                 
                 switch(command) {
                     case 'activate': {
-                        var buttons = element.find('button');
-                        loadNext = angular.element(buttons[buttons.length - 1]).scope().loadNext;
                         element.attr('activated', true);
                         lists = element.find('ui-video-list');
                         items = element.find('ui-video-list-item');
+                        if(lists[0]) {
+                            loadNext = angular.element(lists[0]).isolateScope().loadNext;
+                        }
                         elementDistance = {
                             x: items[1] && items[0] ? items[1].offsetLeft - items[0].offsetLeft : 0,
                             y: items[1] && items[0] ? items[1].offsetTop - items[0].offsetTop : 0
