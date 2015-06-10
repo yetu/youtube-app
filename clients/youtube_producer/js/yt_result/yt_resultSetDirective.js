@@ -56,7 +56,7 @@ module.exports = function (appRemoteControlService, $location) {
             };
 
             var remoteControl = function(command) {
-                
+                var num;
                 switch(command) {
                     case 'activate': {
                         element.attr('activated', true);
@@ -69,17 +69,26 @@ module.exports = function (appRemoteControlService, $location) {
                             x: items[1] && items[0] ? items[1].offsetLeft - items[0].offsetLeft : 0,
                             y: items[1] && items[0] ? items[1].offsetTop - items[0].offsetTop : 0
                         };
-                        activate(0);
+                        activate(current || 0);
                         break;
                     }
                     case 'deactivate': {
                         element.attr('activated', false);
-                        activate(null);
+                        if(attr.remoteControl !== 'playlist') {
+                            activate(null);
+                        }
                         break;
                     }
-                    case 'left':
                     case 'up': {
-                        var num = command === 'left' ? 1 : 4;
+                        if(attr.remoteControl === 'playlist') {
+                            // deactivate to go to top element (search)
+                            appRemoteControlService.deactivate(attr.remoteControl);
+                            return;
+                        }
+                        // no break;
+                    }
+                    case 'left': {
+                        num = command === 'left' ? 1 : 4;
                         if(current - num > 0) {
                             activate(current - num);
                         } else {
@@ -92,14 +101,22 @@ module.exports = function (appRemoteControlService, $location) {
                         }
                         break;
                     }
-                    case 'right':
+
                     case 'down': {
-                        var num = command === 'right' ? 1 : 4;
+                        if(attr.remoteControl === 'playlist') {
+                            // deactivate to go to bottom element (player)
+                            appRemoteControlService.deactivate(attr.remoteControl);
+                            return;
+                        }
+                        // no break;
+                    }
+                    case 'right': {
+                        num = command === 'right' ? 1 : 4;
                         if(current + num < items.length) {
                             activate(current + num);
                         } else {
-                            if(current === items.length - 1) {
-                                // deaxtivate on next press of last element
+                            if(current === items.length - 1 && attr.remoteControl !== 'playlist') {
+                                // deaxtivate on next press of last element; but not for playlist
                                 appRemoteControlService.deactivate(attr.remoteControl);
                                 return;
                             }
@@ -115,10 +132,13 @@ module.exports = function (appRemoteControlService, $location) {
                         }
                         break;
                     }
+                    case 'play':
                     case 'enter': {
                         var el = $current.find('a')[0];
                         if(el.hash) {
                             $location.path(el.hash.substring(1));
+                        } else {
+                            $current.triggerHandler('click');
                         }
                         break;
                     }

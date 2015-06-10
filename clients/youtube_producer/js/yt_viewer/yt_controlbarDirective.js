@@ -24,6 +24,10 @@ module.exports = function ($timeout, $window, $location, ytPlayerConfig, appRemo
                         scope.isVisible = !scope.isVisible;
                         break;
                     }
+                    case 'deactivate': {
+                        scope.isVisible = false;
+                        break;
+                    }
                 }
                 if (!scope.$$phase) {
                     scope.$apply();
