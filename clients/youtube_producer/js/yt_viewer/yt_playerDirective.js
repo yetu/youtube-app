@@ -78,6 +78,9 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
                 if(scope.playingOnTv) {
                     scope.playingOnTv = false;
                 }
+                // on load video there is no new initialDelivery message
+                scope.player.info.video = scope.video;
+                scope.player.info.duration = null;
                 player.loadVideoById(scope.video.id);
             };
 
@@ -95,6 +98,9 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
                         break;
                     }
                     case 'infoDelivery': {
+                        if(!scope.player.info.duration && data.info.duration) {
+                            scope.player.info.duration = data.info.duration;
+                        }
                         if(data.info.currentTime) {
                             var actTime = +data.info.currentTime;
                             scope.player.info.actTime = actTime;
