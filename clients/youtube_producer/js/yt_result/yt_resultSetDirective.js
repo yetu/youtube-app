@@ -56,7 +56,7 @@ module.exports = function (appRemoteControlService, $location) {
                         // TODO: adapt to calculate different number of elements in row if needed
                         $parent.css({transform: 'translate(-' + (( current - perRow * ( items[current].rowNumber - 1 )) * elementDistance.x) + 'px, 0px)'});
                     } else {
-                        $container.css({transform: 'translate(-' + (current * elementDistance.x) + 'px, 0px)'}); // TODO: evantually add control of Y
+                        $parent.css({transform: 'translate(-' + (current * elementDistance.x) + 'px, 0px)'}); // TODO: evantually add control of Y
                     }
                 }
             };
@@ -90,13 +90,17 @@ module.exports = function (appRemoteControlService, $location) {
                     }
                     case 'deactivate': {
                         element.attr('activated', false);
-                        if(attr.remoteControl !== 'playlist') {
+                        if(lists.length !== 1) {
+                            // reset to first if multiline
                             activate(null);
+                        } else {
+                            // just remove attribute without calling full deactivation otherwise
+                            angular.element(items[current]).attr('activated', false);
                         }
                         break;
                     }
                     case 'up': {
-                        if(attr.remoteControl === 'playlist') {
+                        if(lists.length === 1) {
                             // deactivate to go to top element (search)
                             appRemoteControlService.deactivate(attr.remoteControl);
                             return;
@@ -119,7 +123,7 @@ module.exports = function (appRemoteControlService, $location) {
                     }
 
                     case 'down': {
-                        if(attr.remoteControl === 'playlist') {
+                        if(lists.length === 1) {
                             // deactivate to go to bottom element (player)
                             appRemoteControlService.deactivate(attr.remoteControl);
                             return;

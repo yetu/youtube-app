@@ -25,21 +25,26 @@
         overflow-y: visible;
     }
     
-    .app-search,
+    app-search,
     .yt-result-set {
         margin-left: 160px;
     }
     
-    .app-search {
+    app-search {
         z-index: 100;
         width: 1490px !important;
         margin-right: 160px;
+        margin-top: 21px;
+        transition: transform 0.5s ease-in-out;
+        transform: translateY(-200px);
         .query {
             width: 100%;
         }
-    
+        &[activated="true"] {
+            transform: translateY(0);
+        }
     }
-    .app-search,
+    app-search,
     app-key-input {
         width: auto;
     }
@@ -62,6 +67,14 @@
         width: auto;
         height: 800px;
         overflow: hidden;
+
+        &[activated="true"] {
+            transform: translateY(-90px);
+            .list-title.search {    
+                display: block;
+                width: 90%;
+            }
+        }
     }
     
     .yt-result-set {
@@ -83,8 +96,7 @@
         }
         
         &.row-4-activated {
-            transform: translateY(-1860px);
-            
+            transform: translateY(-1860px);            
         }
 
         .list-title {
@@ -93,7 +105,7 @@
             color: color-title-tv;
             margin: 0 0 40px 0 !important;
         }
-            
+    
         .ui-video-list {
             width: auto;
             height: 460px;
@@ -206,7 +218,7 @@
 .tvmode {
     .activated, *[activated="true"] {
         button.search path {
-            fill: #fff;
+           /* fill: #fff; */
         }
     }
 }
