@@ -10,7 +10,7 @@
   "tvcategory": "Apps from your Homescreen",
   "tvready" : true,
   "url": "https://youtubeapp-dev.yetu.me",
-  "tvurl": "https://youtubeapp-dev.yetu.me/level2tv#",
+  "tvurl": "https://youtubeapp-dev.yetu.me/level2tv#/",
   "logo": "https://youtubeapp-dev.yetu.me/assets/appMetaData/assets/logo.svg",
   "controls": {
     "form": {
