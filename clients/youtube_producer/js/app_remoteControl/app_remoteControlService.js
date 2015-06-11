@@ -13,6 +13,7 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
         controller = { name: null, callback: null};
 
     var init = function() {
+        // console.debug('appRemoteControlService.init');
         if($window.yetu) {
             $window.yetu.onAnyActionDetected = function(data, topic, channel){
                 // console.debug("yetu message received", data, topic, channel);
@@ -63,6 +64,10 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
         if(appRemoteControlConfig.controllers[name]) {
             config = appRemoteControlConfig.controllers[name];
             active = config.order[config.first || 0];
+            // in case of already initialized service activate first after controler if set
+            if(initialized) {
+                $timeout(function() { activate(active); });
+            }
         } else {
             throw new Error('Config of remote control doesnt exist for ' + name);
         }
