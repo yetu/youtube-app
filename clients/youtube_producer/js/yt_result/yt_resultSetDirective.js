@@ -1,8 +1,8 @@
 /*
  * <yt-result-set ng-model="" display="" control="" play-link="" play-fn="" load-more=""></yt-result-set>
  *
- * @attr ng-model array Scope model to be used as data feed - with elements containing: { list_type, title, items},
- *                      where list_type determines search strategy - used by search/load
+ * @attr ng-model array Scope model to be used as data feed - with elements containing: { type, title, items, ...@see ui-video-list},
+ *                      where type determines search strategy - used by search/load
  * @attr display @see ui-video-list
  * @attr control @see ui-video-list
  * @attr play-link @see ui-video-list

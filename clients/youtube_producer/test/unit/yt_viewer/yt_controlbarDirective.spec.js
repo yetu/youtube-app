@@ -24,7 +24,7 @@ describe('Directive: yt-controlbar', function () {
         appRemoteControlService.register = function(name, callback) {
             remote.name = name;
             remote.callback = callback;
-        }
+        };
     });
 
     afterEach(function() {
@@ -62,6 +62,16 @@ describe('Directive: yt-controlbar', function () {
         remote.callback('down');
         expect(elementScope.isVisible).toBeTruthy();
         remote.callback('down');
+        expect(elementScope.isVisible).toBeFalsy();
+    });
+
+    it('should hide on deactivation', function() {
+        var element = $compile('<yt-controlbar></yt-controlbar>')($scope);
+        var elementScope = element.isolateScope();
+        $rootScope.$digest();
+        elementScope.isVisible = true;
+        expect(elementScope.isVisible).toBeTruthy();
+        remote.callback('deactivate');
         expect(elementScope.isVisible).toBeFalsy();
     });
 });

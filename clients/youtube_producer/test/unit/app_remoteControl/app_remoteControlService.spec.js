@@ -13,6 +13,7 @@ describe('Service: app_remoteControl', function () {
         $window = _$window_;
         $timeout = _$timeout_;
         config = _appRemoteControlConfig_;
+        config.controllers['viewer-fullscreen'].order = ['playlist', 'player', 'other'];
         service = _appRemoteControlService_;
         controller = {
             callback: function(action) {}
@@ -103,5 +104,35 @@ describe('Service: app_remoteControl', function () {
         service.register('player', directive.callback);
         document.onkeydown({which:111});
         expect(directive.callback.calls.argsFor(1)).toEqual([]);
+    });
+
+    it('should deactivate previous directive on activate next', function() {
+        spyOn(directive, 'callback');
+        service.register('player', directive.callback);
+        service.register('other', directive.callback);
+        service.activate('other');
+        expect(directive.callback.calls.argsFor(0)).toEqual(['activate']);
+        expect(directive.callback.calls.argsFor(1)).toEqual(['deactivate']);
+        expect(directive.callback.calls.argsFor(2)).toEqual(['activate']);
+    });
+
+    it('should activate next directive deactivate after remote down', function() {
+        spyOn(directive, 'callback');
+        service.register('player', directive.callback);
+        service.register('other', directive.callback);
+        service.deactivate('player', 'down');
+        expect(directive.callback.calls.argsFor(0)).toEqual(['activate']);
+        expect(directive.callback.calls.argsFor(1)).toEqual(['deactivate']);
+        expect(directive.callback.calls.argsFor(2)).toEqual(['activate']);
+    });
+
+    it('should activate next directive deactivate after remote up', function() {
+        spyOn(directive, 'callback');
+        service.register('playlist', directive.callback);
+        service.register('player', directive.callback);
+        service.deactivate('player', 'up');
+        expect(directive.callback.calls.argsFor(0)).toEqual(['activate']);
+        expect(directive.callback.calls.argsFor(1)).toEqual(['deactivate']);
+        expect(directive.callback.calls.argsFor(2)).toEqual(['activate']);
     });
 });

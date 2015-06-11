@@ -107,7 +107,7 @@ describe('Directive: app_search', function () {
         expect(elementScope.emitted).toBe('yetu');
     });
 
-    it('should not debounce empty input value', function() {
+    it('should debounce empty input value also', function() {
         var element = $compile('<app-search trigger-search="auto"></app-search>')(scope);
         var elementScope = element.isolateScope();
         scope.$digest();
@@ -116,8 +116,8 @@ describe('Directive: app_search', function () {
         elementScope.searchValue = '';
         expect(elementScope.$emit).not.toHaveBeenCalled();
         scope.$digest();
-        expect(elementScope.$emit).not.toHaveBeenCalled;
-        expect(elementScope.emitted).toBeUndefined();
+        expect(elementScope.$emit).toHaveBeenCalled;
+        expect(elementScope.emitted).toBe('');
     });
     
     xit('should get focus on the input field on click in input field', function() {
