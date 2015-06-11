@@ -104,9 +104,9 @@ describe('Directive: yt-result-set', function () {
         it('should react on remote control right', function() {
             remote.callback('activate');
             remote.callback('right');
-            var container = angular.element(element.children()[0]);
+            var videoListElements = element.find('ui-video-list');
             var videoListItemElements = element.find('ui-video-list-item');
-            expect(container.css('transform')).not.toBe(undefined);
+            expect(angular.element(videoListElements[0]).css('transform')).not.toBe(undefined);
             expect(angular.element(videoListItemElements[0]).attr('activated')).toBe('false');
             expect(angular.element(videoListItemElements[1]).attr('activated')).toBe('true');
         });
@@ -115,9 +115,9 @@ describe('Directive: yt-result-set', function () {
             remote.callback('activate');
             remote.callback('right');
             remote.callback('left');
-            var container = angular.element(element.children()[0]);
+            var videoListElements = element.find('ui-video-list');
             var videoListItemElements = element.find('ui-video-list-item');
-            expect(container.css('transform')).not.toBe(undefined);
+            expect(angular.element(videoListElements[0]).css('transform')).not.toBe(undefined);
             expect(angular.element(videoListItemElements[0]).attr('activated')).toBe('true');
             expect(angular.element(videoListItemElements[1]).attr('activated')).toBe('false');
         });
