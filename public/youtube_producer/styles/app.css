@@ -38,14 +38,12 @@ body {
   color: #333;
   margin: 0 auto;
   zoom: 1;
+  clear: both;
 }
 .container:after,
 .container:before {
   content: "";
   display: table;
-}
-.container:after {
-  clear: both;
 }
 h2 {
   font-size: 25px;
@@ -54,14 +52,12 @@ h2 {
 }
 .clearfix {
   zoom: 1;
+  clear: both;
 }
 .clearfix:after,
 .clearfix:before {
   content: "";
   display: table;
-}
-.clearfix:after {
-  clear: both;
 }
 .tile-label-semi-transparent {
   opacity: 1;
@@ -241,14 +237,12 @@ h2 {
   -o-box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.2);
   box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.2);
   zoom: 1;
+  clear: both;
 }
 .ui-video-list-item .img .items:after,
 .ui-video-list-item .img .items:before {
   content: "";
   display: table;
-}
-.ui-video-list-item .img .items:after {
-  clear: both;
 }
 .ui-video-list-item .img .items svg {
   position: relative;
@@ -328,11 +322,12 @@ h2 {
   -o-box-shadow: 7px 7px 10px 0 rgba(0,0,0,0.3);
   box-shadow: 7px 7px 10px 0 rgba(0,0,0,0.3);
 }
-.yt-viewer h2 {
+.yt-viewer h2.title {
   display: none;
   color: #090;
 }
-.yt-viewer h3 {
+.yt-viewer h2.list-title {
+  display: block;
   font-family: 'source_sans_prolight';
   font-size: 1.25em;
   margin: 10px 0 5px;
@@ -363,14 +358,12 @@ h2 {
   position: relative;
   margin: 15px auto 0;
   zoom: 1;
+  clear: both;
 }
 .yt-viewer .buttons:after,
 .yt-viewer .buttons:before {
   content: "";
   display: table;
-}
-.yt-viewer .buttons:after {
-  clear: both;
 }
 .yt-viewer .buttons button {
   font-family: source_sans_prolight;
@@ -441,19 +434,19 @@ yt-player .overlay {
 .yt-video-description .metadata div.row {
   clear: both;
 }
-.yt-viewer .playlist {
+.yt-viewer yt-result-set.playlist {
   height: auto;
   overflow: hidden;
 }
-.yt-viewer .playlist .ui-video-list {
+.yt-viewer yt-result-set.playlist .ui-video-list {
   height: 620px; /*10 video list items*/
   overflow-y: auto;
   overflow-x: hidden;
 }
-.yt-viewer .playlist .app-send-to-tv {
+.yt-viewer yt-result-set.playlist .app-send-to-tv {
   display: none;
 }
-.yt-viewer .playlist .ui-video-list-item {
+.yt-viewer yt-result-set.playlist .ui-video-list-item {
   width: 100%;
   height: 60px;
   padding: 0;
@@ -463,20 +456,20 @@ yt-player .overlay {
   border-top: 1px solid #eee;
   border-bottom: 1px solid #ccc;
 }
-.yt-viewer .playlist .ui-video-list-item:first-child {
+.yt-viewer yt-result-set.playlist .ui-video-list-item:first-child {
   border-top: 0;
 }
-.yt-viewer .playlist .ui-video-list-item ui-video-list-play-arrow {
+.yt-viewer yt-result-set.playlist .ui-video-list-item ui-video-list-play-arrow {
   display: none;
 }
-.yt-viewer .playlist .ui-video-list-item .img {
+.yt-viewer yt-result-set.playlist .ui-video-list-item .img {
   margin: 0;
   width: 150px;
   height: 50px;
   float: left;
   padding: 5px 0;
 }
-.yt-viewer .playlist .ui-video-list-item .img .index {
+.yt-viewer yt-result-set.playlist .ui-video-list-item .img .index {
   position: absolute;
   font-size: 1.75em;
   text-align: center;
@@ -484,12 +477,12 @@ yt-player .overlay {
   width: 55px;
   color: #666;
 }
-.yt-viewer .playlist .ui-video-list-item .img img {
+.yt-viewer yt-result-set.playlist .ui-video-list-item .img img {
   float: right;
   width: 90px;
   height: 50px;
 }
-.yt-viewer .playlist .ui-video-list-item .img svg {
+.yt-viewer yt-result-set.playlist .ui-video-list-item .img svg {
   position: relative;
   top: 17px;
   left: 20px;
@@ -498,19 +491,19 @@ yt-player .overlay {
   height: 15px;
   padding: 0;
 }
-.yt-viewer .playlist .ui-video-list-item .img svg polygon {
+.yt-viewer yt-result-set.playlist .ui-video-list-item .img svg polygon {
   -webkit-filter: none;
   filter: none;
 }
-.yt-viewer .playlist .ui-video-list-item .img .duration {
+.yt-viewer yt-result-set.playlist .ui-video-list-item .img .duration {
   right: 0;
   bottom: 5px;
 }
-.yt-viewer .playlist .ui-video-list-item .metadata {
+.yt-viewer yt-result-set.playlist .ui-video-list-item .metadata {
   margin: 5px 10px;
   height: auto;
 }
-.yt-viewer .playlist .ui-video-list-item .metadata .title {
+.yt-viewer yt-result-set.playlist .ui-video-list-item .metadata .title {
   position: relative;
   color: #333;
   font-size: 1.125em;
@@ -519,42 +512,42 @@ yt-player .overlay {
   height: 25px;
   top: 5px;
 }
-.yt-viewer .playlist .ui-video-list-item .metadata .subtitle {
+.yt-viewer yt-result-set.playlist .ui-video-list-item .metadata .subtitle {
   margin: 0;
 }
-.yt-viewer .playlist .ui-video-list-item .metadata .channel {
+.yt-viewer yt-result-set.playlist .ui-video-list-item .metadata .channel {
   font-size: 0.8125em;
   width: 100%;
   height: 15px;
 }
-.yt-viewer .playlist .ui-video-list-item .metadata .title,
-.yt-viewer .playlist .ui-video-list-item .metadata .channel {
+.yt-viewer yt-result-set.playlist .ui-video-list-item .metadata .title,
+.yt-viewer yt-result-set.playlist .ui-video-list-item .metadata .channel {
   overflow: hidden;
   white-space: nowrap;
 }
-.yt-viewer .playlist .ui-video-list-item .metadata .description,
-.yt-viewer .playlist .ui-video-list-item .metadata .created {
+.yt-viewer yt-result-set.playlist .ui-video-list-item .metadata .description,
+.yt-viewer yt-result-set.playlist .ui-video-list-item .metadata .created {
   display: none;
 }
-.yt-viewer .playlist .ui-video-list-item.playing,
-.yt-viewer .playlist .ui-video-list-item:hover {
+.yt-viewer yt-result-set.playlist .ui-video-list-item.playing,
+.yt-viewer yt-result-set.playlist .ui-video-list-item:hover {
   background-color: #666;
   -webkit-transition: background-color 0.25s ease-in-out;
   transition: background-color 0.25s ease-in-out;
   cursor: pointer;
 }
-.yt-viewer .playlist .ui-video-list-item.playing .index,
-.yt-viewer .playlist .ui-video-list-item:hover .index {
+.yt-viewer yt-result-set.playlist .ui-video-list-item.playing .index,
+.yt-viewer yt-result-set.playlist .ui-video-list-item:hover .index {
   display: none;
 }
-.yt-viewer .playlist .ui-video-list-item.playing ui-video-list-play-arrow,
-.yt-viewer .playlist .ui-video-list-item:hover ui-video-list-play-arrow {
+.yt-viewer yt-result-set.playlist .ui-video-list-item.playing ui-video-list-play-arrow,
+.yt-viewer yt-result-set.playlist .ui-video-list-item:hover ui-video-list-play-arrow {
   display: block;
 }
-.yt-viewer .playlist .ui-video-list-item.playing .metadata .title,
-.yt-viewer .playlist .ui-video-list-item:hover .metadata .title,
-.yt-viewer .playlist .ui-video-list-item.playing .metadata .channel,
-.yt-viewer .playlist .ui-video-list-item:hover .metadata .channel {
+.yt-viewer yt-result-set.playlist .ui-video-list-item.playing .metadata .title,
+.yt-viewer yt-result-set.playlist .ui-video-list-item:hover .metadata .title,
+.yt-viewer yt-result-set.playlist .ui-video-list-item.playing .metadata .channel,
+.yt-viewer yt-result-set.playlist .ui-video-list-item:hover .metadata .channel {
   color: #fff;
 }
 yt-controlbar {
@@ -685,7 +678,7 @@ yt-controlbar .controlbar-overlay .title {
 }
 .tvmode.fullscreen app-search,
 .tvmode.fullscreen .yt-video-description,
-.tvmode.fullscreen .playlist {
+.tvmode.fullscreen yt-result-set.playlist {
   display: none;
 }
 button.app-send-to-tv {
@@ -806,13 +799,16 @@ app-key-input li.button.del[activated="true"] {
   .yt-viewer .buttons .toggle-playlist {
     display: none;
   }
-  .yt-viewer .playlist {
+  .yt-viewer yt-result-set.playlist {
     position: relative;
     min-height: 50vh;
     margin: 10px;
     width: 280px;
   }
-  .yt-viewer .playlist .ui-video-list-item {
+  .yt-viewer yt-result-set.playlist .ui-video-list {
+    height: auto;
+  }
+  .yt-viewer yt-result-set.playlist .ui-video-list-item {
     width: 100%;
     margin: 0;
   }
@@ -839,7 +835,7 @@ app-key-input li.button.del[activated="true"] {
     width: 440px;
     top: -233px;
   }
-  .yt-viewer .playlist {
+  .yt-viewer yt-result-set.playlist {
     width: 440px;
   }
 }
@@ -876,7 +872,7 @@ app-key-input li.button.del[activated="true"] {
     width: 560px;
     top: -312px;
   }
-  .yt-viewer .playlist {
+  .yt-viewer yt-result-set.playlist {
     margin: 20px;
     width: 560px;
   }
@@ -934,7 +930,7 @@ app-key-input li.button.del[activated="true"] {
   .yt-viewer .buttons .toggle-playlist {
     display: block;
   }
-  .yt-viewer .playlist {
+  .yt-viewer yt-result-set.playlist {
     padding-bottom: 20px;
     position: relative;
     width: 280px;
@@ -942,6 +938,9 @@ app-key-input li.button.del[activated="true"] {
     margin: 0 -300px 0 0;
     -webkit-transition: margin-right 0.5s ease-in-out;
     transition: margin-right 0.5s ease-in-out;
+  }
+  .yt-viewer yt-result-set.playlist .ui-video-list {
+    height: 620px;
   }
   .yt-viewer.playlist-visible {
     background-color: #c6c6c6;
@@ -970,10 +969,13 @@ app-key-input li.button.del[activated="true"] {
     -webkit-transition: all 0.5s ease-in-out;
     transition: all 0.5s ease-in-out;
   }
-  .yt-viewer.playlist-visible .playlist {
+  .yt-viewer.playlist-visible yt-result-set.playlist {
     margin: 0 20px 0 0;
     -webkit-transition: margin-right 0.5s ease-in-out;
     transition: margin-right 0.5s ease-in-out;
+  }
+  .yt-viewer.playlist-visible yt-result-set.playlist .ui-video-list {
+    height: 620px;
   }
 }
 @media (min-width: 992px) {
@@ -1016,7 +1018,7 @@ app-key-input li.button.del[activated="true"] {
   .yt-viewer .video .yt-video-description {
     width: 880px;
   }
-  .yt-viewer .playlist {
+  .yt-viewer yt-result-set.playlist {
     width: 370px;
     margin: 0 -390px 0 0;
     padding-bottom: 30px;
@@ -1035,7 +1037,7 @@ app-key-input li.button.del[activated="true"] {
   .yt-viewer.playlist-visible .video .yt-video-description {
     width: 480px;
   }
-  .yt-viewer.playlist-visible .playlist {
+  .yt-viewer.playlist-visible yt-result-set.playlist {
     margin: 0 30px 0 0;
   }
 }
@@ -1078,7 +1080,7 @@ app-key-input li.button.del[activated="true"] {
   .yt-viewer .video .yt-video-description {
     width: 1000px;
   }
-  .yt-viewer .playlist {
+  .yt-viewer yt-result-set.playlist {
     width: 410px;
     margin: 0 -430px 0 0;
     padding-bottom: 60px;
@@ -1097,7 +1099,7 @@ app-key-input li.button.del[activated="true"] {
   .yt-viewer.playlist-visible .video .yt-video-description {
     width: 530px;
   }
-  .yt-viewer.playlist-visible .playlist {
+  .yt-viewer.playlist-visible yt-result-set.playlist {
     margin: 0 60px 0 0;
   }
 }
@@ -1141,7 +1143,7 @@ app-key-input li.button.del[activated="true"] {
   .yt-viewer .video .yt-video-description {
     width: 1200px;
   }
-  .yt-viewer .playlist {
+  .yt-viewer yt-result-set.playlist {
     width: 510px;
     margin-right: -530px;
   }
@@ -1204,7 +1206,7 @@ app-key-input li.button.del[activated="true"] {
   .yt-viewer .video .yt-video-description {
     width: 1400px;
   }
-  .yt-viewer .playlist {
+  .yt-viewer yt-result-set.playlist {
     width: 570px;
     margin-right: -590px;
   }
@@ -1264,6 +1266,12 @@ app-key-input li.button.del[activated="true"] {
   display: table-cell;
   vertical-align: middle;
 }
+.tvmode yt-result-set {
+  display: block;
+  width: auto;
+  height: 800px;
+  overflow: hidden;
+}
 .tvmode .yt-result-set {
   -webkit-transition: -webkit-transform 0.5s ease-in-out;
   transition: transform 0.5s ease-in-out;
@@ -1305,11 +1313,15 @@ app-key-input li.button.del[activated="true"] {
   display: -webkit-inline-flex;
   display: -ms-inline-flexbox;
   display: inline-flex;
+  -webkit-transition: -webkit-transform 0.5s ease-in-out;
+  transition: transform 0.5s ease-in-out;
 }
 .tvmode .yt-result-set .ui-video-list .load-more-wrap {
   display: none;
 }
-.tvmode .yt-result-set .ui-video-list-item {
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item,
+.tvmode .ui-video-list-item {
+  border: 0;
   width: 460px;
   height: 465px;
   padding: 0;
@@ -1318,7 +1330,8 @@ app-key-input li.button.del[activated="true"] {
   -webkit-transition: -webkit-transform 0.25s ease-in-out;
   transition: transform 0.25s ease-in-out;
 }
-.tvmode .yt-result-set .ui-video-list-item:after {
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item:after,
+.tvmode .ui-video-list-item:after {
   content: '';
   position: absolute;
   display: block;
@@ -1330,7 +1343,8 @@ app-key-input li.button.del[activated="true"] {
   -webkit-transition: background-color 0.25s ease-in-out;
   transition: background-color 0.25s ease-in-out;
 }
-.tvmode .yt-result-set .ui-video-list-item[activated="true"] {
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item[activated="true"],
+.tvmode .ui-video-list-item[activated="true"] {
   -webkit-transform-origin: center center;
   -ms-transform-origin: center center;
   transform-origin: center center;
@@ -1347,35 +1361,56 @@ app-key-input li.button.del[activated="true"] {
   -webkit-transition-delay: 0.5s;
   transition-delay: 0.5s;
 }
-.tvmode .yt-result-set .ui-video-list-item[activated="true"]:after {
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item[activated="true"]:after,
+.tvmode .ui-video-list-item[activated="true"]:after {
   background-color: rgba(237,237,237,0);
   -webkit-transition: background-color 0.25s ease-in-out;
   transition: background-color 0.25s ease-in-out;
 }
-.tvmode .yt-result-set .ui-video-list-item .img {
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item .img,
+.tvmode .ui-video-list-item .img {
+  padding: 0;
   margin: 0;
+  width: 100%;
   height: 259px;
 }
-.tvmode .yt-result-set .ui-video-list-item .metadata {
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item .img img,
+.tvmode .ui-video-list-item .img img {
+  width: 100%;
+  height: auto;
+  float: none;
+}
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item .img .index,
+.tvmode .ui-video-list-item .img .index {
+  display: none;
+}
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item .metadata,
+.tvmode .ui-video-list-item .metadata {
   height: auto;
   margin-top: 10px;
   padding: 0 20px;
 }
-.tvmode .yt-result-set .ui-video-list-item .metadata .title {
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item .metadata .title,
+.tvmode .ui-video-list-item .metadata .title {
   height: 60px;
   white-space: normal;
   font-size: 1.625em;
   color: #3c3c3b;
 }
-.tvmode .yt-result-set .ui-video-list-item .metadata .subtitle {
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item .metadata .subtitle,
+.tvmode .ui-video-list-item .metadata .subtitle {
   margin: 10px 0;
 }
-.tvmode .yt-result-set .ui-video-list-item .metadata .channel,
-.tvmode .yt-result-set .ui-video-list-item .metadata .created {
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item .metadata .channel,
+.tvmode .ui-video-list-item .metadata .channel,
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item .metadata .created,
+.tvmode .ui-video-list-item .metadata .created {
   font-size: 1.125em;
   color: #666;
 }
-.tvmode .yt-result-set .ui-video-list-item .metadata .description {
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item .metadata .description,
+.tvmode .ui-video-list-item .metadata .description {
+  display: block !important;
   margin: 0;
   height: auto;
   width: auto;
@@ -1383,11 +1418,31 @@ app-key-input li.button.del[activated="true"] {
   font-size: 1.125em;
   color: #3c3c3b;
 }
-.tvmode .yt-result-set .ui-video-list-item .duration,
-.tvmode .yt-result-set .ui-video-list-item svg {
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item .duration,
+.tvmode .ui-video-list-item .duration,
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item svg,
+.tvmode .ui-video-list-item svg {
   display: none;
+}
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list {
+  overflow: visible;
 }
 .tvmode .activated button.search path,
 .tvmode *[activated="true"] button.search path {
   fill: #fff;
+}
+.tvmode yt-result-set.playlist[activated="true"] {
+  display: block;
+  z-index: 10;
+  position: absolute;
+  height: 500px;
+  width: auto;
+  top: 300px;
+}
+.tvmode yt-result-set.playlist[activated="true"] ui-video-list {
+  height: 500px;
+}
+.tvmode yt-result-set.playlist[activated="true"] ui-video-list-item {
+  width: 460px;
+  height: 465px;
 }
