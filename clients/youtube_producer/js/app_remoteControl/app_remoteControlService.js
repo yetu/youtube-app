@@ -39,10 +39,11 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
     };
 
     var action = function(command) {
+        // console.debug('appRemoteControlService.action', command);
         last = command;
 
         // TODO: if action special
-
+        
         if(registered[active]) {
             registered[active](command);
             if(config.passthrough && config.passthrough[active]) {
@@ -102,14 +103,14 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
     var findPrev = function(name) {
         var idx = config.order.indexOf(name);
         if(idx - 1 >= 0) {
-            activate(config.order[idx - 1]);
+            return config.order[idx - 1];
         }
     };
 
     var findNext = function(name) {
         var idx = config.order.indexOf(name);
         if(idx + 1 < config.order.length) {
-            activate(config.order[idx + 1]);
+            return config.order[idx + 1];
         }
     };
 
