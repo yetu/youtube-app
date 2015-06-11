@@ -101,8 +101,8 @@ module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $route
             data.video.startAt = $routeParams.time.replace(/&.+/, ''); // TODO: do it with $routeProvider?
         }
         $scope.video = data.video;
-        $scope.playlist = data.playlist;
-        $scope.playlist.currentPlaying = 0;
+        data.playlist.currentPlaying = 0;
+        $scope.playlist = [data.playlist];
     }, function(error) {
         // TODO: error handling
     });
@@ -501,10 +501,10 @@ module.exports = ({
 
         // viewer has different controls based on display type
         'viewer-fullscreen': {
-            order: ['search', 'player', 'playlist'],
-            first: 1,
+            order: ['search', 'playlist', 'player'],
+            first: 2,
             passthrough: {
-                player: 'controlbar'
+                player: ['controlbar']
             }
         },
         'viewer-expand': {
@@ -533,6 +533,7 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
         active,
         config,
         last,
+        initialized = false,
         controller = { name: null, callback: null};
 
     var init = function() {
@@ -555,6 +556,9 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
                 document.body.focus();
             });
             document.body.focus();
+            // activate first element
+            activate(active);
+            initialized = true;
         }
     };
 
@@ -566,9 +570,11 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
         if(registered[active]) {
             registered[active](command);
             if(config.passthrough && config.passthrough[active]) {
-                if(registered[config.passthrough[active]]) {
-                    registered[config.passthrough[active]](command);
-                }
+                angular.forEach(config.passthrough[active], function(value) {
+                    if(registered[value]) {
+                        registered[value](command);
+                    }
+                });
             }
         } else {
             // ...
@@ -594,7 +600,7 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
     var register = function(name, callback) {
         // console.debug('appRemoteControlService.register', name);
         registered[name] = callback;
-        if(active === name) {
+        if(active === name && initialized) {
             // activate configured element after registration
             activate(name);
         }
@@ -605,9 +611,10 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
     };
 
     var activate = function(name) {
+        // console.debug('appRemoteControlService.activate', name);
         if(registered[name]) {
             if(name !== active) {
-                registered[active]('deactivate');
+                action('deactivate');
             }
             active = name;
             registered[name]('activate');
@@ -932,8 +939,8 @@ module.exports = function ($window, $timeout) {
         template: require('./ui_videoListTemplate.html'),
         scope: {
             videoList: '=ngModel',
-            playLink: '@playLink',
-            playFn: '@playFn', // TODO: some function binding?
+            playLink: '@?playLink',
+            playFn: '@?playFn', // TODO: some function binding?
             displayType: '@display',
             controlType: '@control',
             loadMore: '@?loadMore'
@@ -944,6 +951,24 @@ module.exports = function ($window, $timeout) {
             if ($attrs.service) {
                 myService = $injector.get($attrs.service);
             }
+
+            /**
+             * Internal function for finding function wherever defined in parent scope (given as fn name)
+             * @param {object} scpe Initial scope
+             * @param {string} name Function name
+             * @returns {function|null} Found function or null
+             */
+            $scope.findFunction = function(scpe, name) {
+                if(typeof(scpe[name]) === 'function') {
+                    return scpe[name];
+                } else if (scpe.$parent && typeof(scpe.$parent[name]) === 'function') {
+                    return scpe.$parent[name];
+                } else if(scpe.$parent) {
+                    return $scope.findFunction(scpe.$parent, name);
+                } else {
+                    return null;
+                }
+            };
 
             $scope.loadNext = function(callback) {
                 if(!$scope.videoList || !$scope.videoList.etag || !$scope.videoList.next || $scope.loadingMore) {
@@ -968,19 +993,25 @@ module.exports = function ($window, $timeout) {
 
         },
         link: function (scope, element){
-            var container = element[0];
+            var container = element[0],
+                playFunction = null;
 
             // default display type
             if (!scope.displayType) {
                 scope.displayType = 'floating';
             }
 
+            // find play function if defined
+            if(scope.playFn) {
+                playFunction = scope.findFunction(scope, scope.playFn);
+            }
+
             // add display type as a class also
             element.addClass(scope.displayType);
 
             scope.playFunction = function (index) {
-                if (typeof(scope.$parent[scope.playFn]) === 'function') {
-                    scope.$parent[scope.playFn](index);
+                if (typeof(playFunction) === 'function') {
+                    playFunction(index);
                 } else {
                     console.error('ui-video-directive: ' + scope.playFn + ' is not a function');
                 }
@@ -991,7 +1022,7 @@ module.exports = function ($window, $timeout) {
                 element.bind('scroll', function () {
                         var distance = container.scrollHeight * 0.1; // 10% from the end
                         var toBottom = container.scrollHeight - container.clientHeight - container.scrollTop;
-                    
+
                     if(toBottom < distance) {
                         scope.loadNext();
                     }
@@ -1123,13 +1154,15 @@ module.exports = angular.module('yt_result', ['ngResource', 'pascalprecht.transl
 
 },{"./yt_resultSetDirective":42}],42:[function(require,module,exports){
 /*
- * <yt-result-set ng-model="" display="" control="" play-link=""></yt-result-set>
+ * <yt-result-set ng-model="" display="" control="" play-link="" play-fn="" load-more=""></yt-result-set>
  *
  * @attr ng-model array Scope model to be used as data feed - with elements containing: { list_type, title, items},
  *                      where list_type determines search strategy - used by search/load
  * @attr display @see ui-video-list
  * @attr control @see ui-video-list
  * @attr play-link @see ui-video-list
+ * @attr play-fn @see ui-video-list
+ * @attr load-more @see ui-video-list
  *
  */
 module.exports = function (appRemoteControlService, $location) {
@@ -1138,66 +1171,95 @@ module.exports = function (appRemoteControlService, $location) {
 		template: require('./yt_resultSetTemplate.html'),
         scope: {
             resultLists: '=ngModel',
-            playLink: '@playLink',
+            playLink: '@?playLink',
+            playFn: '@?playFn',
             displayType: '@display',
-            controlType: '@control'
+            controlType: '@control',
+            loadMore: '@loadMore'
         },
 		controller: function($scope) {
 		},
 		link: function(scope, element, attr){
-            var _unbinder = [],
-                items, current, $current, lists, loadNext, row, elementDistance,
-                activate = function(act) {
-                    // deactivate old
-                    if(items[current]) {
-                        angular.element(items[current]).attr('activated', false);
-                        if(lists.length > 1) {
-                            row = angular.element(items[current].parentNode).attr('row');
-                            angular.element(items[current].parentNode.parentNode.parentNode).removeClass('row-' + row + '-activated');
+            var _unbinder = [], items = [], rows = [],
+                current, $current, parent, $parent, $container, lists, loadNext, row, elementDistance, perRow;
+
+            var activate = function(act) {
+                // deactivate old
+                if(items[current]) {
+                    angular.element(items[current]).attr('activated', false);
+                    if(lists.length > 1) {
+                        parent = items[current].parentNode;
+                        $parent = angular.element(parent);
+                        $parent.css({transform: 'translate(0, 0)'});
+                        angular.element(parent.parentNode.parentNode).removeClass('row-' + items[current].rowNumber + '-activated');
+                        // check if row switched and reset to first in row, but not for left (-1)
+                        if(items[act] && items[current].rowNumber !== items[act].rowNumber &&  current - act !== 1) {
+                            act = items.indexOf(rows[items[act].rowNumber - 1][0]);
                         }
                     }
-                    // activate new
-                    current = act;
-                    if(current !== null) {
-                        var parent = items[current].parentNode,
-                            $parent = angular.element(parent),
-                            $container = angular.element(parent.parentNode.parentNode);
+                }
+                // activate new
+                current = act;
+                if(current !== null) {
+                    parent = items[current].parentNode;
+                    $container = angular.element(parent.parentNode.parentNode);
+                    $parent = angular.element(parent);
+                    $current = angular.element(items[current]).attr('activated', true);
 
-                        $current = angular.element(items[current]).attr('activated', true);
-
-                        if(lists.length > 1) {
-                            row = $parent.attr('row');
-                            $container.addClass('row-' + row + '-activated');
-                        } else {
-                            $container.css({transform: 'translate(-' + (current * elementDistance.x) + 'px, 0px)'}); // TODO: evantually add control of Y
-                        }
+                    if(lists.length > 1) {
+                        $container.addClass('row-' + items[current].rowNumber + '-activated');
+                        // TODO: adapt to calculate different number of elements in row if needed
+                        $parent.css({transform: 'translate(-' + (( current - perRow * ( items[current].rowNumber - 1 )) * elementDistance.x) + 'px, 0px)'});
+                    } else {
+                        $container.css({transform: 'translate(-' + (current * elementDistance.x) + 'px, 0px)'}); // TODO: evantually add control of Y
                     }
-                };
+                }
+            };
 
             var remoteControl = function(command) {
-                
+                var num;
                 switch(command) {
                     case 'activate': {
-                        var buttons = element.find('button');
-                        loadNext = angular.element(buttons[buttons.length - 1]).scope().loadNext;
                         element.attr('activated', true);
                         lists = element.find('ui-video-list');
-                        items = element.find('ui-video-list-item');
+                        angular.forEach(lists, function(val, key) {
+                            var its = angular.element(val).find('ui-video-list-item');
+                            rows[key] = [];
+                            angular.forEach(its, function(it, pos) {
+                                it.rowNumber = key + 1;
+                                it.positionIndex = pos;
+                                items.push(it);
+                                rows[key].push(it);
+                            });
+                        });
+                        perRow = items.length / lists.length;
+                        if(lists[0]) {
+                            loadNext = angular.element(lists[0]).isolateScope().loadNext;
+                        }
                         elementDistance = {
                             x: items[1] && items[0] ? items[1].offsetLeft - items[0].offsetLeft : 0,
                             y: items[1] && items[0] ? items[1].offsetTop - items[0].offsetTop : 0
                         };
-                        activate(0);
+                        activate(current || 0);
                         break;
                     }
                     case 'deactivate': {
                         element.attr('activated', false);
-                        activate(null);
+                        if(attr.remoteControl !== 'playlist') {
+                            activate(null);
+                        }
                         break;
                     }
-                    case 'left':
                     case 'up': {
-                        var num = command === 'left' ? 1 : 4;
+                        if(attr.remoteControl === 'playlist') {
+                            // deactivate to go to top element (search)
+                            appRemoteControlService.deactivate(attr.remoteControl);
+                            return;
+                        }
+                        // no break;
+                    }
+                    case 'left': {
+                        num = command === 'left' ? 1 : 4;
                         if(current - num > 0) {
                             activate(current - num);
                         } else {
@@ -1210,14 +1272,22 @@ module.exports = function (appRemoteControlService, $location) {
                         }
                         break;
                     }
-                    case 'right':
+
                     case 'down': {
-                        var num = command === 'right' ? 1 : 4;
+                        if(attr.remoteControl === 'playlist') {
+                            // deactivate to go to bottom element (player)
+                            appRemoteControlService.deactivate(attr.remoteControl);
+                            return;
+                        }
+                        // no break;
+                    }
+                    case 'right': {
+                        num = command === 'right' ? 1 : 4;
                         if(current + num < items.length) {
                             activate(current + num);
                         } else {
-                            if(current === items.length - 1) {
-                                // deaxtivate on next press of last element
+                            if(current === items.length - 1 && attr.remoteControl !== 'playlist') {
+                                // deaxtivate on next press of last element; but not for playlist
                                 appRemoteControlService.deactivate(attr.remoteControl);
                                 return;
                             }
@@ -1233,10 +1303,13 @@ module.exports = function (appRemoteControlService, $location) {
                         }
                         break;
                     }
+                    case 'play':
                     case 'enter': {
                         var el = $current.find('a')[0];
                         if(el.hash) {
                             $location.path(el.hash.substring(1));
+                        } else {
+                            $current.triggerHandler('click');
                         }
                         break;
                     }
@@ -1259,7 +1332,7 @@ module.exports = function (appRemoteControlService, $location) {
 	};
 };
 },{"./yt_resultSetTemplate.html":43}],43:[function(require,module,exports){
-module.exports = "<div class=\"{{ class || 'yt-result-set' }}\">\r\n  <div ng-repeat=\"videoList in resultLists\" class=\"result\">\r\n    <h2 class=\"list-title {{ videoList.type }}\">{{ videoList.title }}</h2>\r\n    <ui-video-list row=\"{{ $index + 1 }}\" class=\"{{ ::(class || 'ui-video-list') }} {{ ::displayType }} {{ ::videoList.type }} clearfix\" ng-model=\"videoList\"\r\n        play-link=\"{{ ::playLink }}\" display=\"{{ ::displayType }}\" control=\"{{ ::controlType }}\" service=\"ytYoutubeService\" load-more=\"button\">\r\n    </ui-video-list>\r\n  </div>\r\n</div>\r\n";
+module.exports = "<div class=\"{{ class || 'yt-result-set' }}\">\r\n  <div ng-repeat=\"videoList in resultLists\" class=\"result\">\r\n    <h2 class=\"list-title {{ videoList.type }}\">{{ videoList.title }}</h2>\r\n    <ui-video-list row=\"{{ $index + 1 }}\" class=\"{{ ::(class || 'ui-video-list') }} {{ ::displayType }} {{ ::videoList.type }} clearfix\" ng-model=\"videoList\"\r\n        play-link=\"{{ ::playLink }}\" play-fn=\"{{ ::playFn }}\" display=\"{{ ::displayType }}\" control=\"{{ ::controlType }}\" service=\"ytYoutubeService\" load-more=\"{{ ::( loadMore || 'button') }}\">\r\n    </ui-video-list>\r\n  </div>\r\n</div>\r\n";
 
 },{}],44:[function(require,module,exports){
 module.exports = angular.module('yt_search', ['ngResource', 'yaru22.angular-timeago'])
@@ -1675,6 +1748,10 @@ module.exports = function ($timeout, $window, $location, ytPlayerConfig, appRemo
                         scope.isVisible = !scope.isVisible;
                         break;
                     }
+                    case 'deactivate': {
+                        scope.isVisible = false;
+                        break;
+                    }
                 }
                 if (!scope.$$phase) {
                     scope.$apply();
@@ -1857,6 +1934,7 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
                         player.seekTo(position, true);
                         break;
                     }
+                    case 'up':
                     case 'quit': {
                         player.pauseVideo();
                         appRemoteControlService.deactivate('player');
@@ -1953,11 +2031,12 @@ module.exports = function ($timeout, appMode) {
 		link: function(scope, element){
 
             scope.playVideo = function(index) {
+                var list = scope.playlist[0] || scope.playlist;
                 // check if exists and is contains video id (dummy unavailable list handling)
-                if(scope.playlist.items[index] && scope.playlist.items[index].id) {
-                    scope.activatePlaylistItem(index, scope.playlist.currentPlaying);
-                    scope.playlist.currentPlaying = index;
-                    scope.video = scope.playlist.items[index];
+                if(list.items[index] && list.items[index].id) {
+                    scope.activatePlaylistItem(index, list.currentPlaying);
+                    list.currentPlaying = index;
+                    scope.video = list.items[index];
                 }
             };
 
@@ -1970,7 +2049,7 @@ module.exports = function ($timeout, appMode) {
                     angular.element(items[curr]).addClass('playing');
                 }
             };
-            
+
             scope.$watch('playlist', function(n) {
                 if(n) {
                     // activate (styling) first playlist item after rendering
@@ -1985,6 +2064,6 @@ module.exports = function ($timeout, appMode) {
 	};
 };
 },{"./yt_viewerTemplate.html":58}],58:[function(require,module,exports){
-module.exports = "<div class=\"{{ class || 'yt-viewer' }}\" ng-class=\"{ 'playlist-visible': playlistVisible }\">\r\n    <h2 class=\"title\">{{ video.title}} </h2>\r\n    <div class=\"video\">\r\n        <yt-player>\r\n            <div ng-if=\"playingOnTv\" class=\"overlay\">\r\n                <div>{{ ::('Playing on TV' | translate) }}</div>\r\n            </div>\r\n        </yt-player>\r\n        <yt-controlbar info=\"player.info\"></yt-controlbar>\r\n        <div class=\"buttons\">\r\n            <app-send-to-tv ng-model=\"video\" playing-on-tv=\"playingOnTv\"></app-send-to-tv>\r\n            <button class=\"toggle-playlist\" ng-click=\"playlistVisible = !playlistVisible\">\r\n                <span class=\"label_hidePlaylist\" ng-show=\"playlistVisible\">\r\n                    <span class=\"btnLabel\">{{ ::('Hide video list' | translate) }}</span>\r\n                    <svg version=\"1.1\" id=\"arrow\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 12 13\" enable-background=\"new 0 0 12 13\" xml:space=\"preserve\">\r\n                        <polygon fill=\"#FFFFFF\" points=\"1,0.5 11,6.5 1,12.5\"/>\r\n                    </svg>\r\n                </span>\r\n                <span class=\"label_showPlaylist\" ng-hide=\"playlistVisible\">\r\n                    <svg version=\"1.1\" id=\"arrow\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 12 13\" enable-background=\"new 0 0 12 13\" xml:space=\"preserve\">\r\n                        <polygon fill=\"#FFFFFF\" points=\"1,0.5 11,6.5 1,12.5\"/>\r\n                    </svg>\r\n                    <span class=\"btnLabel\">{{ ::('Show video list' | translate) }}</span>\r\n                </span>\r\n            </button>\r\n        </div>\r\n        <yt-video-description></yt-video-description>\r\n    </div>\r\n    <div class=\"playlist\">\r\n        <h3>{{ ::(playlist.title | translate) }}</h3>\r\n        <ui-video-list class=\"ui-video-list\" ng-model=\"playlist\" display=\"list\" play-fn=\"playVideo\" load-more=\"scroll\" service=\"ytYoutubeService\"></ui-video-list>\r\n    </div>\r\n</div>\r\n";
+module.exports = "<div class=\"{{ class || 'yt-viewer' }}\" ng-class=\"{ 'playlist-visible': playlistVisible }\">\r\n    <h2 class=\"title\">{{ video.title }} </h2>\r\n    <div class=\"video\">\r\n        <yt-player>\r\n            <div ng-if=\"playingOnTv\" class=\"overlay\">\r\n                <div>{{ ::('Playing on TV' | translate) }}</div>\r\n            </div>\r\n        </yt-player>\r\n        <yt-controlbar info=\"player.info\"></yt-controlbar>\r\n        <div class=\"buttons\">\r\n            <app-send-to-tv ng-model=\"video\" playing-on-tv=\"playingOnTv\"></app-send-to-tv>\r\n            <button class=\"toggle-playlist\" ng-click=\"playlistVisible = !playlistVisible\">\r\n                <span class=\"label_hidePlaylist\" ng-show=\"playlistVisible\">\r\n                    <span class=\"btnLabel\">{{ ::('Hide video list' | translate) }}</span>\r\n                    <svg version=\"1.1\" id=\"arrow\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 12 13\" enable-background=\"new 0 0 12 13\" xml:space=\"preserve\">\r\n                        <polygon fill=\"#FFFFFF\" points=\"1,0.5 11,6.5 1,12.5\"/>\r\n                    </svg>\r\n                </span>\r\n                <span class=\"label_showPlaylist\" ng-hide=\"playlistVisible\">\r\n                    <svg version=\"1.1\" id=\"arrow\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 12 13\" enable-background=\"new 0 0 12 13\" xml:space=\"preserve\">\r\n                        <polygon fill=\"#FFFFFF\" points=\"1,0.5 11,6.5 1,12.5\"/>\r\n                    </svg>\r\n                    <span class=\"btnLabel\">{{ ::('Show video list' | translate) }}</span>\r\n                </span>\r\n            </button>\r\n        </div>\r\n        <yt-video-description></yt-video-description>\r\n    </div>\r\n    <yt-result-set class=\"playlist\" ng-model=\"playlist\" display=\"list\" play-fn=\"playVideo\" load-more=\"scroll\" service=\"ytYoutubeService\" control=\"{{ ::appMode.get() }}\" remote-control=\"playlist\"></yt-result-set>\r\n</div>\r\n";
 
 },{}]},{},[1])
