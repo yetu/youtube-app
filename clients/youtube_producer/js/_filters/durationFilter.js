@@ -14,7 +14,7 @@ module.exports = (function() {
             if(hours) {
                 array.unshift(hours);
             }
-        } else if(typeof time !== 'undefined') {
+        } else if(typeof time !== 'undefined' && time !== null) {
             // http://stackoverflow.com/a/19094191
             array = (time || '').match(/(\d+)(?=[MHS])/ig);
         } else {
