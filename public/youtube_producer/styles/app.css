@@ -323,14 +323,14 @@ h2 {
   box-shadow: 7px 7px 10px 0 rgba(0,0,0,0.3);
 }
 .yt-viewer h2.title {
-  display: none;
-  color: #090;
+  color: #000;
 }
 .yt-viewer h2.list-title {
   display: block;
   font-family: 'source_sans_prolight';
   font-size: 1.25em;
-  margin: 10px 0 5px;
+  margin: 14px 0 6px;
+  line-height: 100%;
   color: #666;
 }
 .yt-viewer .video {
@@ -885,7 +885,7 @@ app-key-input li.button.del[activated="true"] {
   .app-search .query {
     width: 730px;
   }
-  .list-title {
+  h2.list-title {
     margin: 0;
   }
   .ui-video-list-item {
@@ -901,6 +901,7 @@ app-key-input li.button.del[activated="true"] {
   .yt-viewer {
     -webkit-transition: background-color 0.5s ease-in-out;
     transition: background-color 0.5s ease-in-out;
+    padding-bottom: 40px;
   }
   .yt-viewer .video {
     width: 700px;

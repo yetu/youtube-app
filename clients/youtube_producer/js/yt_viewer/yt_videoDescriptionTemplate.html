@@ -1,4 +1,5 @@
 <div class="yt-video-description">
+    <h2 class="title">{{ video.title }} </h2>
     <div class="text">
         <span ng-show="!expanded">{{ video.description | limitTo : 300 }}</span><!-- TODO: trust as html and | nl2br filter? -->
         <span ng-show="!expanded" ng-if="video.description.length > 300" ng-click="expanded = true">...</span>
