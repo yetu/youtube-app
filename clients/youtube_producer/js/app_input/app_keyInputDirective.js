@@ -1,9 +1,10 @@
 /* global module */
 /*
- * <app-key-input ng-model="" remote-control=""></app-key-input>
+ * <app-key-input ng-model="" remote-control="" activate-parent=""></app-key-input>
  *
  * @attr ng-model string Scope variable to be used as model for update
  * @attr remote-control string Element name to be registered within remote control service
+ * @attr activate-parent string Indicates if parent element with given name should be set as activated on remote control activation
  */
 module.exports = function (appKeyInputConfig, appRemoteControlService) {
     return {
@@ -45,17 +46,36 @@ module.exports = function (appKeyInputConfig, appRemoteControlService) {
                 }
             };
 
+            var findParent = function(el, name) {
+                var tag = name.toUpperCase();
+                if(el.parentNode && el.parentNode.tagName === tag) {
+                    return angular.element(el.parentNode);
+                } else if(el.parentNode) {
+                    return findParent(el.parentNode, name);
+                } else {
+                    throw new Error('Parent tag not found: ' + name);
+                }
+            };
+
             var remoteControl = function(command) {
 
                 switch(command) {
                     case 'activate': {
-                        scope.current = 0;
+                        if(scope.current === -1) {
+                            scope.current = 0;
+                        }
                         element.attr('activated', true);
+                        if(attr.activateParent) {
+                            findParent(element[0], attr.activateParent).attr('activated', true);
+                        }
                         break;
                     }
                     case 'deactivate': {
                         scope.current = -1;
                         element.attr('activated', false);
+                        if(attr.activateParent) {
+                            findParent(element[0], attr.activateParent).attr('activated', false);
+                        }
                         break;
                     }
                     case 'enter': {
