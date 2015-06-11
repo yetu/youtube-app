@@ -27,8 +27,8 @@ module.exports = ({
     
     controllers: {
         dashboard: {
-            order: ['search', 'input', 'result'],
-            first: 1,
+            order: ['input', 'result'],
+            first: 0,
             special: {
                 menu: {activate: 'search' },
                 quit: {}
@@ -37,8 +37,8 @@ module.exports = ({
 
         // viewer has different controls based on display type
         'viewer-fullscreen': {
-            order: ['search', 'playlist', 'player'],
-            first: 2,
+            order: ['playlist', 'player'],
+            first: 1,
             passthrough: {
                 player: ['controlbar']
             }

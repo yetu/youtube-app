@@ -113,9 +113,9 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
         }
     };
 
-    var deactivate = function(name) {
-        // console.debug('appRemoteControlService.deactivate', name);
-        switch(last) {
+    var deactivate = function(name, force) {
+        // console.debug('appRemoteControlService.deactivate', name, force);
+        switch(force || last) {
             case 'quit': {
                 active = null;
                 controller.callback(last, name);

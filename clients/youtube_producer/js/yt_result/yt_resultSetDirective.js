@@ -155,6 +155,7 @@ module.exports = function (appRemoteControlService, $location) {
                             $location.path(el.hash.substring(1));
                         } else {
                             $current.triggerHandler('click');
+                            appRemoteControlService.deactivate(attr.remoteControl, 'down');
                         }
                         break;
                     }

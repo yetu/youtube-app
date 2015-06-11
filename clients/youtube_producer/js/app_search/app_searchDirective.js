@@ -45,9 +45,16 @@ module.exports = function (appRemoteControlService) {
                     scope.initSearch(event.target.value);
                 }
             };
-            scope.initSearch = function(value) {
+            scope.initSearch = function(value, auto) {
                 if (scope.emitted === value && attr.allowRepeat !== "true") {
                     return;
+                }
+                // fixes late binding of auto param
+                if(auto) {
+                    triggerAuto = attr.triggerSearch && attr.triggerSearch.indexOf('auto') > -1;
+                    if(!triggerAuto) {
+                        return;
+                    }
                 }
                 if (value) {
                     scope.$emit(attr.eventSearch || 'app:search-value', value);
@@ -68,13 +75,9 @@ module.exports = function (appRemoteControlService) {
                 input.isFocused = false;
             });
 
-            if(triggerAuto) {
-                _unbinder.push(scope.$watch('searchValue', function (value) {
-                    if (value !== "") {
-                        scope.initSearch(value);
-                    }
-                }));
-            }
+            _unbinder.push(scope.$watch('searchValue', function (value) {
+                scope.initSearch(value, true);
+            }));
 
             var remoteControl = function(command) {
 
