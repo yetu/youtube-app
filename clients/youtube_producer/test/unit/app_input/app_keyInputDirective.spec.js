@@ -36,7 +36,7 @@ describe('Directive: app_input', function () {
     it('should add "a" on click on letter "a"', function() {
         var element = $compile('<app-key-input></app-key-input>')(scope);
         var elementScope = element.isolateScope();
-        var spy = spyOn(elementScope, 'addChar');
+        var spy = spyOn(elementScope, 'addChar').and.callThrough();
         scope.$digest();
         element.find('li').eq(0).triggerHandler('click');
         expect(elementScope.addChar).toHaveBeenCalled();
@@ -48,7 +48,7 @@ describe('Directive: app_input', function () {
     it('should add "b" on click on letter "b"', function() {
         var element = $compile('<app-key-input></app-key-input>')(scope);
         var elementScope = element.isolateScope();
-        var spy = spyOn(elementScope, 'addChar');
+        var spy = spyOn(elementScope, 'addChar').and.callThrough();
         scope.$digest();
         element.find('li').eq(1).triggerHandler('click');
         expect(elementScope.addChar).toHaveBeenCalled();
@@ -60,7 +60,7 @@ describe('Directive: app_input', function () {
     it('should remove the last character on click on del button', function() {
         var element = $compile('<app-key-input></app-key-input>')(scope);
         var elementScope = element.isolateScope();
-        var spy = spyOn(elementScope, 'deleteChar');
+        var spy = spyOn(elementScope, 'deleteChar').and.callThrough();
         scope.$digest();
         var listElements = element.find('li');
         listElements.eq(listElements.length-2).triggerHandler('click');
