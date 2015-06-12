@@ -61,23 +61,29 @@ module.exports = function (appRemoteControlService, $location) {
                 }
             };
 
+            var populateItems = function() {
+                lists = element.find('ui-video-list');
+                angular.forEach(lists, function(val, key) {
+                    var its = angular.element(val).find('ui-video-list-item');
+                    rows[key] = [];
+                    angular.forEach(its, function(it, pos) {
+                        it.rowNumber = key + 1;
+                        it.positionIndex = pos;
+                        if(items.indexOf(it) === -1) {
+                            items.push(it);
+                            rows[key].push(it);
+                        }
+                    });
+                });
+                perRow = items.length / lists.length;
+            };
+
             var remoteControl = function(command) {
                 var num;
                 switch(command) {
                     case 'activate': {
                         element.attr('activated', true);
-                        lists = element.find('ui-video-list');
-                        angular.forEach(lists, function(val, key) {
-                            var its = angular.element(val).find('ui-video-list-item');
-                            rows[key] = [];
-                            angular.forEach(its, function(it, pos) {
-                                it.rowNumber = key + 1;
-                                it.positionIndex = pos;
-                                items.push(it);
-                                rows[key].push(it);
-                            });
-                        });
-                        perRow = items.length / lists.length;
+                        populateItems();
                         if(lists[0]) {
                             loadNext = angular.element(lists[0]).isolateScope().loadNext;
                         }
@@ -146,7 +152,7 @@ module.exports = function (appRemoteControlService, $location) {
                         if(current + num >= items.length - 8) {
                             if(loadNext && lists.length === 1) {
                                 loadNext(function() {
-                                    items = element.find('ui-video-list-item');
+                                    populateItems();
                                 });
                             }
                         }
