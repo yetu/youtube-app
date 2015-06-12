@@ -4,7 +4,7 @@
  *             key-input="" remote-control=""></app-search>
  *
  * @attr placeholder string Placeholder text
- * @attr ng-model string Scope variable to be used as model
+ * @attr ng-model object Scope objects with .value field to be used as model for update
  * @attr value string Predefined value
  * @attr trigger-search string Comma separated triggers for searching start: enter - by Enter key, button - search button, auto - automatically started on typing
  * @attr auto-delay integer Triggering search after X ms of change (0 for disable) - for auto trigger
@@ -19,7 +19,7 @@ module.exports = function (appRemoteControlService) {
         restrict: 'E',
         template: require('./app_searchTemplate.html'),
         scope: {
-            searchValue: '=?ngModel',
+            searchQuery: '=?ngModel',
             placeholder: '@placeholder',
             keyInput: '@?'
         },
@@ -31,8 +31,12 @@ module.exports = function (appRemoteControlService) {
                 input = element.find('input')[0],
                 $input = angular.element(input);
 
+            if(!scope.searchQuery) {
+                scope.searchQuery = {};
+            }
+
             if(attr.value) {
-                scope.searchValue = attr.value;
+                scope.searchQuery.value = attr.value;
             }
 
             scope.searchButtonClick = function() {
@@ -75,8 +79,10 @@ module.exports = function (appRemoteControlService) {
                 input.isFocused = false;
             });
 
-            _unbinder.push(scope.$watch('searchValue', function (value) {
-                scope.initSearch(value, true);
+            _unbinder.push(scope.$watchCollection('searchQuery', function (model) {
+                if(model) {
+                    scope.initSearch(model.value, true);
+                }
             }));
 
             var remoteControl = function(command) {

@@ -7,6 +7,7 @@ describe('Directive: app_search', function () {
     beforeEach(inject(function(_$compile_, $rootScope, _$timeout_, _$window_){
         $compile = _$compile_;
         scope = $rootScope.$new();
+        scope.searchQuery = { value: '' };
         $timeout = _$timeout_;
         $window = _$window_;
         $window.config.input = {};
@@ -96,24 +97,24 @@ describe('Directive: app_search', function () {
     });
 
     it('should debounce input value', function() {
-        var element = $compile('<app-search trigger-search="auto"></app-search>')(scope);
+        var element = $compile('<app-search ng-model="searchQuery" trigger-search="auto"></app-search>')(scope);
         var elementScope = element.isolateScope();
         scope.$digest();
-        expect(elementScope.searchValue).toBe(undefined);
+        expect(elementScope.searchQuery).toBe(scope.searchQuery);
         spyOn(elementScope, '$emit');
-        elementScope.searchValue = 'yetu';
+        elementScope.searchQuery.value = 'yetu';
         scope.$digest();
         expect(elementScope.$emit).toHaveBeenCalledWith("app:search-value", "yetu");
         expect(elementScope.emitted).toBe('yetu');
     });
 
-    it('should debounce empty input value also', function() {
-        var element = $compile('<app-search trigger-search="auto"></app-search>')(scope);
+    it('should debounce empty input value also on empty', function() {
+        var element = $compile('<app-search ng-model="searchQuery" trigger-search="auto"></app-search>')(scope);
         var elementScope = element.isolateScope();
         scope.$digest();
-        expect(elementScope.searchValue).toBe(undefined);
+        expect(elementScope.searchQuery).toEqual(scope.searchQuery);
         spyOn(elementScope, '$emit');
-        elementScope.searchValue = '';
+        elementScope.searchQuery = '';
         expect(elementScope.$emit).not.toHaveBeenCalled();
         scope.$digest();
         expect(elementScope.$emit).toHaveBeenCalled;

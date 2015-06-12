@@ -14,6 +14,7 @@ describe('Directive: app_input', function () {
         scope = $rootScope.$new();
         $timeout = _$timeout_;
         $window = _$window_;
+        scope.model = { value: '' };
         appKeyInputConfig = _appKeyInputConfig_;
         appKeyInputConfig.letters = inputConfig.letters;
         appKeyInputConfig.numbers = inputConfig.numbers;
@@ -34,7 +35,7 @@ describe('Directive: app_input', function () {
     });
 
     it('should add "a" on click on letter "a"', function() {
-        var element = $compile('<app-key-input></app-key-input>')(scope);
+        var element = $compile('<app-key-input ng-model="model"></app-key-input>')(scope);
         var elementScope = element.isolateScope();
         var spy = spyOn(elementScope, 'addChar').and.callThrough();
         scope.$digest();
@@ -46,7 +47,7 @@ describe('Directive: app_input', function () {
     });
 
     it('should add "b" on click on letter "b"', function() {
-        var element = $compile('<app-key-input></app-key-input>')(scope);
+        var element = $compile('<app-key-input ng-model="model"></app-key-input>')(scope);
         var elementScope = element.isolateScope();
         var spy = spyOn(elementScope, 'addChar').and.callThrough();
         scope.$digest();
@@ -58,7 +59,7 @@ describe('Directive: app_input', function () {
     });
 
     it('should remove the last character on click on del button', function() {
-        var element = $compile('<app-key-input></app-key-input>')(scope);
+        var element = $compile('<app-key-input ng-model="model"></app-key-input>')(scope);
         var elementScope = element.isolateScope();
         var spy = spyOn(elementScope, 'deleteChar').and.callThrough();
         scope.$digest();

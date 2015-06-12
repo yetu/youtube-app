@@ -23,8 +23,8 @@ module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $route
     appRemoteControlService.setController('viewer-' + $routeParams.mode, function(action, name) {
         if(action === 'quit' && name === 'player' && $routeParams.mode === 'fullscreen') {
             var url = '/dashboard';
-            if($rootScope.searchValue) {
-                url += '/search/' + $rootScope.searchValue;
+            if($rootScope.searchQuery) {
+                url += '/search/' + $rootScope.searchQuery.value;
             }
             $location.path(url);
         }

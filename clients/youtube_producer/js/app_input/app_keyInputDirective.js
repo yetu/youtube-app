@@ -2,7 +2,7 @@
 /*
  * <app-key-input ng-model="" remote-control="" activate-parent=""></app-key-input>
  *
- * @attr ng-model string Scope variable to be used as model for update
+ * @attr ng-model object Scope objects with .value field to be used as model for update
  * @attr remote-control string Element name to be registered within remote control service
  * @attr activate-parent string Indicates if parent element with given name should be set as activated on remote control activation
  */
@@ -29,20 +29,17 @@ module.exports = function (appKeyInputConfig, appRemoteControlService) {
             scope.addChar = function(event) {
                 if(event.target) {
                     var char = angular.element(event.target).attr('char'),
-                        value = scope.$parent.$parent.searchValue || '';
-                        //value = scope.inputValue || '';
-                    //scope.inputValue = value + char;
-                    scope.$parent.$parent.searchValue = value + char; // TODO: fix workaround for binding
+                        value = scope.inputValue.value || '';
+
+                    scope.inputValue.value = value + char;
                 }
             };
 
             scope.deleteChar = function() {
-                var value = scope.$parent.$parent.searchValue || '',
-                    //value = scope.inputValue || '',
+                var value = scope.inputValue.value || '',
                     length = value.length;
                 if(length > 0) {
-                    //scope.inputValue = value.substring(0, length - 1);
-                    scope.$parent.$parent.searchValue = value.substring(0, length - 1); // TODO: fix workaround for binding
+                    scope.inputValue.value = value.substring(0, length - 1);
                 }
             };
 

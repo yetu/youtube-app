@@ -53,7 +53,7 @@
             <div class="header" ng-if="::appMode.isTV()">
                 <!-- put logo etc here -->
             </div>
-            <app-search class="app-search" placeholder="Search YouTube" ng-model="searchValue" trigger-search="button,enter{{ appMode.isTV() ? ',auto' : '' }}" allow-repeat="true"
+            <app-search class="app-search" placeholder="Search YouTube" ng-model="searchQuery" trigger-search="button,enter{{ appMode.isTV() ? ',auto' : '' }}" allow-repeat="true"
                 key-input="true" remote-control="search"></app-search>
             <div ng-view></div>
         </div>

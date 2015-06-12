@@ -91,7 +91,7 @@ describe('dashboardController function', function() {
         $timeout.verifyNoPendingTasks();
         expect(ytYoutubeService.getResult).toHaveBeenCalled();
         expect(ytYoutubeService.getResult.calls.count()).toBe(1);
-        expect(scope.searchValue).toBe('testing');
+        expect(scope.searchQuery.value).toBe('testing');
         expect(scope.mainResultList.length).toBe(1);
         expect(scope.mainResultList[0].items[0].id).toBe(1234);
     });
@@ -107,7 +107,7 @@ describe('dashboardController function', function() {
         $timeout.verifyNoPendingTasks();
         expect(ytYoutubeService.getResult).toHaveBeenCalled();
         expect(ytYoutubeService.getResult.calls.count()).toBe(1);
-        expect(scope.searchValue).toBe('testing');
+        expect(scope.searchQuery.value).toBe('testing');
         expect(scope.mainResultList.length).toBe(1);
         expect(scope.mainResultList[0].items[0].id).toBe(1234);
     });

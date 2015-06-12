@@ -6,12 +6,15 @@
  */
 module.exports = (function($scope, ytYoutubeService, $route, $routeParams, $location, $rootScope, $filter, appRemoteControlService) {
 
-    if($routeParams.action === 'search' && $routeParams.param) {
-        $rootScope.searchValue = $routeParams.param;
-        ytYoutubeService.getResult('search', $routeParams.param).then(function(data) {
+    var startSearch = function(value) {
+        ytYoutubeService.getResult('search', value).then(function(data) {
             $scope.mainResultList = [data];
-            $scope.searchValue = $routeParams.param; // temporary as search inside
         });
+    };
+
+    if($routeParams.action === 'search' && $routeParams.param) {
+        $rootScope.searchQuery = { value: $routeParams.param };
+        startSearch($routeParams.param);
     } else {
         var categoryId, list = [], order = [],
             numberOfCategories = config.dashboardCategories.length;
@@ -43,7 +46,7 @@ module.exports = (function($scope, ytYoutubeService, $route, $routeParams, $loca
     $rootScope.$on('app:search-value', function(event, query){
         var url = '/dashboard/search/' + query;
         if(url === $location.path()) {
-            $route.reload();
+            startSearch(query);
         } else {
             $location.path(url);
         }
