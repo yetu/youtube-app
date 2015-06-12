@@ -36,12 +36,14 @@
         margin-right: 160px;
         margin-top: 21px;
         transition: transform 0.5s ease-in-out;
-        transform: translateY(-200px);
         .query {
             width: 100%;
         }
         &[activated="true"] {
             transform: translateY(0);
+        }
+        &[activated="false"] {
+            transform: translateY(-200px);
         }
     }
     app-search,
