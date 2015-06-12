@@ -69,9 +69,9 @@ module.exports = function (appRemoteControlService, $location) {
                     angular.forEach(its, function(it, pos) {
                         it.rowNumber = key + 1;
                         it.positionIndex = pos;
+                        rows[key].push(it);
                         if(items.indexOf(it) === -1) {
                             items.push(it);
-                            rows[key].push(it);
                         }
                     });
                 });
