@@ -149,7 +149,7 @@ module.exports = (function() {
             if(hours) {
                 array.unshift(hours);
             }
-        } else if(typeof time !== 'undefined') {
+        } else if(typeof time !== 'undefined' && time !== null) {
             // http://stackoverflow.com/a/19094191
             array = (time || '').match(/(\d+)(?=[MHS])/ig);
         } else {
@@ -269,10 +269,11 @@ module.exports = ({
 },{}],13:[function(require,module,exports){
 /* global module */
 /*
- * <app-key-input ng-model="" remote-control=""></app-key-input>
+ * <app-key-input ng-model="" remote-control="" activate-parent=""></app-key-input>
  *
  * @attr ng-model string Scope variable to be used as model for update
  * @attr remote-control string Element name to be registered within remote control service
+ * @attr activate-parent string Indicates if parent element with given name should be set as activated on remote control activation
  */
 module.exports = function (appKeyInputConfig, appRemoteControlService) {
     return {
@@ -314,17 +315,36 @@ module.exports = function (appKeyInputConfig, appRemoteControlService) {
                 }
             };
 
+            var findParent = function(el, name) {
+                var tag = name.toUpperCase();
+                if(el.parentNode && el.parentNode.tagName === tag) {
+                    return angular.element(el.parentNode);
+                } else if(el.parentNode) {
+                    return findParent(el.parentNode, name);
+                } else {
+                    throw new Error('Parent tag not found: ' + name);
+                }
+            };
+
             var remoteControl = function(command) {
 
                 switch(command) {
                     case 'activate': {
-                        scope.current = 0;
+                        if(scope.current === -1) {
+                            scope.current = 0;
+                        }
                         element.attr('activated', true);
+                        if(attr.activateParent) {
+                            findParent(element[0], attr.activateParent).attr('activated', true);
+                        }
                         break;
                     }
                     case 'deactivate': {
                         scope.current = -1;
                         element.attr('activated', false);
+                        if(attr.activateParent) {
+                            findParent(element[0], attr.activateParent).attr('activated', false);
+                        }
                         break;
                     }
                     case 'enter': {
@@ -491,8 +511,8 @@ module.exports = ({
     
     controllers: {
         dashboard: {
-            order: ['search', 'input', 'result'],
-            first: 1,
+            order: ['input', 'result'],
+            first: 0,
             special: {
                 menu: {activate: 'search' },
                 quit: {}
@@ -501,8 +521,8 @@ module.exports = ({
 
         // viewer has different controls based on display type
         'viewer-fullscreen': {
-            order: ['search', 'playlist', 'player'],
-            first: 2,
+            order: ['playlist', 'player'],
+            first: 1,
             passthrough: {
                 player: ['controlbar']
             }
@@ -537,6 +557,7 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
         controller = { name: null, callback: null};
 
     var init = function() {
+        // console.debug('appRemoteControlService.init');
         if($window.yetu) {
             $window.yetu.onAnyActionDetected = function(data, topic, channel){
                 // console.debug("yetu message received", data, topic, channel);
@@ -563,10 +584,11 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
     };
 
     var action = function(command) {
+        // console.debug('appRemoteControlService.action', command);
         last = command;
 
         // TODO: if action special
-
+        
         if(registered[active]) {
             registered[active](command);
             if(config.passthrough && config.passthrough[active]) {
@@ -586,6 +608,10 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
         if(appRemoteControlConfig.controllers[name]) {
             config = appRemoteControlConfig.controllers[name];
             active = config.order[config.first || 0];
+            // in case of already initialized service activate first after controler if set
+            if(initialized) {
+                $timeout(function() { activate(active); });
+            }
         } else {
             throw new Error('Config of remote control doesnt exist for ' + name);
         }
@@ -626,20 +652,20 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
     var findPrev = function(name) {
         var idx = config.order.indexOf(name);
         if(idx - 1 >= 0) {
-            activate(config.order[idx - 1]);
+            return config.order[idx - 1];
         }
     };
 
     var findNext = function(name) {
         var idx = config.order.indexOf(name);
         if(idx + 1 < config.order.length) {
-            activate(config.order[idx + 1]);
+            return config.order[idx + 1];
         }
     };
 
-    var deactivate = function(name) {
-        // console.debug('appRemoteControlService.deactivate', name);
-        switch(last) {
+    var deactivate = function(name, force) {
+        // console.debug('appRemoteControlService.deactivate', name, force);
+        switch(force || last) {
             case 'quit': {
                 active = null;
                 controller.callback(last, name);
@@ -725,9 +751,16 @@ module.exports = function (appRemoteControlService) {
                     scope.initSearch(event.target.value);
                 }
             };
-            scope.initSearch = function(value) {
+            scope.initSearch = function(value, auto) {
                 if (scope.emitted === value && attr.allowRepeat !== "true") {
                     return;
+                }
+                // fixes late binding of auto param
+                if(auto) {
+                    triggerAuto = attr.triggerSearch && attr.triggerSearch.indexOf('auto') > -1;
+                    if(!triggerAuto) {
+                        return;
+                    }
                 }
                 if (value) {
                     scope.$emit(attr.eventSearch || 'app:search-value', value);
@@ -748,13 +781,9 @@ module.exports = function (appRemoteControlService) {
                 input.isFocused = false;
             });
 
-            if(triggerAuto) {
-                _unbinder.push(scope.$watch('searchValue', function (value) {
-                    if (value !== "") {
-                        scope.initSearch(value);
-                    }
-                }));
-            }
+            _unbinder.push(scope.$watch('searchValue', function (value) {
+                scope.initSearch(value, true);
+            }));
 
             var remoteControl = function(command) {
 
@@ -798,7 +827,7 @@ module.exports = function (appRemoteControlService) {
 
 
 },{"./app_searchTemplate.html":22}],22:[function(require,module,exports){
-module.exports = "<div class=\"app-search\">\r\n    <input class=\"query\" ng-model=\"searchValue\" ng-model-options=\"{ debounce: 500 }\" ng-keyup=\"searchOnKeyUp($event)\" type=\"text\"\r\n        placeholder=\"{{placeholder}}\" value=\"{{searchValue}}\">\r\n    <button class=\"search\" ng-click=\"searchButtonClick()\">\r\n        <svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\r\n            viewBox=\"0 0 21.7 21.7\" enable-background=\"new 0 0 21.7 21.7\" xml:space=\"preserve\">\r\n            <path fill=\"#777\" d=\"M21.7,20.3l-6-6c1.2-1.5,1.9-3.4,1.9-5.5c0-4.9-4-8.8-8.8-8.8C4,0,0,4,0,8.8c0,4.9,4,8.8,8.8,8.8\r\n                c2.1,0,4-0.7,5.5-1.9l6,6L21.7,20.3z M8.8,15.6C5.1,15.6,2,12.6,2,8.8C2,5.1,5.1,2,8.8,2c3.8,0,6.8,3.1,6.8,6.8\r\n                C15.6,12.6,12.6,15.6,8.8,15.6z\"/>\r\n        </svg>\r\n    </button>\r\n    <app-key-input class=\"clearfix\" ng-model=\"searchValue\" ng-if=\"keyInput\" remote-control=\"input\"></app-key-input>\r\n</div>";
+module.exports = "<div class=\"app-search\">\r\n    <input class=\"query\" ng-model=\"searchValue\" ng-model-options=\"{ debounce: 500 }\" ng-keyup=\"searchOnKeyUp($event)\" type=\"text\"\r\n        placeholder=\"{{placeholder}}\" value=\"{{searchValue}}\">\r\n    <button class=\"search\" ng-click=\"searchButtonClick()\">\r\n        <svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\r\n            viewBox=\"0 0 21.7 21.7\" enable-background=\"new 0 0 21.7 21.7\" xml:space=\"preserve\">\r\n            <path fill=\"#777\" d=\"M21.7,20.3l-6-6c1.2-1.5,1.9-3.4,1.9-5.5c0-4.9-4-8.8-8.8-8.8C4,0,0,4,0,8.8c0,4.9,4,8.8,8.8,8.8\r\n                c2.1,0,4-0.7,5.5-1.9l6,6L21.7,20.3z M8.8,15.6C5.1,15.6,2,12.6,2,8.8C2,5.1,5.1,2,8.8,2c3.8,0,6.8,3.1,6.8,6.8\r\n                C15.6,12.6,12.6,15.6,8.8,15.6z\"/>\r\n        </svg>\r\n    </button>\r\n    <app-key-input class=\"clearfix\" ng-model=\"searchValue\" ng-if=\"keyInput\" remote-control=\"input\" activate-parent=\"app-search\"></app-key-input>\r\n</div>";
 
 },{}],23:[function(require,module,exports){
 module.exports = angular.module('app_search', ['pascalprecht.translate'])
@@ -1156,8 +1185,8 @@ module.exports = angular.module('yt_result', ['ngResource', 'pascalprecht.transl
 /*
  * <yt-result-set ng-model="" display="" control="" play-link="" play-fn="" load-more=""></yt-result-set>
  *
- * @attr ng-model array Scope model to be used as data feed - with elements containing: { list_type, title, items},
- *                      where list_type determines search strategy - used by search/load
+ * @attr ng-model array Scope model to be used as data feed - with elements containing: { type, title, items, ...@see ui-video-list},
+ *                      where type determines search strategy - used by search/load
  * @attr display @see ui-video-list
  * @attr control @see ui-video-list
  * @attr play-link @see ui-video-list
@@ -1211,9 +1240,26 @@ module.exports = function (appRemoteControlService, $location) {
                         // TODO: adapt to calculate different number of elements in row if needed
                         $parent.css({transform: 'translate(-' + (( current - perRow * ( items[current].rowNumber - 1 )) * elementDistance.x) + 'px, 0px)'});
                     } else {
-                        $container.css({transform: 'translate(-' + (current * elementDistance.x) + 'px, 0px)'}); // TODO: evantually add control of Y
+                        $parent.css({transform: 'translate(-' + (current * elementDistance.x) + 'px, 0px)'}); // TODO: evantually add control of Y
                     }
                 }
+            };
+
+            var populateItems = function() {
+                lists = element.find('ui-video-list');
+                angular.forEach(lists, function(val, key) {
+                    var its = angular.element(val).find('ui-video-list-item');
+                    rows[key] = [];
+                    angular.forEach(its, function(it, pos) {
+                        it.rowNumber = key + 1;
+                        it.positionIndex = pos;
+                        rows[key].push(it);
+                        if(items.indexOf(it) === -1) {
+                            items.push(it);
+                        }
+                    });
+                });
+                perRow = items.length / lists.length;
             };
 
             var remoteControl = function(command) {
@@ -1221,18 +1267,7 @@ module.exports = function (appRemoteControlService, $location) {
                 switch(command) {
                     case 'activate': {
                         element.attr('activated', true);
-                        lists = element.find('ui-video-list');
-                        angular.forEach(lists, function(val, key) {
-                            var its = angular.element(val).find('ui-video-list-item');
-                            rows[key] = [];
-                            angular.forEach(its, function(it, pos) {
-                                it.rowNumber = key + 1;
-                                it.positionIndex = pos;
-                                items.push(it);
-                                rows[key].push(it);
-                            });
-                        });
-                        perRow = items.length / lists.length;
+                        populateItems();
                         if(lists[0]) {
                             loadNext = angular.element(lists[0]).isolateScope().loadNext;
                         }
@@ -1245,13 +1280,17 @@ module.exports = function (appRemoteControlService, $location) {
                     }
                     case 'deactivate': {
                         element.attr('activated', false);
-                        if(attr.remoteControl !== 'playlist') {
+                        if(lists.length !== 1) {
+                            // reset to first if multiline
                             activate(null);
+                        } else {
+                            // just remove attribute without calling full deactivation otherwise
+                            angular.element(items[current]).attr('activated', false);
                         }
                         break;
                     }
                     case 'up': {
-                        if(attr.remoteControl === 'playlist') {
+                        if(lists.length === 1) {
                             // deactivate to go to top element (search)
                             appRemoteControlService.deactivate(attr.remoteControl);
                             return;
@@ -1274,7 +1313,7 @@ module.exports = function (appRemoteControlService, $location) {
                     }
 
                     case 'down': {
-                        if(attr.remoteControl === 'playlist') {
+                        if(lists.length === 1) {
                             // deactivate to go to bottom element (player)
                             appRemoteControlService.deactivate(attr.remoteControl);
                             return;
@@ -1297,7 +1336,7 @@ module.exports = function (appRemoteControlService, $location) {
                         if(current + num >= items.length - 8) {
                             if(loadNext && lists.length === 1) {
                                 loadNext(function() {
-                                    items = element.find('ui-video-list-item');
+                                    populateItems();
                                 });
                             }
                         }
@@ -1310,6 +1349,7 @@ module.exports = function (appRemoteControlService, $location) {
                             $location.path(el.hash.substring(1));
                         } else {
                             $current.triggerHandler('click');
+                            appRemoteControlService.deactivate(attr.remoteControl, 'down');
                         }
                         break;
                     }

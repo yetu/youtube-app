@@ -69,17 +69,24 @@
         width: auto;
         height: 800px;
         overflow: hidden;
+        
+        .list-title.search {    
+            display: block;
+            opacity: 0;
+            width: 90%;
+            transition: opacity 0.5s ease-in-out;
+        }
 
         &[activated="true"] {
-            transform: translateY(-90px);
             .list-title.search {    
-                display: block;
-                width: 90%;
+                opacity: 1;
+                transition: opacity 0.5s ease-in-out;
             }
         }
     }
     
     .yt-result-set {
+        position: relative;
         transition: transform 0.5s ease-in-out;
         .result {
             margin-bottom: 65px;
@@ -115,6 +122,7 @@
             display: -webkit-inline-box;
             display: inline-flex;
             transition: transform 0.5s ease-in-out;
+            
             .load-more-wrap {
                 display: none;
             }

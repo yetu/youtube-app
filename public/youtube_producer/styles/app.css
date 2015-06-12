@@ -77,12 +77,13 @@ h2 {
 .tile-label-semi-transparent-80 {
   opacity: 0.8;
 }
-.app-search {
+app-search {
+  display: block;
   position: relative;
   width: 100%;
   padding: 30px 0px;
 }
-.app-search .query {
+app-search .query {
   font-family: source_sans_prolight;
   font-size: 24px;
   color: #999;
@@ -94,7 +95,7 @@ h2 {
   border: 0;
   outline: 0;
 }
-.app-search button.search {
+app-search button.search {
   width: 35px;
   height: 50px;
   position: absolute;
@@ -105,7 +106,7 @@ h2 {
   outline: 0;
   cursor: pointer;
 }
-.app-search button.search:hover path {
+app-search button.search:hover path {
   fill: #000;
 }
 .list-title {
@@ -777,7 +778,7 @@ app-key-input li.button.del[activated="true"] {
   .yt-viewer {
     width: 300px;
   }
-  .app-search .query {
+  app-search .query {
     width: 290px;
   }
   .yt-viewer .yt-video-description {
@@ -818,7 +819,7 @@ app-key-input li.button.del[activated="true"] {
   .yt-viewer {
     width: 460px;
   }
-  .app-search .query {
+  app-search .query {
     width: 450px;
   }
   .yt-viewer .yt-video-description {
@@ -844,7 +845,7 @@ app-key-input li.button.del[activated="true"] {
   .yt-viewer {
     width: 600px;
   }
-  .app-search .query {
+  app-search .query {
     width: 590px;
   }
   .list-title {
@@ -882,7 +883,7 @@ app-key-input li.button.del[activated="true"] {
   .yt-viewer {
     width: 740px;
   }
-  .app-search .query {
+  app-search .query {
     width: 730px;
   }
   h2.list-title {
@@ -984,7 +985,7 @@ app-key-input li.button.del[activated="true"] {
   .yt-viewer {
     width: 960px;
   }
-  .app-search .query {
+  app-search .query {
     padding-left: 10px;
     width: 950px;
   }
@@ -1047,7 +1048,7 @@ app-key-input li.button.del[activated="true"] {
   .yt-viewer {
     width: 1140px;
   }
-  .app-search .query {
+  app-search .query {
     padding-left: 10px;
     width: 1130px;
   }
@@ -1109,7 +1110,7 @@ app-key-input li.button.del[activated="true"] {
   .yt-viewer {
     width: 1340px;
   }
-  .app-search .query {
+  app-search .query {
     width: 1330px;
   }
   .list-title {
@@ -1168,7 +1169,7 @@ app-key-input li.button.del[activated="true"] {
   .yt-viewer {
     width: 1540px;
   }
-  .app-search .query {
+  app-search .query {
     width: 1530px;
   }
   .list-title {
@@ -1233,6 +1234,14 @@ app-key-input li.button.del[activated="true"] {
   width: 100vw;
   padding: 0;
 }
+.tvmode .header {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 103px;
+  background-color: #ededed;
+}
 .tvmode .container,
 .tvmode yt-result-set,
 .tvmode .yt-result-set,
@@ -1240,19 +1249,32 @@ app-key-input li.button.del[activated="true"] {
 .tvmode .ui-video-list {
   overflow-y: visible;
 }
-.tvmode .app-search,
+.tvmode app-search,
 .tvmode .yt-result-set {
   margin-left: 160px;
 }
-.tvmode .app-search {
+.tvmode app-search {
   z-index: 100;
   width: 1490px !important;
   margin-right: 160px;
+  margin-top: 21px;
+  -webkit-transition: -webkit-transform 0.5s ease-in-out;
+  transition: transform 0.5s ease-in-out;
 }
-.tvmode .app-search .query {
+.tvmode app-search .query {
   width: 100%;
 }
-.tvmode .app-search,
+.tvmode app-search[activated="true"] {
+  -webkit-transform: translateY(0);
+  -ms-transform: translateY(0);
+  transform: translateY(0);
+}
+.tvmode app-search[activated="false"] {
+  -webkit-transform: translateY(-200px);
+  -ms-transform: translateY(-200px);
+  transform: translateY(-200px);
+}
+.tvmode app-search,
 .tvmode app-key-input {
   width: auto;
 }
@@ -1273,7 +1295,20 @@ app-key-input li.button.del[activated="true"] {
   height: 800px;
   overflow: hidden;
 }
+.tvmode yt-result-set .list-title.search {
+  display: block;
+  opacity: 0;
+  width: 90%;
+  -webkit-transition: opacity 0.5s ease-in-out;
+  transition: opacity 0.5s ease-in-out;
+}
+.tvmode yt-result-set[activated="true"] .list-title.search {
+  opacity: 1;
+  -webkit-transition: opacity 0.5s ease-in-out;
+  transition: opacity 0.5s ease-in-out;
+}
 .tvmode .yt-result-set {
+  position: relative;
   -webkit-transition: -webkit-transform 0.5s ease-in-out;
   transition: transform 0.5s ease-in-out;
 }
@@ -1427,10 +1462,6 @@ app-key-input li.button.del[activated="true"] {
 }
 .tvmode .yt-viewer yt-result-set.playlist .ui-video-list {
   overflow: visible;
-}
-.tvmode .activated button.search path,
-.tvmode *[activated="true"] button.search path {
-  fill: #fff;
 }
 .tvmode yt-result-set.playlist[activated="true"] {
   display: block;
