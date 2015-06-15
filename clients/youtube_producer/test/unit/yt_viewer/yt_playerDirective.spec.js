@@ -249,7 +249,7 @@ describe('Directive: yt-player', function () {
 
         it('should stop video and deactivate directive', function() {
             spyOn(appRemoteControlService, 'deactivate');
-            remote.callback('quit');
+            remote.callback('back');
             expect(test).toEqual({pauseVideo: undefined});
             expect(appRemoteControlService.deactivate).toHaveBeenCalledWith('player');
         });

@@ -22,7 +22,7 @@ module.exports = ({
         68: 'right', // d
         69: 'enter', // e
         83: 'down',  // s
-        81: 'quit',  // q
+        81: 'back',  // q
         72: 'home',  // h
         77: 'menu',  // m
         80: 'play'   // p
@@ -40,7 +40,7 @@ module.exports = ({
             first: 0,
             special: {
                 menu: { activate: 'search' },
-                quit: { send: 'sendQuit' }
+                back: { send: 'sendQuit' }
             }
         },
 
