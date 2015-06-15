@@ -16,13 +16,13 @@ module.exports = (function($window, $location, $timeout, appRemoteControlConfig)
         // console.debug('appRemoteControlService.init');
         if($window.yetu) {
             $window.yetu.onAnyActionDetected = function(data, topic, channel){
-                console.debug("yetu message received", data, topic, channel);
+                // console.debug("yetu message received", data, topic, channel);
                 action(topic.replace('control.', ''));
             };
             // simulates remote by keys
             document.onkeydown = function (evt) {
                 var key = appRemoteControlConfig.keys[evt.which];
-                console.debug("document.onkeydown", evt.which, key);
+                // console.debug("document.onkeydown", evt.which, key);
                 if(key) {
                     action(key);
                 }
@@ -40,7 +40,7 @@ module.exports = (function($window, $location, $timeout, appRemoteControlConfig)
     };
 
     var action = function(command) {
-        console.debug('appRemoteControlService.action', command, 'active:', active);
+        // console.debug('appRemoteControlService.action', command, 'active:', active);
         last = command;
 
         // call global special action if defined
@@ -55,6 +55,7 @@ module.exports = (function($window, $location, $timeout, appRemoteControlConfig)
         if(config.special && config.special[command]) {
             // send handling
             if(config.special[command].send && $window.yetu[config.special[command].send]) {
+                console.debug( "config.special[command].send: ", command, $window.yetu[config.special[command].send]);
                 $window.yetu[config.special[command].send]();
             }
         }
