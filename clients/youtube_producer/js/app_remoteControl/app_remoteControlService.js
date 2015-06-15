@@ -40,7 +40,7 @@ module.exports = (function($window, $location, $timeout, appRemoteControlConfig)
     };
 
     var action = function(command) {
-        // console.debug('appRemoteControlService.action', command);
+        console.debug('appRemoteControlService.action', command, 'active:', active);
         last = command;
 
         // call global special action if defined

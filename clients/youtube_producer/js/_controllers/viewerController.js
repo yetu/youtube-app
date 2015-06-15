@@ -21,6 +21,7 @@ module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $route
     });
 
     appRemoteControlService.setController('viewer-' + $routeParams.mode, function(action, name) {
+        console.debug("appRemoteControlService.setController: $routeParams.mode, action, name;", $routeParams.mode, action, name);
         if(action === 'back' && name === 'player' && $routeParams.mode === 'fullscreen') {
             var url = '/dashboard';
             if($rootScope.searchQuery && $rootScope.searchQuery.value) {
