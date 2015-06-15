@@ -112,7 +112,7 @@
             line-height: 100%;
             font-size: 3.125em;
             color: color-title-tv;
-            margin: 0 0 40px 0 !important;
+            margin: 0 0 20px 0 !important;
         }
     
         .ui-video-list {
@@ -168,14 +168,16 @@
         }
 
         .img {
+            overflow: hidden;
             padding: 0;
             margin: 0;
             width: 100%;
             height: 259px;
+            float: none;
             img {
                 width: 100%;
                 height: auto;
-                float: none;
+                
             }
             .index {
                 display: none;
@@ -184,19 +186,25 @@
 
         .metadata {
             height: auto;
-            margin-top: 10px;
+            max-height: 170px;
+            margin: 20px 0;
             padding: 0 20px;
+            font-size: 100%;
             .title {
+                top: 0;
+                left: 0;
                 height: 60px;
                 white-space: normal;
                 font-size: 1.625em;
                 color: color-title-tv;
+                line-height: 120%;
             }
             .subtitle {
-                margin: 10px 0;
+                margin: 10px 0 5px;
             }
             .channel,
             .created {
+                display: inline;
                 font-size: 1.125em;
                 color: color-metadata-tv;
             }
@@ -208,6 +216,7 @@
                 white-space: normal;
                 font-size: 1.125em;
                 color: color-title-tv;
+                line-height: 135%;
             }
         }
 

@@ -37,12 +37,15 @@ module.exports = ({
  */
 module.exports = (function($scope, ytYoutubeService, $route, $routeParams, $location, $rootScope, $filter, appRemoteControlService) {
 
-    if($routeParams.action === 'search' && $routeParams.param) {
-        $rootScope.searchValue = $routeParams.param;
-        ytYoutubeService.getResult('search', $routeParams.param).then(function(data) {
+    var startSearch = function(value) {
+        ytYoutubeService.getResult('search', value).then(function(data) {
             $scope.mainResultList = [data];
-            $scope.searchValue = $routeParams.param; // temporary as search inside
         });
+    };
+
+    if($routeParams.action === 'search' && $routeParams.param) {
+        $rootScope.searchQuery = { value: $routeParams.param };
+        startSearch($routeParams.param);
     } else {
         var categoryId, list = [], order = [],
             numberOfCategories = config.dashboardCategories.length;
@@ -74,7 +77,7 @@ module.exports = (function($scope, ytYoutubeService, $route, $routeParams, $loca
     $rootScope.$on('app:search-value', function(event, query){
         var url = '/dashboard/search/' + query;
         if(url === $location.path()) {
-            $route.reload();
+            startSearch(query);
         } else {
             $location.path(url);
         }
@@ -115,8 +118,8 @@ module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $route
     appRemoteControlService.setController('viewer-' + $routeParams.mode, function(action, name) {
         if(action === 'quit' && name === 'player' && $routeParams.mode === 'fullscreen') {
             var url = '/dashboard';
-            if($rootScope.searchValue) {
-                url += '/search/' + $rootScope.searchValue;
+            if($rootScope.searchQuery && $rootScope.searchQuery.value) {
+                url += '/search/' + $rootScope.searchQuery.value;
             }
             $location.path(url);
         }
@@ -271,7 +274,7 @@ module.exports = ({
 /*
  * <app-key-input ng-model="" remote-control="" activate-parent=""></app-key-input>
  *
- * @attr ng-model string Scope variable to be used as model for update
+ * @attr ng-model object Scope objects with .value field to be used as model for update
  * @attr remote-control string Element name to be registered within remote control service
  * @attr activate-parent string Indicates if parent element with given name should be set as activated on remote control activation
  */
@@ -298,20 +301,17 @@ module.exports = function (appKeyInputConfig, appRemoteControlService) {
             scope.addChar = function(event) {
                 if(event.target) {
                     var char = angular.element(event.target).attr('char'),
-                        value = scope.$parent.$parent.searchValue || '';
-                        //value = scope.inputValue || '';
-                    //scope.inputValue = value + char;
-                    scope.$parent.$parent.searchValue = value + char; // TODO: fix workaround for binding
+                        value = scope.inputValue.value || '';
+
+                    scope.inputValue.value = value + char;
                 }
             };
 
             scope.deleteChar = function() {
-                var value = scope.$parent.$parent.searchValue || '',
-                    //value = scope.inputValue || '',
+                var value = scope.inputValue.value || '',
                     length = value.length;
                 if(length > 0) {
-                    //scope.inputValue = value.substring(0, length - 1);
-                    scope.$parent.$parent.searchValue = value.substring(0, length - 1); // TODO: fix workaround for binding
+                    scope.inputValue.value = value.substring(0, length - 1);
                 }
             };
 
@@ -710,7 +710,7 @@ module.exports = angular.module('app_remoteControl', [])
  *             key-input="" remote-control=""></app-search>
  *
  * @attr placeholder string Placeholder text
- * @attr ng-model string Scope variable to be used as model
+ * @attr ng-model object Scope objects with .value field to be used as model for update
  * @attr value string Predefined value
  * @attr trigger-search string Comma separated triggers for searching start: enter - by Enter key, button - search button, auto - automatically started on typing
  * @attr auto-delay integer Triggering search after X ms of change (0 for disable) - for auto trigger
@@ -725,7 +725,7 @@ module.exports = function (appRemoteControlService) {
         restrict: 'E',
         template: require('./app_searchTemplate.html'),
         scope: {
-            searchValue: '=?ngModel',
+            searchQuery: '=?ngModel',
             placeholder: '@placeholder',
             keyInput: '@?'
         },
@@ -737,8 +737,12 @@ module.exports = function (appRemoteControlService) {
                 input = element.find('input')[0],
                 $input = angular.element(input);
 
+            if(!scope.searchQuery) {
+                scope.searchQuery = {};
+            }
+
             if(attr.value) {
-                scope.searchValue = attr.value;
+                scope.searchQuery.value = attr.value;
             }
 
             scope.searchButtonClick = function() {
@@ -781,8 +785,10 @@ module.exports = function (appRemoteControlService) {
                 input.isFocused = false;
             });
 
-            _unbinder.push(scope.$watch('searchValue', function (value) {
-                scope.initSearch(value, true);
+            _unbinder.push(scope.$watchCollection('searchQuery', function (model) {
+                if(model) {
+                    scope.initSearch(model.value, true);
+                }
             }));
 
             var remoteControl = function(command) {
@@ -827,7 +833,7 @@ module.exports = function (appRemoteControlService) {
 
 
 },{"./app_searchTemplate.html":22}],22:[function(require,module,exports){
-module.exports = "<div class=\"app-search\">\r\n    <input class=\"query\" ng-model=\"searchValue\" ng-model-options=\"{ debounce: 500 }\" ng-keyup=\"searchOnKeyUp($event)\" type=\"text\"\r\n        placeholder=\"{{placeholder}}\" value=\"{{searchValue}}\">\r\n    <button class=\"search\" ng-click=\"searchButtonClick()\">\r\n        <svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\r\n            viewBox=\"0 0 21.7 21.7\" enable-background=\"new 0 0 21.7 21.7\" xml:space=\"preserve\">\r\n            <path fill=\"#777\" d=\"M21.7,20.3l-6-6c1.2-1.5,1.9-3.4,1.9-5.5c0-4.9-4-8.8-8.8-8.8C4,0,0,4,0,8.8c0,4.9,4,8.8,8.8,8.8\r\n                c2.1,0,4-0.7,5.5-1.9l6,6L21.7,20.3z M8.8,15.6C5.1,15.6,2,12.6,2,8.8C2,5.1,5.1,2,8.8,2c3.8,0,6.8,3.1,6.8,6.8\r\n                C15.6,12.6,12.6,15.6,8.8,15.6z\"/>\r\n        </svg>\r\n    </button>\r\n    <app-key-input class=\"clearfix\" ng-model=\"searchValue\" ng-if=\"keyInput\" remote-control=\"input\" activate-parent=\"app-search\"></app-key-input>\r\n</div>";
+module.exports = "<div class=\"app-search\">\r\n    <input class=\"query\" ng-model=\"searchQuery.value\" ng-model-options=\"{ debounce: 500 }\" ng-keyup=\"searchOnKeyUp($event)\" type=\"text\"\r\n        placeholder=\"{{placeholder}}\" value=\"{{searchQuery.value}}\">\r\n    <button class=\"search\" ng-click=\"searchButtonClick()\">\r\n        <svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\r\n            viewBox=\"0 0 21.7 21.7\" enable-background=\"new 0 0 21.7 21.7\" xml:space=\"preserve\">\r\n            <path fill=\"#777\" d=\"M21.7,20.3l-6-6c1.2-1.5,1.9-3.4,1.9-5.5c0-4.9-4-8.8-8.8-8.8C4,0,0,4,0,8.8c0,4.9,4,8.8,8.8,8.8\r\n                c2.1,0,4-0.7,5.5-1.9l6,6L21.7,20.3z M8.8,15.6C5.1,15.6,2,12.6,2,8.8C2,5.1,5.1,2,8.8,2c3.8,0,6.8,3.1,6.8,6.8\r\n                C15.6,12.6,12.6,15.6,8.8,15.6z\"/>\r\n        </svg>\r\n    </button>\r\n    <app-key-input class=\"clearfix\" ng-model=\"searchQuery\" ng-if=\"keyInput\" remote-control=\"input\" activate-parent=\"app-search\"></app-key-input>\r\n</div>";
 
 },{}],23:[function(require,module,exports){
 module.exports = angular.module('app_search', ['pascalprecht.translate'])
