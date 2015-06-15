@@ -5,7 +5,7 @@ describe('Service: app_remoteControl', function () {
 
     beforeEach(module('youtubeApp', function($provide) {
         // simulates having yetu library loaded and TV mode
-        $provide.value('$window', { yetu: {dummy: 'true'}});
+        $provide.value('$window', { yetu: { sendQuit: function() {}}});
         $provide.value('appMode', { get: function() { return 'tv'; }});
     }));
 
@@ -134,5 +134,12 @@ describe('Service: app_remoteControl', function () {
         expect(directive.callback.calls.argsFor(0)).toEqual(['activate']);
         expect(directive.callback.calls.argsFor(1)).toEqual(['deactivate']);
         expect(directive.callback.calls.argsFor(2)).toEqual(['activate']);
+    });
+
+    it('should call special action if defined', function() {
+        spyOn($window.yetu, 'sendQuit');
+        service.setController('dashboard', controller.callback);
+        $window.yetu.onAnyActionDetected('data', 'control.quit', 'channel');
+        expect($window.yetu.sendQuit).toHaveBeenCalled();
     });
 });

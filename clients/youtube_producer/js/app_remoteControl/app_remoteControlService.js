@@ -2,7 +2,7 @@
 /**
  * Service for remote controling
  */
-module.exports = (function($window, $timeout, appRemoteControlConfig) {
+module.exports = (function($window, $location, $timeout, appRemoteControlConfig) {
     'use strict';
 
     var registered = {},
@@ -16,13 +16,13 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
         // console.debug('appRemoteControlService.init');
         if($window.yetu) {
             $window.yetu.onAnyActionDetected = function(data, topic, channel){
-                // console.debug("yetu message received", data, topic, channel);
+                console.debug("yetu message received", data, topic, channel);
                 action(topic.replace('control.', ''));
             };
             // simulates remote by keys
             document.onkeydown = function (evt) {
                 var key = appRemoteControlConfig.keys[evt.which];
-                // console.debug("document.onkeydown", evt.which, key);
+                console.debug("document.onkeydown", evt.which, key);
                 if(key) {
                     action(key);
                 }
@@ -43,8 +43,23 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
         // console.debug('appRemoteControlService.action', command);
         last = command;
 
-        // TODO: if action special
-        
+        // call global special action if defined
+        if(appRemoteControlConfig.special && appRemoteControlConfig.special[command]) {
+            // route handling
+            if(appRemoteControlConfig.special[command].route) {
+                $location.path(appRemoteControlConfig.special[command].route);
+            }
+        }
+
+        // call controller special action if defined
+        if(config.special && config.special[command]) {
+            // send handling
+            if(config.special[command].send && $window.yetu[config.special[command].send]) {
+                $window.yetu[config.special[command].send]();
+            }
+        }
+
+        // call component specific action
         if(registered[active]) {
             registered[active](command);
             if(config.passthrough && config.passthrough[active]) {

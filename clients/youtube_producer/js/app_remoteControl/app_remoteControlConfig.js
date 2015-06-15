@@ -3,11 +3,14 @@
 /**
  * Configuration for remote control service. It contains:
  * - keys: key binding for simulating remote controls with keyboard
+ * - special: general key handler - mainly for controllers independent actions - for particular key action can be:
+ *      - route: change location path to given
+ *      - ...
  * - controllers: controller actions configuration (key as name used by setController method), which can contain:
  *      - order: order of modules used for navigation between them
  *      - special: special action to be executed if particular key is pressed, can be:
  *              - activate: activation of other module
- *              - ... TODO, WIP, not implemented and used yet
+ *              - send: calls given method to yetu library
  *      - passthrough: passes event to other module if currentmodule is active now (syntax: { currentmodule: 'other' })
  */
 
@@ -24,14 +27,20 @@ module.exports = ({
         77: 'menu',  // m
         80: 'play'   // p
     },
+
+    special: {
+        home: {
+            route: '/'
+        }
+    },
     
     controllers: {
         dashboard: {
             order: ['input', 'result'],
             first: 0,
             special: {
-                menu: {activate: 'search' },
-                quit: {}
+                menu: { activate: 'search' },
+                quit: { send: 'sendQuit' }
             }
         },
 
