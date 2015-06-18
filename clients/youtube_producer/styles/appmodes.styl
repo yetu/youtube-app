@@ -142,6 +142,14 @@
         margin: 0 10px 0 0 !important; /* lazy but memory saving approach to override responsive styles ;) */
         background-color: bg-video-list-item-tv;
         transition: transform 0.25s ease-in-out;
+        
+        .duration,
+        .items{
+          span {
+            font-size: 1.25em;
+          }
+        }
+        
         &:after {
             content: '';
             position: absolute;
@@ -219,9 +227,8 @@
                 line-height: 135%;
             }
         }
-
-        .duration, 
-        svg {
+        
+        svg#arrow {
             display: none;
         }
     }

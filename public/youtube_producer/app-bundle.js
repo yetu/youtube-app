@@ -116,7 +116,8 @@ module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $route
     });
 
     appRemoteControlService.setController('viewer-' + $routeParams.mode, function(action, name) {
-        if(action === 'quit' && name === 'player' && $routeParams.mode === 'fullscreen') {
+        console.debug("appRemoteControlService.setController: $routeParams.mode, action, name;", $routeParams.mode, action, name);
+        if(action === 'back' && name === 'player' && $routeParams.mode === 'fullscreen') {
             var url = '/dashboard';
             if($rootScope.searchQuery && $rootScope.searchQuery.value) {
                 url += '/search/' + $rootScope.searchQuery.value;
@@ -487,11 +488,14 @@ module.exports = angular.module('app_mode', [])
 /**
  * Configuration for remote control service. It contains:
  * - keys: key binding for simulating remote controls with keyboard
+ * - special: general key handler - mainly for controllers independent actions - for particular key action can be:
+ *      - route: change location path to given
+ *      - ...
  * - controllers: controller actions configuration (key as name used by setController method), which can contain:
  *      - order: order of modules used for navigation between them
  *      - special: special action to be executed if particular key is pressed, can be:
  *              - activate: activation of other module
- *              - ... TODO, WIP, not implemented and used yet
+ *              - send: calls given method to yetu library
  *      - passthrough: passes event to other module if currentmodule is active now (syntax: { currentmodule: 'other' })
  */
 
@@ -503,10 +507,16 @@ module.exports = ({
         68: 'right', // d
         69: 'enter', // e
         83: 'down',  // s
-        81: 'quit',  // q
+        81: 'back',  // q
         72: 'home',  // h
         77: 'menu',  // m
         80: 'play'   // p
+    },
+
+    special: {
+        home: {
+            route: '/'
+        }
     },
     
     controllers: {
@@ -514,8 +524,8 @@ module.exports = ({
             order: ['input', 'result'],
             first: 0,
             special: {
-                menu: {activate: 'search' },
-                quit: {}
+                menu: { activate: 'search' },
+                back: { send: 'sendQuit' }
             }
         },
 
@@ -546,7 +556,7 @@ module.exports = ({
 /**
  * Service for remote controling
  */
-module.exports = (function($window, $timeout, appRemoteControlConfig) {
+module.exports = (function($window, $location, $timeout, appRemoteControlConfig) {
     'use strict';
 
     var registered = {},
@@ -584,11 +594,27 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
     };
 
     var action = function(command) {
-        // console.debug('appRemoteControlService.action', command);
+        // console.debug('appRemoteControlService.action', command, 'active:', active);
         last = command;
 
-        // TODO: if action special
-        
+        // call global special action if defined
+        if(appRemoteControlConfig.special && appRemoteControlConfig.special[command]) {
+            // route handling
+            if(appRemoteControlConfig.special[command].route) {
+                $location.path(appRemoteControlConfig.special[command].route);
+            }
+        }
+
+        // call controller special action if defined
+        if(config.special && config.special[command]) {
+            // send handling
+            if(config.special[command].send && $window.yetu[config.special[command].send]) {
+                console.debug( "config.special[command].send: ", command, $window.yetu[config.special[command].send]);
+                $window.yetu[config.special[command].send]();
+            }
+        }
+
+        // call component specific action
         if(registered[active]) {
             registered[active](command);
             if(config.passthrough && config.passthrough[active]) {
@@ -666,7 +692,7 @@ module.exports = (function($window, $timeout, appRemoteControlConfig) {
     var deactivate = function(name, force) {
         // console.debug('appRemoteControlService.deactivate', name, force);
         switch(force || last) {
-            case 'quit': {
+            case 'back': {
                 active = null;
                 controller.callback(last, name);
                 break;
@@ -1987,7 +2013,7 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
                         break;
                     }
                     case 'up':
-                    case 'quit': {
+                    case 'back': {
                         player.pauseVideo();
                         appRemoteControlService.deactivate('player');
                         break;
