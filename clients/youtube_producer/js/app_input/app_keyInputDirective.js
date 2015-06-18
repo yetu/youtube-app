@@ -31,7 +31,7 @@ module.exports = function (appKeyInputConfig, appRemoteControlService) {
                     var char = angular.element(event.target).attr('char'),
                         value = scope.inputValue.value || '';
 
-                    scope.inputValue.value = value + char;
+                    scope.inputValue.value = value + (appKeyInputConfig.special[char] || char);
                 }
             };
 
