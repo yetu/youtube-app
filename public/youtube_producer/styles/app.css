@@ -1366,6 +1366,21 @@ app-key-input li.button.del[activated="true"] {
   -webkit-transition: -webkit-transform 0.25s ease-in-out;
   transition: transform 0.25s ease-in-out;
 }
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item .duration,
+.tvmode .ui-video-list-item .duration,
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item .items,
+.tvmode .ui-video-list-item .items {
+  -webkit-transition: all 0.25s ease-in-out;
+  transition: all 0.25s ease-in-out;
+  -webkit-transition-delay: 0.5s;
+  transition-delay: 0.5s;
+}
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item .duration span,
+.tvmode .ui-video-list-item .duration span,
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item .items span,
+.tvmode .ui-video-list-item .items span {
+  font-size: 1.25em;
+}
 .tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item:after,
 .tvmode .ui-video-list-item:after {
   content: '';
@@ -1402,6 +1417,15 @@ app-key-input li.button.del[activated="true"] {
   background-color: rgba(237,237,237,0);
   -webkit-transition: background-color 0.25s ease-in-out;
   transition: background-color 0.25s ease-in-out;
+}
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item[activated="true"] .duration,
+.tvmode .ui-video-list-item[activated="true"] .duration,
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item[activated="true"] .items,
+.tvmode .ui-video-list-item[activated="true"] .items {
+  -webkit-transition: all 0.25s ease-in-out;
+  transition: all 0.25s ease-in-out;
+  -webkit-transition-delay: 0.5s;
+  transition-delay: 0.5s;
 }
 .tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item .img,
 .tvmode .ui-video-list-item .img {
@@ -1462,10 +1486,8 @@ app-key-input li.button.del[activated="true"] {
   color: #3c3c3b;
   line-height: 135%;
 }
-.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item .duration,
-.tvmode .ui-video-list-item .duration,
-.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item svg,
-.tvmode .ui-video-list-item svg {
+.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item svg#arrow,
+.tvmode .ui-video-list-item svg#arrow {
   display: none;
 }
 .tvmode .yt-viewer yt-result-set.playlist .ui-video-list {
