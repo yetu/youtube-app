@@ -268,7 +268,11 @@ youtubeApp.run(function($location, $translate, appMode, $rootScope, $window){
 /* global module */
 module.exports = ({
     letters: config.input ? config.input.letters.split(' ') : [],
-    numbers: config.input ? config.input.numbers.split(' ') : []
+    numbers: config.input ? config.input.numbers.split(' ') : [],
+
+    special: {
+        space: ' '
+    }
 });
 },{}],13:[function(require,module,exports){
 /* global module */
@@ -304,7 +308,7 @@ module.exports = function (appKeyInputConfig, appRemoteControlService) {
                     var char = angular.element(event.target).attr('char'),
                         value = scope.inputValue.value || '';
 
-                    scope.inputValue.value = value + char;
+                    scope.inputValue.value = value + (appKeyInputConfig.special[char] || char);
                 }
             };
 
