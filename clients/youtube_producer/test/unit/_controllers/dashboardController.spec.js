@@ -24,6 +24,7 @@ describe('dashboardController function', function() {
         $timeout = _$timeout_;
         $location = _$location_;
         $window = _$window_;
+        spyOn(ytYoutubeService, 'initialize');
         $window.config.dashboardCategories = [{id: 11, name: 'App Category 1'}, {id: 22, name: 'App Category 2'}];
         respond = {
             search: __fixtures__['_controllers/dashboard.search.response'],
