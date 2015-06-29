@@ -200,7 +200,7 @@ app-search button.search:hover path {
 }
 .ui-video-list-item .img svg {
   width: 30px;
-  height: auto;
+  height: 30px;
   position: absolute;
   top: 37px;
   left: 90px;
@@ -248,7 +248,7 @@ app-search button.search:hover path {
 .ui-video-list-item .img .items svg {
   position: relative;
   float: left;
-  width: auto;
+  width: 20px;
   height: 14px;
   margin-right: 5px;
   top: 1px;
