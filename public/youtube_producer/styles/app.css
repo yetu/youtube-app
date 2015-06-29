@@ -200,7 +200,7 @@ app-search button.search:hover path {
 }
 .ui-video-list-item .img svg {
   width: 30px;
-  height: auto;
+  height: 30px;
   position: absolute;
   top: 37px;
   left: 90px;
@@ -248,7 +248,7 @@ app-search button.search:hover path {
 .ui-video-list-item .img .items svg {
   position: relative;
   float: left;
-  width: auto;
+  width: 20px;
   height: 14px;
   margin-right: 5px;
   top: 1px;
@@ -399,7 +399,7 @@ app-search button.search:hover path {
 }
 .yt-viewer .buttons .toggle-playlist svg {
   height: 12px;
-  width: auto;
+  width: 12px;
   position: relative;
   top: 0;
   margin: 0 0 0 5px;
@@ -409,6 +409,9 @@ app-search button.search:hover path {
   -ms-transform: scaleX(-1);
   transform: scaleX(-1);
   margin: 0 5px 0 0;
+}
+.yt-viewer .buttons .app-send-to-tv svg {
+  width: 30px;
 }
 yt-player {
   width: 100%;
@@ -1366,15 +1369,6 @@ app-key-input li.button.del[activated="true"] {
   -webkit-transition: -webkit-transform 0.25s ease-in-out;
   transition: transform 0.25s ease-in-out;
 }
-.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item .duration,
-.tvmode .ui-video-list-item .duration,
-.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item .items,
-.tvmode .ui-video-list-item .items {
-  -webkit-transition: all 0.25s ease-in-out;
-  transition: all 0.25s ease-in-out;
-  -webkit-transition-delay: 0.5s;
-  transition-delay: 0.5s;
-}
 .tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item .duration span,
 .tvmode .ui-video-list-item .duration span,
 .tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item .items span,
@@ -1417,15 +1411,6 @@ app-key-input li.button.del[activated="true"] {
   background-color: rgba(237,237,237,0);
   -webkit-transition: background-color 0.25s ease-in-out;
   transition: background-color 0.25s ease-in-out;
-}
-.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item[activated="true"] .duration,
-.tvmode .ui-video-list-item[activated="true"] .duration,
-.tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item[activated="true"] .items,
-.tvmode .ui-video-list-item[activated="true"] .items {
-  -webkit-transition: all 0.25s ease-in-out;
-  transition: all 0.25s ease-in-out;
-  -webkit-transition-delay: 0.5s;
-  transition-delay: 0.5s;
 }
 .tvmode .yt-viewer yt-result-set.playlist .ui-video-list-item .img,
 .tvmode .ui-video-list-item .img {
