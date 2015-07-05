@@ -26,6 +26,7 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
             $window.onYouTubeIframeAPIReady = function() {
                 scope.player.API.loaded = true;
                 $rootScope.YTloaded = true;
+                scope.$apply();
             };
 
             if(!$rootScope.YTloaded) {
@@ -175,7 +176,7 @@ module.exports = function(ytPlayerConfig, $window, $rootScope, appMode, appRemot
             });
 
             scope.$watch('video', function(n, o) {
-                if(n && (scope.player.API.loaded || YT && YT.loaded) && !scope.player.API.initialized) {
+                if(n && (scope.player.API.loaded || $window.YT && $window.YT.loaded) && !scope.player.API.initialized) {
                     initPlayer();
                 }
                 if(n && o && n.id !== o.id) {
