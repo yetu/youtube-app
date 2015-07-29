@@ -1,8 +1,9 @@
 {
-  "label": "YouTube App",
+  "label": "YouTube Beamer",
+  "text": "beamer for YouTube",
   "description": "yetu | youtube app: allowing you to search and watch your favorite videos on the best screen in your house.",
-  "backgroundColor": "#C4110B",
-  "controlsType": "form",
+  "backgroundColor": "#c43f3f",
+  "controlsType": "simpleText",
   "tileType": "app",
   "category": [
     "Apps"
@@ -11,16 +12,5 @@
   "tvready" : true,
   "url": "https://youtubeapp-dev.yetu.me",
   "tvurl": "https://youtubeapp-dev.yetu.me/level2tv#/",
-  "logo": "https://youtubeapp-dev.yetu.me/assets/appMetaData/assets/logo.svg",
-  "controls": {
-    "form": {
-      "action": "open_app_view",
-      "fields": [
-        {
-          "name": "search",
-          "label": "Search YouTube"
-        }
-      ]
-    }
-  }
+  "logo": "https://youtubeapp-dev.yetu.me/assets/appMetaData/assets/logo.svg"
 }
