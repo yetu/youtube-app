@@ -4,7 +4,7 @@
  */
 module.exports = (function($scope, $rootScope, ytYoutubeService, $filter, $routeParams, $location, appRemoteControlService, Notification) {
 
-    ytYoutubeService.getDetails($routeParams.type, $routeParams.id).then(function(data) {
+    ytYoutubeService.getDetails($routeParams.type, $routeParams.id, $routeParams.playlistItemIndex).then(function(data) {
         if($routeParams.time) {
             data.video.startAt = $routeParams.time.replace(/&.+/, ''); // TODO: do it with $routeProvider?
         }

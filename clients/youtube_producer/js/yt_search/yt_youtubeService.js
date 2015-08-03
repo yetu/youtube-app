@@ -195,13 +195,16 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageServi
         return deferred.promise;
     };
 
-    var getDetails = function(type, id) {
+    var getDetails = function(type, id, playlistItemIndex) {
         var deferred = $q.defer();
         var params = {
             maxResults: settings[type].maxResults,
             part: settings[type].part,
             key: settings.developerToken
         };
+
+        playlistItemIndex = playlistItemIndex || 0;
+
         params[settings[type].id] = id;
 
         $http.get(settings[type].url, {
@@ -222,7 +225,7 @@ module.exports = (function ($http, $q, ytYoutubeServiceConfig, localStorageServi
                 case 'playlist': {
                     result = {
                         playlist: items,
-                        video: items.items[0]
+                        video: items.items[playlistItemIndex]
                     };
                     deferred.resolve(result);
                     break;
